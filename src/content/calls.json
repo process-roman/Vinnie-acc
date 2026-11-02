@@ -112,5 +112,32 @@
       ],
       "closer": "Alright. I gotta go. Deductible's eating a receipt. Bye."
     }
-  ]
+  ],
+  "checkIn": {
+    "id": "call_check_in",
+    "trigger": "any",
+    "minHeat": "gentle",
+    "lines": [
+      "Hey. It's me. No, nothing's wrong. Can't a guy call?",
+      "I was looking at the books and I thought: I wonder how my kid's doing."
+    ],
+    "replies": [
+      {
+        "text": "I'm doing good.",
+        "tag": "admit",
+        "response": "Good. Good. Keep it that way. Log your stuff."
+      },
+      {
+        "text": "Is this about money?",
+        "tag": "excuse_needed",
+        "response": "Everything's about money. But no. Not today. Mostly no."
+      },
+      {
+        "text": "I'm trying, Vinnie.",
+        "tag": "admit",
+        "response": "I know you are. That's all I ask. Trying, and receipts."
+      }
+    ],
+    "closer": "Alright. Go. Deductible says hi. She doesn't. But she would."
+  }
 }

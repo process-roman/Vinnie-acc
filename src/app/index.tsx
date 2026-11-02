@@ -12,6 +12,7 @@ import Animated, {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import callbacks from '@/content/callbacks.json';
+import calls from '@/content/calls.json';
 import { getCategory } from '@/domain/categories';
 import { balance } from '@/domain/coins';
 import { Entry, monthSpentMinor, toDateKey } from '@/domain/entries';
@@ -33,7 +34,11 @@ import { useFx } from '@/store/fx';
 import { LogInput, StoredEntry, useGame } from '@/store/game';
 import { BudgetSheet, HistorySheet } from '@/ui/LedgerSheets';
 import { ReceiptSheet, ReceiptValues } from '@/ui/ReceiptSheet';
+import { SettingsSheet } from '@/ui/SettingsSheet';
+import { ShareSheet } from '@/ui/ShareSheet';
 import { ShopSheet } from '@/ui/ShopSheet';
+import { SitdownSheet } from '@/ui/SitdownSheet';
+import { ShareMoment } from '@/domain/shareCard';
 import { SpeechBubble } from '@/ui/SpeechBubble';
 import { colors, radius, space } from '@/ui/tokens';
 
@@ -86,6 +91,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const pick = <T,>(list: readonly T[]): T => list[Math.floor(Math.random() * list.length)];
 
 const UNDO_MS = 5000;
+const SHARE_PROMPT_MS = 10000;
 
 type Bubble = { id: number; text: string; anchor: Point; done: () => void };
 type OpenSheet =
@@ -94,6 +100,8 @@ type OpenSheet =
   | { kind: 'history' }
   | { kind: 'budget' }
   | { kind: 'shop' }
+  | { kind: 'settings' }
+  | { kind: 'sitdown' }
   | null;
 type Undo = { id: string; label: string };
 
@@ -114,6 +122,9 @@ function Office() {
   const mood = useGame((s) => s.character.mood);
   const crackLevel = useGame((s) => s.character.crackLevel);
   const coins = useGame((s) => balance(s.coinTx));
+  const pendingSitdown = useGame((s) => s.pendingSitdown);
+  const pendingCheckIn = useGame((s) => s.pendingCheckIn);
+  const sitdownReady = useGame((s) => s.sitdownAvailable());
   const inventory = useGame((s) => s.inventory);
   const cosmetics = useMemo(() => equippedBySlot(inventory), [inventory]);
   const game = useGame.getState;
@@ -227,6 +238,16 @@ function Office() {
       }
       canvas.play('idle');
       setStatus(STATUS[reaction.tier]);
+      // A moment worth sharing (blueprint §12): offer it, never post it.
+      if (reaction.escalation !== 'none' || reaction.call) {
+        offerShare({
+          kind: reaction.escalation === 'punch' ? 'crack' : 'call',
+          line: reaction.line,
+          amountMinor: entry.amountMinor,
+          description: entry.description,
+          category: entry.category,
+        });
+      }
 
       // A good day with a crack in the glass: he tapes it up.
       if (reaction.tier !== 'meltdown' && game().repairIfDue()) await tapeTheGlass();
@@ -356,7 +377,8 @@ function Office() {
   const openNew = (initial: Partial<ReceiptValues> = {}) =>
     setSheet({ kind: 'new', key: Date.now(), initial: { category: lastCategory, ...initial } });
 
-  // A quick-add link (vinnie://add?...) shows a pre-filled receipt once Vinnie is free.
+  // A quick-add link (vinnie://add?...) shows a pre-filled receipt once Vinnie is free;
+  // a sit-down notification opens the sit-down.
   const shown: OpenSheet =
     sheet ??
     (prefill && !busy
@@ -369,7 +391,56 @@ function Office() {
             description: prefill.merchant,
           },
         }
-      : null);
+      : pendingSitdown && !busy
+        ? { kind: 'sitdown' }
+        : null);
+
+  // Share: a pill offers the moment for a few seconds after a crack, call or achievement.
+  const [sharePrompt, setSharePrompt] = useState<ShareMoment | null>(null);
+  const [sharing, setSharing] = useState<ShareMoment | null>(null);
+  const offerShare = (m: ShareMoment) => setSharePrompt(m);
+  useEffect(() => {
+    if (!sharePrompt) return;
+    const id = setTimeout(() => setSharePrompt(null), SHARE_PROMPT_MS);
+    return () => clearTimeout(id);
+  }, [sharePrompt]);
+  useEffect(
+    () =>
+      useGame.subscribe((s, prev) => {
+        const a = s.toasts[0];
+        if (a && a !== prev.toasts[0]) {
+          setSharePrompt({ kind: 'achievement', name: a.name, description: a.description });
+        }
+      }),
+    [],
+  );
+
+  // Opened from a "Vinnie is calling…" notification: he calls to check in.
+  useEffect(() => {
+    if (!pendingCheckIn || busy) return;
+    const id = setTimeout(async () => {
+      const canvas = office.current;
+      game().clearPending();
+      if (!canvas) return;
+      setBusy(true);
+      try {
+        canvas.play('phone');
+        setStatus('Vinnie is calling you…');
+        game().callPlaced();
+        await ring(
+          { ...calls.checkIn, scriptId: calls.checkIn.id, declineRetry: calls.declineRetry },
+          null,
+        );
+        canvas.play('idle');
+        setStatus(ANIM_STATUS.idle);
+      } finally {
+        setBusy(false);
+      }
+    }, 800);
+    return () => clearTimeout(id);
+    // game() and ring are stable store accessors.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingCheckIn, busy]);
 
   // One tap logs a frequent purchase; Undo removes it for a few seconds.
   const [undo, setUndo] = useState<Undo | null>(null);
@@ -413,6 +484,14 @@ function Office() {
           <Text style={styles.subtitle}>
             {now.toLocaleString('en-US', { month: 'long' })} · {HEAT_LABEL[heat]}
           </Text>
+        </Pressable>
+        <Pressable
+          style={styles.gear}
+          onPress={() => setSheet({ kind: 'settings' })}
+          disabled={busy}
+          accessibilityLabel="Settings"
+        >
+          <Text style={styles.gearLabel}>⚙︎</Text>
         </Pressable>
         <Pressable style={styles.budget} onPress={() => setSheet({ kind: 'budget' })}>
           <Text style={styles.budgetLabel}>This month</Text>
@@ -506,6 +585,22 @@ function Office() {
           />
           <Chip label="Nearly broke" onPress={() => game().loadNearlyBrokeDemo()} />
           <Chip label="+100 coins" onPress={() => game().grantDebugCoins(100)} />
+          <Chip label="Sit-down" onPress={() => setSheet({ kind: 'sitdown' })} />
+          {entries.length > 0 && (
+            <Chip
+              label="Share card"
+              onPress={() => {
+                const last = entries[entries.length - 1];
+                setSharing({
+                  kind: 'crack',
+                  line: `Over budget AND $${(last.amountMinor / 100).toFixed(2)}?! That's IT.`,
+                  amountMinor: last.amountMinor,
+                  description: last.description,
+                  category: last.category,
+                });
+              }}
+            />
+          )}
           <Chip label={`Repair (${crackLevel})`} onPress={repairGlass} />
           <Chip label="Reset" onPress={() => game().reset()} />
           {spent > 0 &&
@@ -526,6 +621,27 @@ function Office() {
               }}
             />
           ))}
+        </View>
+      )}
+
+      {(sitdownReady || sharePrompt) && (
+        <View style={styles.prompts}>
+          {sitdownReady && !busy && (
+            <Pressable style={styles.prompt} onPress={() => setSheet({ kind: 'sitdown' })}>
+              <Text style={styles.promptLabel}>☕ Weekly sit-down</Text>
+            </Pressable>
+          )}
+          {sharePrompt && !busy && (
+            <Pressable
+              style={styles.prompt}
+              onPress={() => {
+                setSharing(sharePrompt);
+                setSharePrompt(null);
+              }}
+            >
+              <Text style={styles.promptLabel}>📸 Share this moment</Text>
+            </Pressable>
+          )}
         </View>
       )}
 
@@ -634,6 +750,20 @@ function Office() {
         onEdit={(entry) => setSheet({ kind: 'edit', entry })}
       />
       <BudgetSheet visible={shown?.kind === 'budget'} onClose={() => setSheet(null)} />
+      <SettingsSheet visible={shown?.kind === 'settings'} onClose={() => setSheet(null)} />
+      <SitdownSheet
+        visible={shown?.kind === 'sitdown'}
+        onClose={() => {
+          setSheet(null);
+          game().clearPending();
+        }}
+        onDone={() => {
+          setSheet(null);
+          office.current?.play('celebrate');
+          setStatus('Vinnie enjoyed the sit-down.');
+        }}
+      />
+      <ShareSheet moment={sharing} onClose={() => setSharing(null)} />
       <ShopSheet
         visible={shown?.kind === 'shop'}
         onClose={() => setSheet(null)}
@@ -709,6 +839,21 @@ function Chip({ label, onPress }: { label: string; onPress: () => void }) {
 
 const styles = StyleSheet.create({
   loading: { flex: 1, backgroundColor: colors.paper },
+  gear: { padding: space.sm, marginLeft: 'auto', marginRight: space.sm },
+  gearLabel: { fontSize: 22, color: colors.inkSoft },
+  prompts: {
+    flexDirection: 'row',
+    gap: space.sm,
+    justifyContent: 'center',
+    marginBottom: space.sm,
+  },
+  prompt: {
+    backgroundColor: colors.ink,
+    borderRadius: radius.pill,
+    paddingVertical: space.sm,
+    paddingHorizontal: space.lg,
+  },
+  promptLabel: { color: colors.card, fontWeight: '800' },
   statusRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   coinButton: {
     flexDirection: 'row',

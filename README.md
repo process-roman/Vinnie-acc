@@ -25,9 +25,9 @@ npm run lint
 
 ## Status
 
-**M5 (progression)** — coins for tracking days, saving and walking away, streaks and
-achievements, kept as an idempotent ledger (same-day deletes give them back). 13 achievements
-with an unlock toast (one secret). The 🪙 button opens Appease Vinnie: gifts lift his mood,
-office items (rug, cat bed, neon sign, deluxe espresso machine, wallpaper, outfits) appear in
-the room and stay. Everything from M1–M4 is still here; tap the "Vinnie" title for playtest
-controls (including +100 coins).
+**M6 (retention and sharing)** — opt-in, in-character notifications (weekly sit-down,
+a check-in call, a late-month warning, a nudge after two quiet days; one a day, quiet hours,
+backs off when ignored). The weekly sit-down walks through your week and pays 20 coins.
+Share cards of cracks, calls and achievements, with amounts hidden unless you turn them on.
+Settings (⚙︎) has heat level, notifications and the iPhone Apple Pay Shortcut guide.
+Everything from M1–M5 is still here; tap the "Vinnie" title for playtest controls.

@@ -44,11 +44,25 @@ import {
   updateAchievements,
 } from '@/domain/achievements';
 import { balance, CoinGrant, grantsForEntry, reversalForDeletedEntry } from '@/domain/coins';
-import { Entry, toDateKey, toMonthKey } from '@/domain/entries';
-import { Currency } from '@/domain/money';
+import { daysLeft, Entry, monthSpentMinor, toDateKey, toMonthKey } from '@/domain/entries';
+import notificationCopy from '@/content/notifications.json';
+import { DEFAULT_PREFS, NotificationLogItem, planNotifications } from '@/domain/notifications';
+import { fillPlaceholders, Heat } from '@/domain/reaction/dialogue';
+import { SITDOWN_COINS, SITDOWN_MOOD, sitdownAvailable, weekStart } from '@/domain/sitdown';
+import { formatMoney, Currency } from '@/domain/money';
+import {
+  cancelAll,
+  NotificationTap,
+  requestNotifications,
+  scheduleAll,
+} from '@/services/notifications';
+import {
+  listNotificationLog,
+  markOpened,
+  replaceUpcoming,
+} from '@/data/repositories/notificationLog';
 import { clampMood, DECLINE_MOOD, driftMood, MOOD_START, REPLY_MOOD } from '@/domain/mood';
 import { QuickAdd } from '@/domain/quickAdd';
-import { Heat } from '@/domain/reaction/dialogue';
 import { HONEYMOON_MS } from '@/domain/reaction/escalation';
 import { keptPromises, LedgerEntry, LedgerEvent } from '@/domain/reaction/ledger';
 import { NewEntry, planReaction, Reaction } from '@/domain/reaction/react';
@@ -89,6 +103,23 @@ type GameState = {
   ledger: LedgerEntry[];
   /** A pre-filled receipt waiting to be opened (from a quick-add link). */
   prefill: QuickAdd | null;
+  notificationsEnabled: boolean;
+  quietStart: number;
+  quietEnd: number;
+  notificationLog: NotificationLogItem[];
+  /** Opened from a notification: show the sit-down / take the check-in call. */
+  pendingSitdown: boolean;
+  pendingCheckIn: boolean;
+
+  /** Turns notifications on (asking the OS) or off. Resolves to the new state. */
+  setNotificationsEnabled(on: boolean): Promise<boolean>;
+  /** Re-plans the next week of notifications from the current state. */
+  rescheduleNotifications(): void;
+  notificationOpened(t: NotificationTap): void;
+  clearPending(): void;
+  sitdownAvailable(now?: Date): boolean;
+  /** Finishes this week's sit-down: coins, mood, achievement. */
+  completeSitdown(now?: Date): void;
   coinTx: CoinGrant[];
   achievements: AchievementState;
   inventory: Owned[];
@@ -110,7 +141,7 @@ type GameState = {
   deleteEntry(id: string): void;
   removeExamples(): void;
   /** A reply on a call: goes in the promise ledger and moves his mood. */
-  recordReply(tag: string, entry: Entry): void;
+  recordReply(tag: string, entry: Entry | null): void;
   /** You declined his call. */
   declined(): void;
   /** The glass cracked (or got worse). `impact` is a fraction of the window. */
@@ -214,6 +245,12 @@ export const useGame = create<GameState>()((set, get) => {
     character: FRESH_CHARACTER(Date.now()),
     ledger: [],
     prefill: null,
+    notificationsEnabled: false,
+    quietStart: DEFAULT_PREFS.quietStart,
+    quietEnd: DEFAULT_PREFS.quietEnd,
+    notificationLog: [],
+    pendingSitdown: false,
+    pendingCheckIn: false,
     coinTx: [],
     achievements: {},
     inventory: [],
@@ -242,6 +279,10 @@ export const useGame = create<GameState>()((set, get) => {
           heat: settings.heat,
           currency: settings.currency,
           lastCategory: settings.lastCategory,
+          notificationsEnabled: settings.notificationsEnabled,
+          quietStart: settings.quietStart,
+          quietEnd: settings.quietEnd,
+          notificationLog: await listNotificationLog(db),
           installedAt: settings.createdAt,
           character,
           ledger: await listLedger(db),
@@ -303,6 +344,7 @@ export const useGame = create<GameState>()((set, get) => {
       });
       grant(grantsForEntry(entry, s.entries, new Set(get().coinTx.map((g) => g.key))));
       checkAchievements();
+      get().rescheduleNotifications();
       return { entry, reaction };
     },
 
@@ -335,18 +377,21 @@ export const useGame = create<GameState>()((set, get) => {
     },
 
     recordReply(tag, entry) {
-      const l: LedgerEntry = {
-        id: newId(),
-        tag,
-        category: entry.category,
-        amountMinor: entry.amountMinor,
-        entryId: entry.id,
-        createdAt: Date.now(),
-        resolved: null,
-        resolvedAt: null,
-      };
-      set((s) => ({ ledger: [...s.ledger, l] }));
-      write((d) => insertLedger(d, l));
+      // A check-in call has no receipt behind it: nothing for the ledger, just mood.
+      if (entry) {
+        const l: LedgerEntry = {
+          id: newId(),
+          tag,
+          category: entry.category,
+          amountMinor: entry.amountMinor,
+          entryId: entry.id,
+          createdAt: Date.now(),
+          resolved: null,
+          resolvedAt: null,
+        };
+        set((s) => ({ ledger: [...s.ledger, l] }));
+        write((d) => insertLedger(d, l));
+      }
       setCharacter({ mood: clampMood(get().character.mood + (REPLY_MOOD[tag] ?? 0)) });
       if (tag === 'admit') get().achievementEvent('apology');
     },
@@ -453,6 +498,84 @@ export const useGame = create<GameState>()((set, get) => {
     setHeat(heat) {
       set({ heat });
       write((d) => updateSettings(d, { heat }));
+    },
+
+    async setNotificationsEnabled(on) {
+      const allowed = on ? await requestNotifications() : false;
+      set({ notificationsEnabled: allowed });
+      write((d) => updateSettings(d, { notificationsEnabled: allowed }));
+      if (!allowed) await cancelAll();
+      get().rescheduleNotifications();
+      return allowed;
+    },
+
+    rescheduleNotifications() {
+      const s = get();
+      const now = new Date();
+      const planned = planNotifications({
+        prefs: { enabled: s.notificationsEnabled, quietStart: s.quietStart, quietEnd: s.quietEnd },
+        entries: s.entries,
+        limitMinor: s.limitMinor,
+        now,
+        log: s.notificationLog,
+        lastCallAt: s.character.lastCallAt,
+      });
+      const spent = monthSpentMinor(s.entries, now);
+      const values = {
+        daysLeft: daysLeft(now),
+        remaining: formatMoney(Math.max(0, (s.limitMinor ?? 0) - spent), s.currency, {
+          trimZeroCents: true,
+        }),
+      };
+      const list = planned.map((p, i) => {
+        const copy = notificationCopy[p.kind][i % notificationCopy[p.kind].length];
+        return {
+          id: p.kind + ':' + p.at,
+          kind: p.kind,
+          at: p.at,
+          title: copy.title,
+          body: fillPlaceholders(copy.body, values),
+        };
+      });
+      const fired = s.notificationLog.filter((l) => l.at <= now.getTime());
+      set({ notificationLog: [...fired, ...list.map((n) => ({ ...n, opened: false }))] });
+      write(async (d) => {
+        await replaceUpcoming(d, list, now.getTime());
+        await scheduleAll(list);
+      });
+    },
+
+    notificationOpened(t) {
+      set((s) => ({
+        notificationLog: s.notificationLog.map((l) =>
+          (l as { id?: string }).id === t.id ? { ...l, opened: true } : l,
+        ),
+        pendingSitdown: s.pendingSitdown || t.kind === 'sitdown',
+        pendingCheckIn: s.pendingCheckIn || t.kind === 'proactive_call',
+      }));
+      write((d) => markOpened(d, t.id));
+    },
+
+    clearPending() {
+      set({ pendingSitdown: false, pendingCheckIn: false });
+    },
+
+    sitdownAvailable(now = new Date()) {
+      const done = new Set(
+        get()
+          .coinTx.filter((g) => g.key.startsWith('sitdown:'))
+          .map((g) => g.key.slice('sitdown:'.length)),
+      );
+      return get().pendingSitdown || sitdownAvailable(now, done);
+    },
+
+    completeSitdown(now = new Date()) {
+      grant([
+        { key: 'sitdown:' + weekStart(now), delta: SITDOWN_COINS, reason: 'Weekly sit-down' },
+      ]);
+      setCharacter({ mood: clampMood(get().character.mood + SITDOWN_MOOD) });
+      set({ pendingSitdown: false });
+      get().achievementEvent('sitdown');
     },
 
     setLimit(limitMinor) {

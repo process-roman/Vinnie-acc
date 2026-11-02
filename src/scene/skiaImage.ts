@@ -30,3 +30,8 @@ export function toSkImage(buf: PixelBuffer): SkImage {
   if (!image) throw new Error(`Could not create a ${buf.width}x${buf.height} image`);
   return image;
 }
+
+/** A PNG data URI for pixel art, e.g. to put a still of the office in a share card. */
+export function toPngDataUri(buf: PixelBuffer): string {
+  return `data:image/png;base64,${toSkImage(buf).encodeToBase64()}`;
+}

@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
+import { composeSnapshot, scaleNearest } from '../composition';
 import { getPixel } from '../pixels';
 import {
   rasterizeLightning,
@@ -80,5 +81,38 @@ describe('wall layers', () => {
       }
     }
     expect(differs).toBe(true);
+  });
+});
+
+describe('share snapshot', () => {
+  const room = {
+    plant: 'dead' as const,
+    weather: 'storm' as const,
+    poster: 'cracked' as const,
+    receipts: 5,
+    espressoSteaming: false,
+    cat: 'hiding' as const,
+    streak: 0,
+  };
+  const white = (b: { data: Uint8Array }) => {
+    let n = 0;
+    for (let i = 0; i < b.data.length; i += 4) {
+      if (b.data[i] === 255 && b.data[i + 1] === 255 && b.data[i + 2] === 255) n++;
+    }
+    return n;
+  };
+
+  it('draws the office with the crack over it', () => {
+    const base = { room, cosmetics: {}, vinnieFrame: 16, at: { gx: 7, gy: 7 }, crackSeed: 3 };
+    const clean = composeSnapshot({ ...base, crackLevel: 0 });
+    const cracked = composeSnapshot({ ...base, crackLevel: 3 });
+    expect([clean.width, clean.height]).toEqual([ROOM_W, ROOM_H]);
+    expect(white(cracked)).toBeGreaterThan(white(clean) + 50);
+  });
+
+  it('scales up without blurring', () => {
+    const s = scaleNearest(rasterizeRoom(), 3);
+    expect(s.width).toBe(ROOM_W * 3);
+    expect(getPixel(s, 3 * 64 + 2, 3 * 100 + 1)).toEqual(getPixel(rasterizeRoom(), 64, 100));
   });
 });

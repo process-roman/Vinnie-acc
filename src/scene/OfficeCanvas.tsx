@@ -25,18 +25,15 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import type { PropTarget } from '@/domain/propLines';
 import type { RoomState } from '@/domain/roomState';
-import type { ItemSlot } from '@/domain/shop';
 
-import { depth, gridToScreen, GridPoint, Point, screenToGrid } from './iso';
-import { SceneSprite, slotDepth, slotPosition, SLOTS } from './layout';
+import { buf, buildSprites, Cosmetics, roomBuffer, vinnieSheet as sheetFor } from './composition';
+import { gridToScreen, GridPoint, Point, screenToGrid } from './iso';
+import { SceneSprite } from './layout';
 import { getPixel, PixelBuffer } from './pixels';
 import {
-  PROPS,
-  rasterizeBox,
   rasterizeLightning,
-  rasterizePoster,
   rasterizeNeonSign,
-  rasterizeRoom,
+  rasterizePoster,
   rasterizeRug,
   rasterizeWindow,
   RAIN_FRAMES,
@@ -48,27 +45,7 @@ import {
 } from './room';
 import { PIXEL_SAMPLING, toSkImage } from './skiaImage';
 import { buildAlertBubble } from './sprites/bubble';
-import {
-  buildPlant,
-  CAT_BED,
-  DELUXE_ESPRESSO,
-  buildReceiptPile,
-  CAT_SITTING,
-  CAT_SLEEPING,
-  ESPRESSO,
-  LAMP,
-  PHONE,
-  STEAM_FRAMES,
-} from './sprites/props';
-import {
-  AnimName,
-  ANIM_NAMES,
-  ANIMS,
-  buildVinnieSheet,
-  VINNIE_ANCHOR,
-  VINNIE_H,
-  VINNIE_W,
-} from './sprites/vinnie';
+import { AnimName, ANIM_NAMES, ANIMS, VINNIE_ANCHOR, VINNIE_H, VINNIE_W } from './sprites/vinnie';
 
 const MS_PER_TILE = 260;
 const START: GridPoint = WAYPOINTS.chair;
@@ -102,7 +79,7 @@ type Props = {
   height: number;
   room: RoomState;
   /** Equipped shop items by slot. */
-  cosmetics?: Partial<Record<ItemSlot, string>>;
+  cosmetics?: Cosmetics;
   onTap?: (t: TapTarget) => void;
   /** Ignore taps, e.g. while a reaction is playing. */
   disabled?: boolean;
@@ -119,66 +96,7 @@ const img = (b: PixelBuffer) => {
   }
   return i;
 };
-const buffers = new Map<string, PixelBuffer>();
-const buf = (key: string, make: () => PixelBuffer) => {
-  let b = buffers.get(key);
-  if (!b) {
-    b = make();
-    buffers.set(key, b);
-  }
-  return b;
-};
-
 const clampToRoom = (n: number) => Math.min(ROOM_TILES - 0.4, Math.max(0.4, n));
-
-function buildSprites(
-  room: RoomState,
-  cosmetics: Partial<Record<ItemSlot, string>>,
-): SceneSprite[] {
-  const sprites: SceneSprite[] = PROPS.map((p) => ({
-    key: p.id,
-    frames: [buf(`box:${p.id}`, () => rasterizeBox(p.footprint, p.heightPx, p.colors))],
-    x: 0,
-    y: 0,
-    depth: depth({
-      gx: p.footprint.gx + p.footprint.w / 2,
-      gy: p.footprint.gy + p.footprint.d / 2,
-    }),
-  }));
-  const place = (
-    key: string,
-    slot: (typeof SLOTS)[keyof typeof SLOTS],
-    frames: PixelBuffer[],
-    order: number,
-    extra: Partial<SceneSprite> = {},
-  ) =>
-    sprites.push({ key, frames, ...slotPosition(slot), depth: slotDepth(slot, order), ...extra });
-
-  place('plant', SLOTS.plant, [buf(`plant:${room.plant}`, () => buildPlant(room.plant))], 0, {
-    tap: 'plant',
-  });
-  place(
-    'pile',
-    SLOTS.pile,
-    [buf(`pile:${room.receipts}`, () => buildReceiptPile(room.receipts))],
-    0,
-    { tap: 'receipts' },
-  );
-  place('lamp', SLOTS.lamp, [LAMP], 0);
-  place('phone', SLOTS.phone, [PHONE], 1, { tap: 'phone' });
-  const machine = cosmetics.espresso === 'deluxe_espresso' ? DELUXE_ESPRESSO : ESPRESSO;
-  place('espresso', SLOTS.espresso, [machine], 0, { tap: 'espresso' });
-  if (cosmetics.cat === 'cat_bed') place('catBed', SLOTS.catBed, [CAT_BED], 0, { tap: 'cat' });
-  if (room.espressoSteaming) place('steam', SLOTS.steam, STEAM_FRAMES, 1, { frameMs: 220 });
-  if (room.cat === 'sleeping') {
-    place('cat', SLOTS.catOnDesk, CAT_SLEEPING, 2, { frameMs: 900, tap: 'cat' });
-  } else if (room.cat === 'sitting') {
-    // With a bed, she sits in it.
-    const slot = cosmetics.cat === 'cat_bed' ? SLOTS.catInBed : SLOTS.catOnFloor;
-    place('cat', slot, CAT_SITTING, 1, { frameMs: 700, tap: 'cat' });
-  }
-  return sprites.sort((a, b) => a.depth - b.depth);
-}
 
 export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disabled, ref }: Props) {
   // Whole device pixels per art pixel keeps every pixel the same size on screen.
@@ -200,10 +118,8 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
     }),
     [],
   );
-  const walls = cosmetics.walls === 'green_wallpaper' ? 'green_wallpaper' : 'brick';
-  const roomImage = img(buf(`room:${walls}`, () => rasterizeRoom(walls)));
-  const outfit = cosmetics.outfit ?? '';
-  const vinnieSheet = buf(`vinnie:${outfit}`, () => buildVinnieSheet(outfit));
+  const roomImage = img(roomBuffer(cosmetics));
+  const vinnieSheet = sheetFor(cosmetics);
 
   const windowFrames = useMemo(() => {
     const n = room.weather === 'rain' || room.weather === 'storm' ? RAIN_FRAMES : 1;

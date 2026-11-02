@@ -37,7 +37,7 @@ type Phase =
 export function CallOverlay() {
   const current = useCall((s) => s.current);
   // Remount per call so every call starts from the ringing state.
-  return current ? <Call key={current.entry.id} /> : null;
+  return current ? <Call key={current.id} /> : null;
 }
 
 function Call() {

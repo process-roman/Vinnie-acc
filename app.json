@@ -36,7 +36,14 @@
           "imageWidth": 76
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-sharing",
+      [
+        "expo-notifications",
+        {
+          "color": "#A4523A"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

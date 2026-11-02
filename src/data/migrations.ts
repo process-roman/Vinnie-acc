@@ -86,6 +86,18 @@ export const MIGRATIONS: readonly string[] = [
     bought_at INTEGER NOT NULL
   );
   `,
+  `
+  ALTER TABLE settings ADD COLUMN notifications_enabled INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE settings ADD COLUMN quiet_start INTEGER NOT NULL DEFAULT 22;
+  ALTER TABLE settings ADD COLUMN quiet_end INTEGER NOT NULL DEFAULT 9;
+
+  CREATE TABLE notification_log (
+    id TEXT PRIMARY KEY,
+    kind TEXT NOT NULL,
+    at INTEGER NOT NULL,
+    opened INTEGER NOT NULL DEFAULT 0
+  );
+  `,
 ];
 
 export async function migrate(db: Db): Promise<void> {

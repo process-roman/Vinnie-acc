@@ -193,3 +193,31 @@ Office items are slot-based and permanent: rug (floor), cat bed (Deductible sits
 neon "$" (wall, flickers), deluxe espresso machine, green wallpaper, and two outfits (blue tie,
 Sunday vest) that are colour swaps on his sprite sheet. One item per slot; bought items can be
 put away and used again. No paid coin packs.
+
+## 2026-11-02 — M6 retention and sharing
+
+**Notifications are planned, not fired ad hoc.** `src/domain/notifications.ts` plans the next
+7 days from the current state (pure, tested): the Sunday 18:00 sit-down, a weekly check-in
+call (Thursday 18:30, skipped if he called in the last 72 h), a late-month warning (85%+ spent
+with a week left), and a quiet nudge after two days without a receipt. At most one a day, never
+in quiet hours (22:00–9:00 by default, moved to when they end), and every other day only after
+three ignored in a row. The plan is rebuilt at launch and after each receipt; the device
+schedule is replaced each time (`expo-notifications`, date triggers). Calls use a high-priority
+Android channel. Tapping a notification opens the sit-down or rings the check-in call. Opt-in
+only, from Settings; web is a no-op. Custom ringtone sounds still need assets.
+
+**Weekly sit-down.** Weeks run Monday to Sunday. It opens Friday to Sunday (or from its
+notification), once a week: spent, receipts, top category, best and worst decision, promises
+kept and broken, then +20 coins (`sitdown:<monday>`), mood +6 and "The Sit-Down".
+
+**Share cards.** The office is re-composed as a still pixel image (`scene/composition.ts`,
+shared with the live canvas), scaled up 4× and encoded to PNG with Skia, inside a plain RN
+9:16 card that `react-native-view-shot` captures for the system share sheet. Amounts are
+redacted from his line (`$$$`) and neither the amount nor what you bought appears unless you
+switch it on. A "Share this moment" pill appears for 10 s after a crack, a call or an
+achievement; nothing is ever shared automatically. Web previews the card only.
+
+**Settings (first part).** Heat level with sample lines, the notification switch, and the
+iPhone Shortcut guide: a Wallet automation that opens
+`vinnie://add?amount=…&merchant=…`. Export and delete-all come with M7. The Apple Pay flow
+needs a real iPhone to verify.

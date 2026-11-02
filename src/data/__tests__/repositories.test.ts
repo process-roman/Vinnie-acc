@@ -25,6 +25,7 @@ import {
   spendCoins,
   walletBalance,
 } from '../repositories/progression';
+import { listNotificationLog, markOpened, replaceUpcoming } from '../repositories/notificationLog';
 import { getSettings, updateSettings } from '../repositories/settings';
 import { createTestDb } from './testDb';
 
@@ -51,7 +52,7 @@ describe('migrations', () => {
   it('are idempotent', async () => {
     await migrate(db);
     const row = await db.get<{ user_version: number }>('PRAGMA user_version');
-    expect(row?.user_version).toBe(3);
+    expect(row?.user_version).toBe(4);
   });
 });
 
@@ -149,13 +150,20 @@ describe('settings', () => {
       currency: 'USD',
       heat: 'classic',
       lastCategory: 'coffee',
+      notificationsEnabled: false,
+      quietStart: 22,
+      quietEnd: 9,
       createdAt: 42,
     });
-    await updateSettings(db, { heat: 'gentle', lastCategory: 'dining' });
-    expect(await getSettings(db, 99)).toEqual({
-      currency: 'USD',
+    await updateSettings(db, {
       heat: 'gentle',
       lastCategory: 'dining',
+      notificationsEnabled: true,
+    });
+    expect(await getSettings(db, 99)).toMatchObject({
+      heat: 'gentle',
+      lastCategory: 'dining',
+      notificationsEnabled: true,
       createdAt: 42,
     });
   });
@@ -277,6 +285,25 @@ describe('coins, achievements, inventory', () => {
     expect(await listInventory(db)).toEqual([
       { itemId: 'rug', equipped: false },
       { itemId: 'blue_tie', equipped: true },
+    ]);
+  });
+});
+
+describe('notification log', () => {
+  it('keeps fired notifications and replaces upcoming ones', async () => {
+    await replaceUpcoming(
+      db,
+      [
+        { id: 'a', kind: 'quiet_nudge', at: 100 },
+        { id: 'b', kind: 'sitdown', at: 300 },
+      ],
+      0,
+    );
+    await markOpened(db, 'a');
+    await replaceUpcoming(db, [{ id: 'c', kind: 'proactive_call', at: 400 }], 200);
+    expect(await listNotificationLog(db)).toEqual([
+      { id: 'a', kind: 'quiet_nudge', at: 100, opened: true },
+      { id: 'c', kind: 'proactive_call', at: 400, opened: false },
     ]);
   });
 });

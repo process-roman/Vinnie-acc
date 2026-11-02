@@ -1,0 +1,31 @@
+{
+  "quiet_nudge": [
+    { "title": "Vinnie", "body": "You've been quiet. Too quiet. What'd you buy?" },
+    {
+      "title": "Vinnie",
+      "body": "Two days, no receipts. Either you're a saint or you're hiding something."
+    },
+    { "title": "Vinnie", "body": "Deductible thinks you forgot about us. I told her you'd never." }
+  ],
+  "late_month": [
+    { "title": "Vinnie", "body": "We got {daysLeft} days and {remaining}. Walk with me." },
+    {
+      "title": "Vinnie",
+      "body": "{daysLeft} days left, {remaining} in the budget. Easy does it, kid."
+    }
+  ],
+  "sitdown": [
+    {
+      "title": "Vinnie wants a word",
+      "body": "Sit down. We need to talk. It's nothin' bad. Probably."
+    },
+    {
+      "title": "The weekly sit-down",
+      "body": "Coffee's on. Bring your receipts. Five minutes, I promise."
+    }
+  ],
+  "proactive_call": [
+    { "title": "📞 Vinnie is calling…", "body": "Pick up. It's me. Just checking in." },
+    { "title": "📞 Vinnie is calling…", "body": "You gonna answer or what?" }
+  ]
+}
