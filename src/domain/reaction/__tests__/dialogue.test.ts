@@ -25,6 +25,8 @@ const ALL_VALUES = {
   monthTotal: '$19.50',
   daysLeft: 9,
   remaining: '$120',
+  promiseDay: 'Tuesday',
+  today: 'Thursday',
 };
 
 const q = (over: Partial<LineQuery>): LineQuery => ({
@@ -37,6 +39,10 @@ const q = (over: Partial<LineQuery>): LineQuery => ({
 });
 
 describe('dialogue content', () => {
+  it('has the blueprint M4 minimum of 120 lines', () => {
+    expect(LINES.length).toBeGreaterThanOrEqual(120);
+  });
+
   it('has unique line ids', () => {
     expect(new Set(LINES.map((l) => l.id)).size).toBe(LINES.length);
   });
@@ -83,7 +89,8 @@ describe('selectLine', () => {
       q({ tier: 'judge', category: 'coffee', reasons: ['repeat'] }),
       rng(1),
     );
-    expect(line?.id).toBe('ju_coffee_repeat');
+    expect(line?.categories).toContain('coffee');
+    expect(line?.conditions).toContain('repeat');
   });
 
   it('skips recently shown lines while others fit', () => {
@@ -93,10 +100,19 @@ describe('selectLine', () => {
   });
 
   it('repeats a line rather than saying nothing', () => {
-    // Health has one specific line and one generic approve line; both were just shown.
-    const recent = ['ap_health_1', 'ap_generic_1'];
-    const again = selectLine(LINES, q({ tier: 'approve', category: 'health', recent }), rng(1));
-    expect(again?.id).toBe('ap_health_1');
+    // Every line that fits a health receipt was just shown.
+    const fits = LINES.filter(
+      (l) =>
+        l.tier === 'approve' &&
+        !l.conditions?.length &&
+        (!l.categories?.length || l.categories.includes('health')),
+    ).map((l) => l.id);
+    const again = selectLine(
+      LINES,
+      q({ tier: 'approve', category: 'health', recent: fits }),
+      rng(1),
+    );
+    expect(fits).toContain(again?.id);
   });
 });
 
@@ -116,5 +132,19 @@ describe('selectCallScript', () => {
 
   it('falls back to the generic script', () => {
     expect(selectCallScript(SCRIPTS, ['repeatAgain'], 'gentle')?.id).toBe('call_generic');
+  });
+});
+
+describe('tone rules (blueprint §7.6)', () => {
+  const BANNED = /\b(fuck|shit|bitch|asshole|bastard|crap)\w*/i;
+  it('keeps real profanity out of everything below Unhinged', () => {
+    for (const l of LINES.filter((x) => x.minHeat !== 'unhinged')) {
+      expect(l.text).not.toMatch(BANNED);
+    }
+    for (const s of SCRIPTS) {
+      for (const t of [...s.lines, s.closer, ...s.replies.map((r) => r.response)]) {
+        expect(t).not.toMatch(BANNED);
+      }
+    }
   });
 });

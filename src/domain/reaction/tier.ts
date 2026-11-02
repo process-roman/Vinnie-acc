@@ -21,7 +21,11 @@ export type Reason =
   | 'repeatAgain'
   | 'big'
   | 'lateMonth'
-  | 'noBudget';
+  | 'noBudget'
+  /** Bought something in a category you promised to quit (promise ledger). */
+  | 'brokenPromise'
+  /** Called something an investment again within 30 days. */
+  | 'investmentAgain';
 
 export type TierInput = {
   type: EntryType;

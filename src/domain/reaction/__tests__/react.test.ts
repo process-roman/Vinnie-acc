@@ -6,6 +6,7 @@ import { rng } from '@/domain/random';
 import { NewEntry, planReaction, ReactContext } from '../react';
 
 const now = new Date(2026, 10, 10, 15);
+const DAY = 24 * 3600 * 1000;
 
 const past = (amountMinor: number, category = 'groceries'): Entry => ({
   id: `${category}-${amountMinor}`,
@@ -23,6 +24,8 @@ const ctx = (over: Partial<ReactContext> = {}): ReactContext => ({
   heat: 'classic',
   currency: 'USD',
   recentLineIds: [],
+  ledger: [],
+  character: { installedAt: now.getTime() - 30 * DAY, lastCrackAt: null, lastCallAt: null },
   now,
   rand: rng(7),
   ...over,
@@ -75,5 +78,54 @@ describe('planReaction', () => {
     );
     expect(r.tier).toBe('approve');
     expect(r.escalation).toBe('none');
+  });
+
+  it('remembers a broken promise and calls about it', () => {
+    const promise = {
+      id: 'p1',
+      tag: 'promise_never_again',
+      category: 'shopping',
+      amountMinor: 9000,
+      entryId: null,
+      createdAt: now.getTime() - 2 * DAY,
+      resolved: null,
+      resolvedAt: null,
+    };
+    const shoes = { ...latte, category: 'shopping', amountMinor: 25000 };
+    const r = planReaction(shoes, ctx({ ledger: [promise] }));
+    expect(r.tier).toBe('meltdown');
+    expect(r.reasons).toContain('brokenPromise');
+    expect(r.call?.scriptId).toBe('call_broken_promise');
+    expect(r.call?.lines.join(' ')).toContain('Sunday'); // Nov 8, 2026
+    expect(r.ledgerEvents).toEqual([{ id: 'p1', resolved: 'broken' }]);
+    // A small treat in that category is still angry, not a meltdown.
+    expect(planReaction({ ...shoes, amountMinor: 500 }, ctx({ ledger: [promise] })).tier).toBe(
+      'angry',
+    );
+  });
+
+  it('holds back escalation in the first three days', () => {
+    const fresh = { installedAt: now.getTime() - DAY, lastCrackAt: null, lastCallAt: null };
+    const r = planReaction(latte, ctx({ entries: [past(199800)], character: fresh }));
+    expect(r.tier).toBe('angry');
+    expect(r.escalation).toBe('none');
+    expect(r.call).toBeNull();
+  });
+
+  it('calls without cracking when the glass is cooling down', () => {
+    const character = {
+      installedAt: now.getTime() - 30 * DAY,
+      lastCrackAt: now.getTime() - DAY,
+      lastCallAt: null,
+    };
+    const r = planReaction(latte, ctx({ entries: [past(199800)], character }));
+    expect(r.escalation).toBe('none');
+    expect(r.call).not.toBeNull();
+  });
+
+  it('moves his mood', () => {
+    expect(planReaction({ ...latte, type: 'saved' }, ctx()).moodDelta).toBe(8);
+    expect(planReaction(latte, ctx({ entries: [past(199800)] })).moodDelta).toBe(-12);
+    expect(planReaction(latte, ctx()).moodDelta).toBe(0);
   });
 });

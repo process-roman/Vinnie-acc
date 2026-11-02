@@ -1,5 +1,5 @@
-// Crack overlay spike (M0 / blueprint 0.3). Mounted last in the root layout so it
-// covers every screen, sheet and bar. It never takes touches.
+// The cracked glass (blueprint 4.1). Mounted last in the root layout so it covers
+// every screen, sheet and bar. It never takes touches. Saved, so it survives restarts.
 
 import { Canvas, Image } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
@@ -7,20 +7,23 @@ import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { rasterizeCrack } from '@/scene/crack';
 import { PIXEL_SAMPLING, toSkImage } from '@/scene/skiaImage';
-import { useFx } from '@/store/fx';
+import { useGame } from '@/store/game';
 
 /** Screen points per crack pixel. Matches the office's chunky pixel scale. */
 const PIXEL = 3;
 
 export function CrackOverlay() {
-  const { crackLevel, impact, crackSeed } = useFx();
+  const crackLevel = useGame((s) => s.character.crackLevel);
+  const impact = useGame((s) => s.character.impact);
+  const crackSeed = useGame((s) => s.character.crackSeed);
   const { width, height } = useWindowDimensions();
   const w = Math.ceil(width / PIXEL);
   const h = Math.ceil(height / PIXEL);
 
   const image = useMemo(() => {
     if (crackLevel === 0) return null;
-    const at = impact ? { x: impact.x / PIXEL, y: impact.y / PIXEL } : undefined;
+    // The impact is stored as a fraction of the window.
+    const at = impact ? { x: impact.x * w, y: impact.y * h } : undefined;
     return toSkImage(rasterizeCrack(crackLevel, w, h, crackSeed, at));
   }, [crackLevel, impact, crackSeed, w, h]);
 

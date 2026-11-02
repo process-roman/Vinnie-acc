@@ -11,12 +11,14 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import callbacks from '@/content/callbacks.json';
 import { getCategory } from '@/domain/categories';
 import { Entry, monthSpentMinor } from '@/domain/entries';
 import { formatMoney } from '@/domain/money';
 import { pickPropLine, PropTarget } from '@/domain/propLines';
 import { QuickChip, quickChips } from '@/domain/quickChips';
-import { Heat } from '@/domain/reaction/dialogue';
+import { MOOD_LABEL, moodState } from '@/domain/mood';
+import { fillPlaceholders, Heat } from '@/domain/reaction/dialogue';
 import { Reaction } from '@/domain/reaction/react';
 import { Tier } from '@/domain/reaction/tier';
 import { roomState } from '@/domain/roomState';
@@ -78,6 +80,7 @@ const HEAT_LABEL: Record<Heat, string> = {
 };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const pick = <T,>(list: readonly T[]): T => list[Math.floor(Math.random() * list.length)];
 
 const UNDO_MS = 5000;
 
@@ -104,6 +107,8 @@ function Office() {
   const heat = useGame((s) => s.heat);
   const lastCategory = useGame((s) => s.lastCategory);
   const prefill = useGame((s) => s.prefill);
+  const mood = useGame((s) => s.character.mood);
+  const crackLevel = useGame((s) => s.character.crackLevel);
   const game = useGame.getState;
 
   const office = useRef<OfficeCanvasHandle>(null);
@@ -125,9 +130,9 @@ function Office() {
   const zoomTo = (at: Point | null, ms: number) => {
     const s = at ? ZOOM : 1;
     const t = { duration: ms, easing: Easing.inOut(Easing.cubic) };
-    zoom.value = withTiming(s, t);
-    zoomX.value = withTiming(at ? (scene.width / 2 - at.x) * (s - 1) : 0, t);
-    zoomY.value = withTiming(at ? (scene.height / 2 - at.y) * (s - 1) : 0, t);
+    zoom.set(withTiming(s, t));
+    zoomX.set(withTiming(at ? (scene.width / 2 - at.x) * (s - 1) : 0, t));
+    zoomY.set(withTiming(at ? (scene.height / 2 - at.y) * (s - 1) : 0, t));
   };
 
   const say = (text: string) =>
@@ -179,7 +184,8 @@ function Office() {
         await sleep(500);
       }
 
-      if (reaction.escalation !== 'none' && reaction.call) {
+      // Cooldowns decide separately whether he breaks the glass and whether he calls.
+      if (reaction.escalation !== 'none') {
         setStatus('Vinnie is walking up to the glass…');
         const head = canvas.headPositionAt(CAMERA_SPOT);
         zoomTo(head, ZOOM_MS);
@@ -201,42 +207,73 @@ function Office() {
           setStatus('Vinnie knocked on the glass.');
         }
         await sleep(1100);
+      }
+      if (reaction.call) {
         canvas.play('phone');
         setStatus('Vinnie is calling you…');
+        game().callPlaced();
         await ring(reaction.call, entry);
+      }
+      if (reaction.escalation !== 'none') {
         zoomTo(null, 700);
         await canvas.walkTo(DESK_SPOT);
       }
       canvas.play('idle');
       setStatus(STATUS[reaction.tier]);
+
+      // A good day with a crack in the glass: he tapes it up.
+      if (reaction.tier !== 'meltdown' && game().repairIfDue()) await tapeTheGlass();
     } finally {
       setBusy(false);
     }
   };
 
-  /** Repair moment (blueprint 4.4): he tapes up the glass himself. */
-  const repairGlass = async () => {
+  /** Repair moment (blueprint 4.4): he walks up and tapes the glass himself. */
+  const tapeTheGlass = async () => {
     const canvas = office.current;
-    if (!canvas || busy || fx.crackLevel === 0) return;
+    if (!canvas) return;
+    setStatus('Vinnie is walking up to the glass…');
+    zoomTo(canvas.headPositionAt(CAMERA_SPOT), ZOOM_MS);
+    await canvas.walkTo(CAMERA_SPOT);
+    canvas.play('repair');
+    setStatus(ANIM_STATUS.repair);
+    await sleep(1800);
+    canvas.play('idle');
+    await say(pick(callbacks.repair));
+    zoomTo(null, 700);
+    await canvas.walkTo(DESK_SPOT);
+    setStatus(ANIM_STATUS.idle);
+  };
+
+  /** Playtest button: repair now, skipping the once-a-day rule. */
+  const repairGlass = async () => {
+    if (!office.current || busy || crackLevel === 0) return;
     setBusy(true);
     setUserZoom(0);
     try {
-      setStatus('Vinnie is walking up to the glass…');
-      zoomTo(canvas.headPositionAt(CAMERA_SPOT), ZOOM_MS);
-      await canvas.walkTo(CAMERA_SPOT);
-      canvas.play('repair');
-      setStatus(ANIM_STATUS.repair);
-      await sleep(1800);
-      fx.repair();
-      canvas.play('idle');
-      await say("There. Don't tell anyone I did this.");
-      zoomTo(null, 700);
-      await canvas.walkTo(DESK_SPOT);
-      setStatus(ANIM_STATUS.idle);
+      game().repairNow();
+      await tapeTheGlass();
     } finally {
       setBusy(false);
     }
   };
+
+  // A week without the thing he made you promise to quit: he noticed.
+  const checkedPromises = useRef(false);
+  useEffect(() => {
+    if (checkedPromises.current || !office.current) return;
+    checkedPromises.current = true;
+    const kept = game().collectKeptPromises();
+    if (!kept.length) return;
+    const category = getCategory(kept[0].category).label.toLowerCase();
+    const id = setTimeout(() => {
+      office.current?.play('celebrate');
+      say(fillPlaceholders(pick(callbacks.promiseKept), { category }));
+    }, 1500);
+    return () => clearTimeout(id);
+    // Runs once the office is up.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene.width]);
 
   // Taps in the office: props get a line from Vinnie, the floor gets a walk.
   const lastLines = useRef<Partial<Record<PropTarget, string>>>({});
@@ -343,7 +380,7 @@ function Office() {
     return () => clearInterval(id);
   }, []);
   const room = useMemo(
-    () => roomState(entries, limit, new Date()),
+    () => roomState(entries, limit, new Date(), mood),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `minute` only forces a refresh
     [entries, limit, minute],
   );
@@ -382,6 +419,7 @@ function Office() {
           </View>
         </Pressable>
       </View>
+      <MoodBar mood={mood} />
 
       <View
         ref={sceneBox}
@@ -438,7 +476,7 @@ function Office() {
             onPress={() => game().setHeat(HEATS[(HEATS.indexOf(heat) + 1) % HEATS.length])}
           />
           <Chip label="Nearly broke" onPress={() => game().loadNearlyBrokeDemo()} />
-          <Chip label={`Repair (${fx.crackLevel})`} onPress={repairGlass} />
+          <Chip label={`Repair (${crackLevel})`} onPress={repairGlass} />
           <Chip label="Reset" onPress={() => game().reset()} />
           {spent > 0 &&
             [0.5, 0.7, 0.9, 1.1].map((s) => (
@@ -572,6 +610,43 @@ function Office() {
 
 const chipLabel = (c: QuickChip) => c.description || getCategory(c.category).label;
 
+const MOOD_COLOR = {
+  proud: '#4E9F5A',
+  relaxed: '#7DB25A',
+  suspicious: '#E2A93B',
+  angry: '#D9822B',
+  meltdown: '#C0392B',
+};
+
+/** Segmented mood meter with his state label (blueprint Screen 1 header). */
+function MoodBar({ mood }: { mood: number }) {
+  const state = moodState(mood);
+  const segments = 12;
+  const lit = Math.round((mood / 100) * segments);
+  return (
+    <View
+      style={styles.mood}
+      accessibilityRole="progressbar"
+      accessibilityLabel={`Vinnie's mood: ${MOOD_LABEL[state]}`}
+      accessibilityValue={{ min: 0, max: 100, now: mood }}
+    >
+      <Text style={styles.moodLabel}>Mood</Text>
+      <View style={styles.moodTrack}>
+        {Array.from({ length: segments }, (_, i) => (
+          <View
+            key={i}
+            style={[
+              styles.moodSegment,
+              { backgroundColor: i < lit ? MOOD_COLOR[state] : colors.line },
+            ]}
+          />
+        ))}
+      </View>
+      <Text style={[styles.moodState, { color: MOOD_COLOR[state] }]}>{MOOD_LABEL[state]}</Text>
+    </View>
+  );
+}
+
 function ZoomButton(props: { label: string; disabled: boolean; onPress: () => void }) {
   return (
     <Pressable
@@ -595,6 +670,19 @@ function Chip({ label, onPress }: { label: string; onPress: () => void }) {
 
 const styles = StyleSheet.create({
   loading: { flex: 1, backgroundColor: colors.paper },
+  mood: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    paddingVertical: space.sm,
+    paddingHorizontal: space.md,
+  },
+  moodLabel: { fontSize: 12, fontWeight: '700', color: colors.inkSoft },
+  moodTrack: { flex: 1, flexDirection: 'row', gap: 2 },
+  moodSegment: { flex: 1, height: 10, borderRadius: 2 },
+  moodState: { fontSize: 12, fontWeight: '800', minWidth: 72, textAlign: 'right' },
   zoomButtons: { position: 'absolute', right: 0, bottom: space.sm, gap: space.sm },
   zoomButton: {
     width: 36,

@@ -12,6 +12,8 @@ import {
   StoredEntry,
   updateEntry,
 } from '../repositories/entries';
+import { getCharacter, resetCharacter, saveCharacter } from '../repositories/character';
+import { insertLedger, listLedger, resolveLedger } from '../repositories/ledger';
 import { categoryForMerchant, learnMerchant } from '../repositories/merchants';
 import { getSettings, updateSettings } from '../repositories/settings';
 import { createTestDb } from './testDb';
@@ -39,7 +41,7 @@ describe('migrations', () => {
   it('are idempotent', async () => {
     await migrate(db);
     const row = await db.get<{ user_version: number }>('PRAGMA user_version');
-    expect(row?.user_version).toBe(1);
+    expect(row?.user_version).toBe(2);
   });
 });
 
@@ -168,5 +170,59 @@ describe('transactions', () => {
       }),
     ).rejects.toThrow('boom');
     expect(await listEntries(db)).toEqual([]);
+  });
+});
+
+describe('character state', () => {
+  it('starts calm and uncracked, and saves changes', async () => {
+    const first = await getCharacter(db, 100);
+    expect(first).toEqual({
+      mood: 50,
+      moodAt: 100,
+      crackLevel: 0,
+      crackSeed: 1,
+      impact: null,
+      lastCrackAt: null,
+      lastCallAt: null,
+      lastRepairDay: null,
+    });
+    const next = {
+      ...first,
+      mood: 22,
+      crackLevel: 2 as const,
+      crackSeed: 777,
+      impact: { x: 0.5, y: 0.25 },
+      lastCrackAt: 5000,
+      lastCallAt: 6000,
+      lastRepairDay: '2026-11-02',
+    };
+    await saveCharacter(db, next);
+    expect(await getCharacter(db, 999)).toEqual(next);
+    await resetCharacter(db, 1234);
+    expect((await getCharacter(db, 0)).crackLevel).toBe(0);
+  });
+
+  it('rejects an impossible crack level', async () => {
+    const c = await getCharacter(db, 1);
+    await expect(saveCharacter(db, { ...c, crackLevel: 7 as 3 })).rejects.toThrow();
+  });
+});
+
+describe('promise ledger', () => {
+  it('records replies and resolves promises once', async () => {
+    const p = {
+      id: 'p1',
+      tag: 'promise_never_again',
+      category: 'shopping',
+      amountMinor: 9000,
+      entryId: 'e1',
+      createdAt: 10,
+      resolved: null,
+      resolvedAt: null,
+    };
+    await insertLedger(db, p);
+    await resolveLedger(db, [{ id: 'p1', resolved: 'broken' }], 20);
+    await resolveLedger(db, [{ id: 'p1', resolved: 'kept' }], 30);
+    expect(await listLedger(db)).toEqual([{ ...p, resolved: 'broken', resolvedAt: 20 }]);
   });
 });

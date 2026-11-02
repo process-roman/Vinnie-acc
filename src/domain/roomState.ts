@@ -2,6 +2,7 @@
 // budget every time, never stored.
 
 import { Entry, toDateKey, toMonthKey } from './entries';
+import { MOOD_START, moodState } from './mood';
 import { Tier } from './reaction/tier';
 
 export type PlantState = 'healthy' | 'droopy' | 'wilted' | 'dead';
@@ -22,9 +23,8 @@ export type RoomState = {
 };
 
 export const MAX_PILE = 14;
-/** A reaction this recent and this angry still has Vinnie worked up. */
-export const UPSET_WINDOW_MS = 2 * 3600 * 1000;
-const UPSET: readonly Tier[] = ['angry', 'meltdown'];
+/** The espresso machine steams when he's at least relaxed (blueprint §3). */
+export const ESPRESSO_MOOD = 55;
 
 export function plantFor(share: number | null): PlantState {
   if (share === null || share < 0.6) return 'healthy';
@@ -57,6 +57,7 @@ export function roomState(
   entries: readonly (Entry & { tier?: Tier | null })[],
   limitMinor: number | null,
   now: Date,
+  mood: number = MOOD_START,
 ): RoomState {
   const month = toMonthKey(now);
   const expenses = entries.filter((e) => e.type === 'expense' && toMonthKey(e.date) === month);
@@ -64,14 +65,8 @@ export function roomState(
   const share =
     limitMinor === null ? null : limitMinor === 0 ? (spent > 0 ? 2 : 0) : spent / limitMinor;
 
-  const latest = entries.reduce<(typeof entries)[number] | null>(
-    (a, e) => (!a || e.createdAt > a.createdAt ? e : a),
-    null,
-  );
-  const upset =
-    !!latest?.tier &&
-    UPSET.includes(latest.tier) &&
-    now.getTime() - latest.createdAt < UPSET_WINDOW_MS;
+  // The cat hides when Vinnie is angry or worse.
+  const upset = ['angry', 'meltdown'].includes(moodState(mood));
   const streak = trackingStreak(entries, now);
 
   return {
@@ -79,7 +74,7 @@ export function roomState(
     weather: weatherFor(share),
     poster: share !== null && share > 1 ? 'cracked' : 'intact',
     receipts: Math.min(MAX_PILE, expenses.length),
-    espressoSteaming: !upset,
+    espressoSteaming: mood >= ESPRESSO_MOOD,
     cat: upset ? 'hiding' : streak >= 2 ? 'sleeping' : 'sitting',
     streak,
   };

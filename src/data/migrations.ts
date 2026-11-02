@@ -40,6 +40,31 @@ export const MIGRATIONS: readonly string[] = [
     updated_at INTEGER NOT NULL
   );
   `,
+  `
+  CREATE TABLE character_state (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    mood INTEGER NOT NULL DEFAULT 50,
+    mood_at INTEGER NOT NULL,
+    crack_level INTEGER NOT NULL DEFAULT 0 CHECK (crack_level BETWEEN 0 AND 3),
+    crack_seed INTEGER NOT NULL DEFAULT 1,
+    impact_x REAL,
+    impact_y REAL,
+    last_crack_at INTEGER,
+    last_call_at INTEGER,
+    last_repair_day TEXT
+  );
+
+  CREATE TABLE promise_ledger (
+    id TEXT PRIMARY KEY,
+    tag TEXT NOT NULL,
+    category TEXT NOT NULL,
+    amount_minor INTEGER NOT NULL,
+    entry_id TEXT,
+    created_at INTEGER NOT NULL,
+    resolved TEXT CHECK (resolved IN ('kept', 'broken')),
+    resolved_at INTEGER
+  );
+  `,
 ];
 
 export async function migrate(db: Db): Promise<void> {

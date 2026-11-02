@@ -25,12 +25,10 @@ npm run lint
 
 ## Status
 
-**M3 (office)** — the office now shows the budget: the plant droops, wilts and dies, the
-window goes from sun to clouds to rain to a lightning storm, the piggy-bank poster cracks
-when you go over, and a crumpled receipt lands by the bin for every expense. Deductible the
-cat naps on the desk during a streak and hides when Vinnie is angry; the espresso machine
-steams unless he is. Vinnie walks around on his own, sits at his desk, and has poses for
-reading, celebrating, shouting, slamming the desk, the phone, punching and repairing the
-glass. Tap the plant, window, poster, phone, espresso, pile, cat or Vinnie for a line. Zoom
-with + and −. Saved data, History, Budget, quick chips and quick-add links from M2 are all
-still here. Tap the "Vinnie" title for playtest controls (budget %, every animation).
+**M4 (Vinnie's brain)** — Vinnie has a mood (shown in the header) that receipts, call replies
+and declined calls move, and that drifts back toward neutral over time. Meltdowns respect
+cooldowns (glass every 48 h, calls every 72 h) and a 3-day honeymoon for new users. He keeps a
+promise ledger: break "won't happen again" within a week and he calls you on it; keep it for
+a week and he notices. The crack is saved and only heals as you log on later days without a
+meltdown, one level per day. 120 dialogue lines. Everything from M1–M3 is still here; tap
+the "Vinnie" title for playtest controls.

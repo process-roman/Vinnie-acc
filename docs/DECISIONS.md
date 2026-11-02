@@ -135,3 +135,36 @@ the cat's line goes to the status bar instead of a bubble.
 
 **Repair preview.** The playtest "Repair" button now plays the blueprint's repair moment:
 he walks to the glass, tapes it, and says so. The behaviour that earns repairs is M4.
+
+## 2026-11-02 — M4 Vinnie's brain
+
+**Mood** (`src/domain/mood.ts`): 0–100, starts at 50 ("Suspicious"), drifts 2 points a day
+toward 50 (applied at launch, partial days carry over). Tier deltas: approve +5, judge −4,
+angry −8, meltdown −12; saved +8, skipped +6. Replies: admit +4, "won't happen again" +2,
+"I needed it" −2, "it's an investment" −4. Declining a call −3. A kept promise +6. The room
+now reads mood instead of M3's two-hour stand-in: the espresso steams at 55+ and the cat hides
+below 35, as the blueprint says.
+
+**Escalation** (`escalation.ts`): only meltdowns escalate. Glass at most every 48 h, calls at
+most every 72 h, decided separately (he can call without cracking, or crack without calling).
+Nothing escalates in the first 72 h after install. When both are cooling down the meltdown
+plays as `angry` (desk slam) instead, and is stored that way.
+
+**Promise ledger** (`ledger.ts`): every call reply is recorded. "Won't happen again" plus an
+expense in that category within 7 days breaks the promise: at least `angry`, and a meltdown if
+the purchase was already a problem (judge or worse). A broken promise has its own call script.
+"It's an investment" is remembered for 30 days and gets callback lines. A promise kept for a
+full week gets a pride line the next time the office opens. Essentials never trigger any of
+this.
+
+**Crack and repair** (`repair.ts`): the crack lives in `character_state` and survives
+restarts; the impact point is stored as a fraction of the window. Each later day where you log
+something and nothing was a meltdown takes it down one level (a full crack takes three good
+days), with the tape-and-squeegee repair moment. The blueprint's text says both "3 days" and
+"each day −1 level"; this reads it as one level per qualifying day.
+
+**Line library** is at 120 lines plus 4 call scripts, with tests for placeholders, heat, and a
+banned-word check below Unhinged.
+
+**Playtest controls.** "Nearly broke" also ends the honeymoon and clears cooldowns, so the
+meltdown always escalates in a demo. "Repair" skips the once-a-day rule.

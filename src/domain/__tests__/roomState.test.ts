@@ -62,11 +62,10 @@ describe('roomState', () => {
     expect(roomState([e(100, { date: '2026-10-31' })], null, now).receipts).toBe(0);
   });
 
-  it('cools the espresso and hides the cat right after an angry reaction', () => {
-    const angry = e(100, { tier: 'angry', createdAt: now.getTime() - HOUR });
-    expect(roomState([angry], null, now)).toMatchObject({ espressoSteaming: false, cat: 'hiding' });
-    const later = e(100, { tier: 'angry', createdAt: now.getTime() - 3 * HOUR });
-    expect(roomState([later], null, now)).toMatchObject({ espressoSteaming: true });
+  it('steams the espresso when he is relaxed, and hides the cat when he is angry', () => {
+    expect(roomState([], null, now, 60)).toMatchObject({ espressoSteaming: true, cat: 'sitting' });
+    expect(roomState([], null, now, 50)).toMatchObject({ espressoSteaming: false });
+    expect(roomState([], null, now, 30)).toMatchObject({ espressoSteaming: false, cat: 'hiding' });
   });
 
   it('puts the cat to sleep on the desk during a tracking streak', () => {
@@ -105,7 +104,7 @@ describe('prop lines', () => {
 
   it('has at least 3 lines for every prop in every state', () => {
     const states = [0, 0.7, 0.9, 1.2].map((s) => roomState([e(s * 100000)], 100000, now));
-    const upset = roomState([e(100, { tier: 'meltdown', createdAt: now.getTime() })], 100000, now);
+    const upset = roomState([e(100)], 100000, now, 10);
     for (const r of [...states, upset]) {
       for (const t of targets) expect(propLinePool(t, r).length).toBeGreaterThanOrEqual(3);
     }

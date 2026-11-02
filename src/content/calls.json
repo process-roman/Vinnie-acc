@@ -2,6 +2,34 @@
   "declineRetry": "Real mature.",
   "scripts": [
     {
+      "id": "call_broken_promise",
+      "trigger": "brokenPromise",
+      "minHeat": "gentle",
+      "lines": [
+        "It's Vinnie. Sit down.",
+        "{promiseDay} you said 'won't happen again.' I wrote it down. In pen.",
+        "And now: {amount} on {category}. Same thing. Same week."
+      ],
+      "replies": [
+        {
+          "text": "I needed it.",
+          "tag": "excuse_needed",
+          "response": "You needed it {promiseDay} too, apparently. Funny how that works."
+        },
+        {
+          "text": "This time I mean it.",
+          "tag": "promise_never_again",
+          "response": "Okay. New page. Same pen. I'm watching."
+        },
+        {
+          "text": "Yeah… my bad.",
+          "tag": "admit",
+          "response": "...Thank you. That's the first step. The second step is not doing it."
+        }
+      ],
+      "closer": "One more week. Show me. I'll be here. I'm always here."
+    },
+    {
       "id": "call_over_budget",
       "trigger": "pushedOverBudget",
       "minHeat": "gentle",

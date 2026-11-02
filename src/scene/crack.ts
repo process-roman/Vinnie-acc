@@ -6,7 +6,9 @@ import { rng } from '@/domain/random';
 
 import { createBuffer, drawLine, hex, PixelBuffer, setPixel } from './pixels';
 
-export type CrackLevel = 0 | 1 | 2 | 3;
+import type { CrackLevel } from '@/domain/repair';
+
+export type { CrackLevel };
 export type Segment = { x0: number; y0: number; x1: number; y1: number };
 type Pt = { x: number; y: number };
 

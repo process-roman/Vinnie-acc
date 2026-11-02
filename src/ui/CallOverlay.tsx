@@ -67,6 +67,8 @@ function Call() {
   }, [phase.kind, hangUp]);
 
   const decline = () => {
+    // Hanging up on him costs a little mood every time.
+    useGame.getState().declined();
     setDeclines(declines + 1);
     setPhase({ kind: declines === 0 ? 'waitingToRetry' : 'realMature' });
   };

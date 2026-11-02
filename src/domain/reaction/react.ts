@@ -1,5 +1,6 @@
-// Turns a new entry into Vinnie's reaction: tier, spoken line, and whether he
-// punches the glass and calls. Pure: everything it needs is passed in.
+// Turns a new entry into Vinnie's reaction: tier, spoken line, mood change,
+// promise-ledger callbacks, and whether he punches the glass and calls.
+// Pure: everything it needs is passed in.
 
 import calls from '@/content/calls.json';
 import lines from '@/content/lines.json';
@@ -13,6 +14,7 @@ import {
   monthSpentMinor,
 } from '../entries';
 import { Currency, formatMoney } from '../money';
+import { SAVED_MOOD, SKIPPED_MOOD, TIER_MOOD } from '../mood';
 import {
   CallScript,
   fillPlaceholders,
@@ -23,7 +25,9 @@ import {
   selectCallScript,
   selectLine,
 } from './dialogue';
-import { evaluateTier, Reason, Tier } from './tier';
+import { decideEscalation } from './escalation';
+import { checkLedger, LedgerEntry, LedgerEvent, weekday } from './ledger';
+import { evaluateTier, Reason, Tier, TIER_ORDER } from './tier';
 
 const LINES = lines as Line[];
 const SCRIPTS = calls.scripts as CallScript[];
@@ -44,6 +48,7 @@ export type FilledCall = {
 };
 
 export type Reaction = {
+  /** The tier he reacts with. A meltdown held back by a cooldown plays as angry. */
   tier: Tier;
   reasons: Reason[];
   lineId: string;
@@ -51,6 +56,14 @@ export type Reaction = {
   /** Classic and above: he punches the glass. Gentle: he knocks instead. */
   escalation: 'none' | 'punch' | 'knock';
   call: FilledCall | null;
+  moodDelta: number;
+  ledgerEvents: LedgerEvent[];
+};
+
+export type CharacterContext = {
+  installedAt: number;
+  lastCrackAt: number | null;
+  lastCallAt: number | null;
 };
 
 export type ReactContext = {
@@ -60,9 +73,13 @@ export type ReactContext = {
   heat: Heat;
   currency: Currency;
   recentLineIds: readonly string[];
+  ledger: readonly LedgerEntry[];
+  character: CharacterContext;
   now: Date;
   rand: () => number;
 };
+
+const atLeast = (tier: Tier, floor: Tier) => TIER_ORDER.indexOf(tier) >= TIER_ORDER.indexOf(floor);
 
 export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
   const { entries, limitMinor, now } = ctx;
@@ -71,7 +88,7 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
   const left = daysLeftIn(now);
   const category = getCategory(entry.category);
 
-  const { tier, reasons } = evaluateTier({
+  const evaluated = evaluateTier({
     type: entry.type,
     amountMinor: entry.amountMinor,
     kind: category.kind,
@@ -80,6 +97,32 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
     daysLeft: left,
     stats,
   });
+
+  // The promise ledger can make things worse: breaking a promise is at least angry,
+  // and a meltdown if the purchase was already a problem. Essentials never count.
+  let tier = evaluated.tier;
+  const reasons = [...evaluated.reasons];
+  const ledger = checkLedger(ctx.ledger, entry, now.getTime());
+  if (category.kind !== 'essential') {
+    if (ledger.reasons.includes('brokenPromise')) {
+      tier = atLeast(tier, 'judge') ? 'meltdown' : 'angry';
+      reasons.push('brokenPromise');
+    }
+    if (ledger.reasons.includes('investmentAgain') && atLeast(tier, 'judge')) {
+      reasons.push('investmentAgain');
+    }
+  }
+
+  const esc = decideEscalation({
+    tier,
+    heat: ctx.heat,
+    now: now.getTime(),
+    installedAt: ctx.character.installedAt,
+    lastCrackAt: ctx.character.lastCrackAt,
+    lastCallAt: ctx.character.lastCallAt,
+  });
+  // Cooling down from both: he still blows up, just without the glass or the phone.
+  if (esc.held) tier = 'angry';
 
   const money = (m: number) => formatMoney(m, ctx.currency, { trimZeroCents: true });
   const spentAfter = spentBefore + (entry.type === 'expense' ? entry.amountMinor : 0);
@@ -91,6 +134,8 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
     monthTotal: money(stats.monthTotalMinor + entry.amountMinor),
     daysLeft: left,
     remaining: limitMinor === null ? 'no budget' : money(Math.max(0, limitMinor - spentAfter)),
+    promiseDay: ledger.brokenPromise ? weekday(ledger.brokenPromise.createdAt) : 'The other day',
+    today: weekday(now.getTime()),
   };
 
   const line = selectLine(
@@ -101,7 +146,7 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
   if (!line) throw new Error(`No line for tier ${tier} at heat ${ctx.heat}`);
 
   let call: FilledCall | null = null;
-  if (tier === 'meltdown') {
+  if (esc.call) {
     const script = selectCallScript(SCRIPTS, reasons, ctx.heat);
     if (script) {
       const fill = (t: string) => fillPlaceholders(t, values);
@@ -120,7 +165,14 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
     reasons,
     lineId: line.id,
     line: fillPlaceholders(line.text, values),
-    escalation: tier !== 'meltdown' ? 'none' : ctx.heat === 'gentle' ? 'knock' : 'punch',
+    escalation: esc.glass,
     call,
+    moodDelta:
+      entry.type === 'saved'
+        ? SAVED_MOOD
+        : entry.type === 'skipped'
+          ? SKIPPED_MOOD
+          : TIER_MOOD[tier],
+    ledgerEvents: category.kind === 'essential' ? [] : ledger.events,
   };
 }

@@ -41,3 +41,8 @@ export async function updateSettings(
     keys.map((k) => patch[k] as string),
   );
 }
+
+/** Playtests only: pretend the app was installed at `at` (ends the honeymoon early). */
+export async function setInstalledAt(db: Db, at: number): Promise<void> {
+  await db.run('UPDATE settings SET created_at = ? WHERE id = 1', [at]);
+}
