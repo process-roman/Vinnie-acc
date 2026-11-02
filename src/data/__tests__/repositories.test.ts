@@ -52,7 +52,7 @@ describe('migrations', () => {
   it('are idempotent', async () => {
     await migrate(db);
     const row = await db.get<{ user_version: number }>('PRAGMA user_version');
-    expect(row?.user_version).toBe(4);
+    expect(row?.user_version).toBe(5);
   });
 });
 
@@ -153,6 +153,10 @@ describe('settings', () => {
       notificationsEnabled: false,
       quietStart: 22,
       quietEnd: 9,
+      onboardingDone: false,
+      sound: true,
+      haptics: true,
+      analyticsId: null,
       createdAt: 42,
     });
     await updateSettings(db, {

@@ -17,6 +17,7 @@ import type { Reply } from '@/domain/reaction/dialogue';
 import { VinnieAvatar } from '@/scene/VinnieAvatar';
 import { useCall } from '@/store/call';
 import { equippedBySlot } from '@/domain/shop';
+import { track } from '@/services/analytics';
 import { useGame } from '@/store/game';
 
 import { colors, radius, space } from './tokens';
@@ -71,11 +72,13 @@ function Call() {
   const decline = () => {
     // Hanging up on him costs a little mood every time.
     useGame.getState().declined();
+    track('call_declined');
     setDeclines(declines + 1);
     setPhase({ kind: declines === 0 ? 'waitingToRetry' : 'realMature' });
   };
   const answer = () => {
     useGame.getState().achievementEvent('answered');
+    track('call_answered');
     setAnsweredAt(Date.now());
     setPhase({ kind: 'talking', step: 0 });
   };

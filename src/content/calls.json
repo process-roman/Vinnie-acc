@@ -111,6 +111,116 @@
         }
       ],
       "closer": "Alright. I gotta go. Deductible's eating a receipt. Bye."
+    },
+    {
+      "id": "call_over_budget_2",
+      "trigger": "pushedOverBudget",
+      "minHeat": "gentle",
+      "lines": [
+        "Kid. It's Vinnie. You know what happened.",
+        "{amount} on {category}, and now we're past the budget.",
+        "I'm not mad. I'm... okay, I'm a little mad."
+      ],
+      "replies": [
+        {
+          "text": "I needed it.",
+          "tag": "excuse_needed",
+          "response": "Maybe. But the budget needed you more."
+        },
+        {
+          "text": "Won't happen again.",
+          "tag": "promise_never_again",
+          "response": "I'm holding you to that. I keep receipts, remember."
+        },
+        {
+          "text": "Yeah… my bad.",
+          "tag": "admit",
+          "response": "Thank you. That's how we fix it. Out loud."
+        }
+      ],
+      "closer": "Rest of the month, we're careful. Together. Bye, kid."
+    },
+    {
+      "id": "call_already_over_2",
+      "trigger": "alreadyOverBudget",
+      "minHeat": "gentle",
+      "lines": [
+        "Pick up, pick up. Oh. You picked up.",
+        "We're past the budget and {amount} more just went out the door.",
+        "The plant died, kid. I watered it and it still died."
+      ],
+      "replies": [
+        {
+          "text": "It's an investment.",
+          "tag": "excuse_investment",
+          "response": "The only investment here is my therapist."
+        },
+        {
+          "text": "Won't happen again.",
+          "tag": "promise_never_again",
+          "response": "Say it like you mean it. ...Okay, that was close enough."
+        },
+        {
+          "text": "Yeah… my bad.",
+          "tag": "admit",
+          "response": "Alright. Nothing more till the first. Deal? Deal."
+        }
+      ],
+      "closer": "I'm gonna go lie down on the floor of my office now. Bye."
+    },
+    {
+      "id": "call_broken_promise_2",
+      "trigger": "brokenPromise",
+      "minHeat": "gentle",
+      "lines": [
+        "It's me. Remember {promiseDay}? 'Won't happen again'?",
+        "Well. It happened again. {Category}. {amount}."
+      ],
+      "replies": [
+        {
+          "text": "It was different this time.",
+          "tag": "excuse_needed",
+          "response": "It's always different this time. That's how it gets you."
+        },
+        {
+          "text": "Okay, really never again.",
+          "tag": "promise_never_again",
+          "response": "Really never. New promise, new page. I'm watching."
+        },
+        {
+          "text": "You're right. My bad.",
+          "tag": "admit",
+          "response": "...Okay. You owned it. That's worth something to me."
+        }
+      ],
+      "closer": "I believe in you. I'm annoyed, but I believe in you."
+    },
+    {
+      "id": "call_generic_2",
+      "trigger": "any",
+      "minHeat": "gentle",
+      "lines": [
+        "Hey. Vinnie here. Got a second?",
+        "{amount} on {category}. I saw it. I had feelings about it."
+      ],
+      "replies": [
+        {
+          "text": "I needed it.",
+          "tag": "excuse_needed",
+          "response": "If you needed it, you needed it. Did you, though?"
+        },
+        {
+          "text": "It's an investment.",
+          "tag": "excuse_investment",
+          "response": "In what? Happiness? ...Fine. A little happiness is allowed."
+        },
+        {
+          "text": "Yeah… my bad.",
+          "tag": "admit",
+          "response": "Good. That's all I wanted to hear. Go drink some water."
+        }
+      ],
+      "closer": "Alright, I'll let you go. Log your receipts. Bye."
     }
   ],
   "checkIn": {

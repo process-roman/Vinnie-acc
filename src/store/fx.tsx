@@ -4,7 +4,13 @@
 import * as Haptics from 'expo-haptics';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { Dimensions, Platform } from 'react-native';
-import { SharedValue, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
+import {
+  SharedValue,
+  useReducedMotion,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
 import type { Point } from '@/scene/iso';
 
@@ -29,6 +35,11 @@ function shake(x: SharedValue<number>, strength = 1) {
 
 export function FxProvider({ children }: { children: ReactNode }) {
   const shakeX = useSharedValue(0);
+  // Reduce Motion: no shaking the screen.
+  const reduced = useReducedMotion();
+  const buzz = (fn: () => void) => {
+    if (Platform.OS !== 'web' && useGame.getState().haptics) fn();
+  };
 
   const value = useMemo<Fx>(
     () => ({
@@ -36,18 +47,18 @@ export function FxProvider({ children }: { children: ReactNode }) {
       punch(at) {
         const { width, height } = Dimensions.get('window');
         useGame.getState().crackGlass({ x: at.x / width, y: at.y / height });
-        shake(shakeX);
-        if (Platform.OS !== 'web') {
+        if (!reduced) shake(shakeX);
+        buzz(() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        }
+        });
       },
       knock() {
-        shake(shakeX, 0.3);
-        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        if (!reduced) shake(shakeX, 0.3);
+        buzz(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium));
       },
     }),
-    [shakeX],
+    [shakeX, reduced],
   );
 
   return <FxContext.Provider value={value}>{children}</FxContext.Provider>;

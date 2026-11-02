@@ -1,0 +1,54 @@
+{
+  "meet": "Name's Vinnie. I look after the numbers. You stop doin' stupid things with 'em. Capisce?",
+  "heat": "How loud do you want me? Pick one. You can change it later. I'll still be me.",
+  "budget": "What are we workin' with this month? Your spending budget. Ballpark's fine.",
+  "receipt": "Give me your first receipt. Something real, or I can show you what I do with a bad one.",
+  "example": {
+    "amountMinor": 1400,
+    "category": "coffee",
+    "description": "Cold brew (example)"
+  },
+  "meltdown": {
+    "gentle": "Fourteen dollars? For cold coffee? Hold on, I'm gonna knock on your glass.",
+    "classic": "FOURTEEN DOLLARS? For COLD coffee? Stay right there.",
+    "unhinged": "Fourteen damn dollars for cold coffee? Oh, I'm coming over there."
+  },
+  "call": {
+    "id": "call_onboarding",
+    "lines": [
+      "Yeah, hi. It's me. This is how it works, kid.",
+      "You buy something dumb, I find out. I always find out.",
+      "So. You got anything to say for yourself?"
+    ],
+    "replies": [
+      {
+        "text": "I needed it.",
+        "tag": "excuse_needed",
+        "response": "Everybody needs coffee. Nobody needs fourteen-dollar coffee."
+      },
+      {
+        "text": "Won't happen again.",
+        "tag": "promise_never_again",
+        "response": "I'll remember you said that. I remember everything."
+      },
+      {
+        "text": "Yeah… my bad.",
+        "tag": "admit",
+        "response": "Honest. I like you already. Don't tell anybody."
+      }
+    ],
+    "closer": "Alright. Welcome to the office. Let me clean up that glass."
+  },
+  "repair": "Just this once, I'll fix it for free. Next time you earn it. Good habits only.",
+  "shop": "See those coins up top? You earn 'em by tracking. Spend 'em on me. Cannoli works.",
+  "notifyAsk": "Can I call you sometimes? I promise I'll only yell a little.",
+  "notifyYes": "Sure, call me",
+  "notifyNo": "Not now",
+  "notifyThanks": "Good. I'll be in touch. Sunday sit-downs. Bring receipts.",
+  "notifySkip": "Fine. I know where you live. In this app.",
+  "meltdownReal": {
+    "gentle": "{amount} on {category}, first day? Hold on, I'm gonna knock on your glass.",
+    "classic": "{amount} on {category}? On DAY ONE? Stay right there.",
+    "unhinged": "{amount} on {category} on day one? Oh, hell no. Come here."
+  }
+}

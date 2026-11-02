@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { Heat } from '@/domain/reaction/dialogue';
+import { entriesToCsv, fullExport } from '@/domain/exportData';
+import { exportFile } from '@/services/exporter';
 import { useGame } from '@/store/game';
 
 import { Sheet } from './Sheet';
@@ -29,7 +31,7 @@ const SHORTCUT_STEPS = [
 
 type Props = { visible: boolean; onClose: () => void };
 
-export function SettingsSheet({ visible, onClose }: Props) {
+export function SettingsSheet({ visible, onClose, onDeleted }: Props & { onDeleted: () => void }) {
   const heat = useGame((s) => s.heat);
   const setHeat = useGame((s) => s.setHeat);
   const notifications = useGame((s) => s.notificationsEnabled);
@@ -38,6 +40,40 @@ export function SettingsSheet({ visible, onClose }: Props) {
   const setNotifications = useGame((s) => s.setNotificationsEnabled);
   const [denied, setDenied] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
+  const sound = useGame((s) => s.sound);
+  const haptics = useGame((s) => s.haptics);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [exported, setExported] = useState<string | null>(null);
+
+  const exportCsv = async () => {
+    const s = useGame.getState();
+    await exportFile('vinnie-receipts.csv', entriesToCsv(s.entries, s.currency), 'text/csv');
+    setExported('Receipts exported.');
+  };
+  const exportJson = async () => {
+    const s = useGame.getState();
+    const json = fullExport(
+      {
+        entries: s.entries,
+        budget: { limitMinor: s.limitMinor },
+        settings: { heat: s.heat, currency: s.currency },
+        vinnie: s.character,
+        promises: s.ledger,
+        coins: s.coinTx,
+        achievements: s.achievements,
+        inventory: s.inventory,
+      },
+      new Date(),
+    );
+    await exportFile('vinnie-data.json', json, 'application/json');
+    setExported('Everything exported.');
+  };
+  const deleteEverything = async () => {
+    if (!confirmDelete) return setConfirmDelete(true);
+    setConfirmDelete(false);
+    await useGame.getState().deleteAll();
+    onDeleted();
+  };
 
   const toggleNotifications = async (on: boolean) => {
     const result = await setNotifications(on);
@@ -110,6 +146,38 @@ export function SettingsSheet({ visible, onClose }: Props) {
             </Text>
           </View>
         )}
+        <Text style={styles.section}>Sound and feel</Text>
+        <View style={styles.row}>
+          <Text style={[styles.rowTitle, styles.rowMain]}>Sounds</Text>
+          <Switch value={sound} onValueChange={(v) => useGame.getState().setSound(v)} />
+        </View>
+        <View style={styles.row}>
+          <Text style={[styles.rowTitle, styles.rowMain]}>Vibration</Text>
+          <Switch value={haptics} onValueChange={(v) => useGame.getState().setHaptics(v)} />
+        </View>
+
+        <Text style={styles.section}>Your data</Text>
+        <Text style={styles.rowSub}>
+          Everything stays on this phone. Nothing about your money is ever sent anywhere.
+        </Text>
+        <View style={styles.buttons}>
+          <Pressable style={styles.button} onPress={exportCsv}>
+            <Text style={styles.buttonLabel}>Export receipts (CSV)</Text>
+          </Pressable>
+          <Pressable style={styles.button} onPress={exportJson}>
+            <Text style={styles.buttonLabel}>Export everything (JSON)</Text>
+          </Pressable>
+          {exported && <Text style={styles.rowSub}>{exported}</Text>}
+          <Pressable
+            style={[styles.button, styles.danger, confirmDelete && styles.dangerOn]}
+            onPress={deleteEverything}
+            accessibilityHint="Deletes all receipts, coins and settings. Tap twice."
+          >
+            <Text style={[styles.dangerLabel, confirmDelete && styles.dangerLabelOn]}>
+              {confirmDelete ? 'Tap again: delete everything for good' : 'Delete everything'}
+            </Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </Sheet>
   );
@@ -137,6 +205,19 @@ const styles = StyleSheet.create({
   rowSub: { color: colors.inkSoft, fontSize: 13, marginTop: 2 },
   warn: { color: colors.brick, fontWeight: '600' },
   chevron: { fontSize: 18, color: colors.inkSoft },
+  buttons: { gap: space.sm, marginTop: space.sm, marginBottom: space.xl },
+  button: {
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: radius.md,
+    paddingVertical: space.md,
+    alignItems: 'center',
+  },
+  buttonLabel: { fontWeight: '700', color: colors.ink },
+  danger: { borderColor: colors.brick },
+  dangerOn: { backgroundColor: colors.brick },
+  dangerLabel: { fontWeight: '800', color: colors.brick },
+  dangerLabelOn: { color: colors.card },
   guide: { backgroundColor: colors.paper, borderRadius: radius.md, padding: space.md, gap: 6 },
   step: { color: colors.ink },
   code: {

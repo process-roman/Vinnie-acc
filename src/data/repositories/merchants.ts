@@ -28,3 +28,7 @@ export async function categoryForMerchant(db: Db, merchant: string): Promise<str
   );
   return row?.category ?? null;
 }
+
+export async function clearMerchants(db: Db): Promise<void> {
+  await db.run('DELETE FROM merchant_categories');
+}

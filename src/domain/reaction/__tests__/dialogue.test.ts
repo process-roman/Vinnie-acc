@@ -39,8 +39,9 @@ const q = (over: Partial<LineQuery>): LineQuery => ({
 });
 
 describe('dialogue content', () => {
-  it('has the blueprint M4 minimum of 120 lines', () => {
-    expect(LINES.length).toBeGreaterThanOrEqual(120);
+  it('meets the blueprint beta target: 250+ lines and 8+ call scripts', () => {
+    expect(LINES.length).toBeGreaterThanOrEqual(250);
+    expect(SCRIPTS.length).toBeGreaterThanOrEqual(8);
   });
 
   it('has unique line ids', () => {
@@ -124,14 +125,20 @@ describe('fillPlaceholders', () => {
 
 describe('selectCallScript', () => {
   it('matches the trigger reason', () => {
-    expect(selectCallScript(SCRIPTS, ['pushedOverBudget'], 'classic')?.id).toBe('call_over_budget');
-    expect(selectCallScript(SCRIPTS, ['alreadyOverBudget', 'big'], 'classic')?.id).toBe(
-      'call_already_over',
+    expect(selectCallScript(SCRIPTS, ['pushedOverBudget'], 'classic')?.trigger).toBe(
+      'pushedOverBudget',
     );
+    expect(selectCallScript(SCRIPTS, ['alreadyOverBudget', 'big'], 'classic')?.trigger).toBe(
+      'alreadyOverBudget',
+    );
+    // A broken promise is what the call is about, whatever else happened.
+    expect(
+      selectCallScript(SCRIPTS, ['pushedOverBudget', 'brokenPromise'], 'classic')?.trigger,
+    ).toBe('brokenPromise');
   });
 
   it('falls back to the generic script', () => {
-    expect(selectCallScript(SCRIPTS, ['repeatAgain'], 'gentle')?.id).toBe('call_generic');
+    expect(selectCallScript(SCRIPTS, ['repeatAgain'], 'gentle')?.trigger).toBe('any');
   });
 });
 

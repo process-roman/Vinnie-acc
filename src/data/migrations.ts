@@ -98,6 +98,12 @@ export const MIGRATIONS: readonly string[] = [
     opened INTEGER NOT NULL DEFAULT 0
   );
   `,
+  `
+  ALTER TABLE settings ADD COLUMN onboarding_done INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE settings ADD COLUMN sound INTEGER NOT NULL DEFAULT 1;
+  ALTER TABLE settings ADD COLUMN haptics INTEGER NOT NULL DEFAULT 1;
+  ALTER TABLE settings ADD COLUMN analytics_id TEXT;
+  `,
 ];
 
 export async function migrate(db: Db): Promise<void> {

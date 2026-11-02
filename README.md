@@ -25,9 +25,8 @@ npm run lint
 
 ## Status
 
-**M6 (retention and sharing)** — opt-in, in-character notifications (weekly sit-down,
-a check-in call, a late-month warning, a nudge after two quiet days; one a day, quiet hours,
-backs off when ignored). The weekly sit-down walks through your week and pays 20 coins.
-Share cards of cracks, calls and achievements, with amounts hidden unless you turn them on.
-Settings (⚙︎) has heat level, notifications and the iPhone Apple Pay Shortcut guide.
-Everything from M1–M5 is still here; tap the "Vinnie" title for playtest controls.
+**M7 (onboarding and polish)** — a first-run onboarding that ends in a scripted crack and
+call, a free repair, the shop and the notification ask. Settings has export (CSV, JSON), delete
+everything, sound and vibration. Reduce Motion is respected; the budget meter has symbols as
+well as colours. Privacy-safe analytics (no amounts ever). 250 dialogue lines and 8 call
+scripts. Performance notes are in [docs/PERF.md](docs/PERF.md). Next: beta builds (M8).

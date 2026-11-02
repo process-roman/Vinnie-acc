@@ -33,8 +33,14 @@ import {
   saveInventory,
   spendCoins,
 } from '@/data/repositories/progression';
-import { categoryForMerchant, learnMerchant } from '@/data/repositories/merchants';
-import { getSettings, setInstalledAt, updateSettings } from '@/data/repositories/settings';
+import { categoryForMerchant, clearMerchants, learnMerchant } from '@/data/repositories/merchants';
+import {
+  getSettings,
+  resetSettings,
+  setInstalledAt,
+  updateSettings,
+} from '@/data/repositories/settings';
+import { initAnalytics, track } from '@/services/analytics';
 import {
   Achievement,
   AchievementEvent,
@@ -57,6 +63,7 @@ import {
   scheduleAll,
 } from '@/services/notifications';
 import {
+  clearNotificationLog,
   listNotificationLog,
   markOpened,
   replaceUpcoming,
@@ -136,7 +143,23 @@ type GameState = {
   grantDebugCoins(n: number): void;
 
   init(): Promise<void>;
-  logEntry(input: LogInput, now?: Date): { entry: StoredEntry; reaction: Reaction };
+  logEntry(
+    input: LogInput,
+    now?: Date,
+    opts?: { isExample?: boolean; via?: 'chip' | 'sheet' | 'deeplink' | 'onboarding' },
+  ): { entry: StoredEntry; reaction: Reaction };
+  onboardingDone: boolean;
+  sound: boolean;
+  haptics: boolean;
+  setSound(on: boolean): void;
+  setHaptics(on: boolean): void;
+  completeOnboarding(): void;
+  /** The first receipt from onboarding, waiting for the office to play its reaction. */
+  onboardingScript: { entry: StoredEntry; reaction: Reaction; scripted: boolean } | null;
+  startOnboardingScript(input: LogInput, opts: { isExample: boolean; scripted: boolean }): void;
+  clearOnboardingScript(): void;
+  /** Wipes everything (entries, Vinnie, coins, settings) back to a fresh install. */
+  deleteAll(): Promise<void>;
   editEntry(id: string, edit: EntryEdit): void;
   deleteEntry(id: string): void;
   removeExamples(): void;
@@ -149,8 +172,8 @@ type GameState = {
   callPlaced(): void;
   /** Takes the crack down a level if today earned it. Returns true if it did. */
   repairIfDue(now?: Date): boolean;
-  /** Playtests: repair right now, ignoring the once-a-day rule. */
-  repairNow(): void;
+  /** Repair right now, ignoring the once-a-day rule (playtests, onboarding's free fix). */
+  repairNow(opts?: { quiet?: boolean }): void;
   /** Promises kept for a week, resolved as kept; Vinnie should say something. */
   collectKeptPromises(now?: Date): LedgerEntry[];
   setHeat(heat: Heat): void;
@@ -246,6 +269,10 @@ export const useGame = create<GameState>()((set, get) => {
     ledger: [],
     prefill: null,
     notificationsEnabled: false,
+    onboardingDone: false,
+    sound: true,
+    haptics: true,
+    onboardingScript: null,
     quietStart: DEFAULT_PREFS.quietStart,
     quietEnd: DEFAULT_PREFS.quietEnd,
     notificationLog: [],
@@ -267,6 +294,13 @@ export const useGame = create<GameState>()((set, get) => {
           limit = DEFAULT_LIMIT;
           await saveLimit(db, toMonthKey(now), limit);
         }
+        // A random analytics id, made once per install; never linked to any data.
+        let analyticsId = settings.analyticsId;
+        if (!analyticsId) {
+          analyticsId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+          await updateSettings(db, { analyticsId });
+        }
+        initAnalytics(analyticsId);
         const stored = await getCharacter(db, now.getTime());
         // Time away calms him down (or cheers him down) toward 50.
         const drift = driftMood(stored.mood, stored.moodAt, now.getTime());
@@ -282,6 +316,9 @@ export const useGame = create<GameState>()((set, get) => {
           notificationsEnabled: settings.notificationsEnabled,
           quietStart: settings.quietStart,
           quietEnd: settings.quietEnd,
+          onboardingDone: settings.onboardingDone,
+          sound: settings.sound,
+          haptics: settings.haptics,
           notificationLog: await listNotificationLog(db),
           installedAt: settings.createdAt,
           character,
@@ -298,7 +335,7 @@ export const useGame = create<GameState>()((set, get) => {
       return loading;
     },
 
-    logEntry(input, now = new Date()) {
+    logEntry(input, now = new Date(), opts = {}) {
       const s = get();
       const date = input.date ?? toDateKey(now);
       const reaction = planReaction(input, {
@@ -325,9 +362,11 @@ export const useGame = create<GameState>()((set, get) => {
         date,
         createdAt: now.getTime(),
         updatedAt: now.getTime(),
-        isExample: false,
+        isExample: opts.isExample ?? false,
         tier: reaction.tier,
       };
+      track('entry_logged', { type: entry.type, via: opts.via ?? 'sheet' });
+      track('reaction_shown', { tier: reaction.tier });
       set({
         entries: [...s.entries, entry],
         recentLineIds: [...s.recentLineIds, reaction.lineId].slice(-50),
@@ -394,6 +433,7 @@ export const useGame = create<GameState>()((set, get) => {
       }
       setCharacter({ mood: clampMood(get().character.mood + (REPLY_MOOD[tag] ?? 0)) });
       if (tag === 'admit') get().achievementEvent('apology');
+      track('reply_chosen', { tag });
     },
 
     declined() {
@@ -414,6 +454,7 @@ export const useGame = create<GameState>()((set, get) => {
         ...(c.crackLevel === 0 ? { crackSeed: Math.floor(Math.random() * 1e9), impact } : {}),
       });
       get().achievementEvent('glass');
+      track('crack_shown', { level: String(worse.level) });
     },
 
     callPlaced() {
@@ -434,10 +475,11 @@ export const useGame = create<GameState>()((set, get) => {
       return true;
     },
 
-    repairNow() {
+    repairNow(opts = {}) {
       const level = Math.max(0, get().character.crackLevel - 1) as CharacterState['crackLevel'];
       setCharacter({ crackLevel: level });
-      if (level === 0) get().achievementEvent('repaired');
+      // Onboarding's free fix doesn't count as earning "Good as New".
+      if (level === 0 && !opts.quiet) get().achievementEvent('repaired');
     },
 
     achievementEvent(ev) {
@@ -460,6 +502,7 @@ export const useGame = create<GameState>()((set, get) => {
       // The database refuses the spend if the balance changed underneath; it's atomic.
       write((d) => spendCoins(d, spend, now));
       const gift = GIFTS.find((g) => g.id === id);
+      track(gift ? 'gift_bought' : 'item_bought');
       if (gift) {
         // Gifts lift his mood. They never repair the glass.
         setCharacter({ mood: clampMood(s.character.mood + gift.mood) });
@@ -576,6 +619,7 @@ export const useGame = create<GameState>()((set, get) => {
       setCharacter({ mood: clampMood(get().character.mood + SITDOWN_MOOD) });
       set({ pendingSitdown: false });
       get().achievementEvent('sitdown');
+      track('sitdown_done');
     },
 
     setLimit(limitMinor) {
@@ -623,6 +667,61 @@ export const useGame = create<GameState>()((set, get) => {
           await setInstalledAt(d, installedAt);
         });
       });
+    },
+
+    setSound(on) {
+      set({ sound: on });
+      write((d) => updateSettings(d, { sound: on }));
+    },
+
+    setHaptics(on) {
+      set({ haptics: on });
+      write((d) => updateSettings(d, { haptics: on }));
+    },
+
+    startOnboardingScript(input, opts) {
+      const { entry, reaction } = get().logEntry(input, new Date(), {
+        isExample: opts.isExample,
+        via: 'onboarding',
+      });
+      set({ onboardingScript: { entry, reaction, scripted: opts.scripted } });
+    },
+
+    clearOnboardingScript() {
+      set({ onboardingScript: null });
+    },
+
+    completeOnboarding() {
+      set({ onboardingDone: true });
+      write((d) => updateSettings(d, { onboardingDone: true }));
+      track('onboarding_step', { step: 'done' });
+    },
+
+    async deleteAll() {
+      await get().reset();
+      const now = Date.now();
+      await cancelAll();
+      set({
+        heat: 'classic',
+        lastCategory: 'coffee',
+        notificationsEnabled: false,
+        quietStart: DEFAULT_PREFS.quietStart,
+        quietEnd: DEFAULT_PREFS.quietEnd,
+        onboardingDone: false,
+        sound: true,
+        haptics: true,
+        notificationLog: [],
+        installedAt: now,
+        prefill: null,
+        pendingSitdown: false,
+        pendingCheckIn: false,
+      });
+      write(async (d) => {
+        await clearNotificationLog(d);
+        await clearMerchants(d);
+        await resetSettings(d, now);
+      });
+      await queue;
     },
 
     async reset() {

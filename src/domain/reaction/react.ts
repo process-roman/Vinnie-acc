@@ -147,7 +147,7 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
 
   let call: FilledCall | null = null;
   if (esc.call) {
-    const script = selectCallScript(SCRIPTS, reasons, ctx.heat);
+    const script = selectCallScript(SCRIPTS, reasons, ctx.heat, ctx.rand);
     if (script) {
       const fill = (t: string) => fillPlaceholders(t, values);
       call = {

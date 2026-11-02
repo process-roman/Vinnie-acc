@@ -2,8 +2,14 @@
 // every screen, sheet and bar. It never takes touches. Saved, so it survives restarts.
 
 import { Canvas, Image } from '@shopify/react-native-skia';
-import { useMemo } from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useEffect, useMemo } from 'react';
+import { StyleSheet, useWindowDimensions } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { rasterizeCrack } from '@/scene/crack';
 import { PIXEL_SAMPLING, toSkImage } from '@/scene/skiaImage';
@@ -27,9 +33,19 @@ export function CrackOverlay() {
     return toSkImage(rasterizeCrack(crackLevel, w, h, crackSeed, at));
   }, [crackLevel, impact, crackSeed, w, h]);
 
+  // Reduce Motion: the crack fades in instead of appearing with a jolt.
+  const reduced = useReducedMotion();
+  const opacity = useSharedValue(1);
+  useEffect(() => {
+    if (!reduced || crackLevel === 0) return;
+    opacity.set(0);
+    opacity.set(withTiming(1, { duration: 600 }));
+  }, [crackLevel, reduced, opacity]);
+  const fade = useAnimatedStyle(() => ({ opacity: opacity.get() }));
+
   if (!image) return null;
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <Animated.View style={[StyleSheet.absoluteFill, fade]} pointerEvents="none">
       <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
         <Image
           image={image}
@@ -41,6 +57,6 @@ export function CrackOverlay() {
           opacity={0.85}
         />
       </Canvas>
-    </View>
+    </Animated.View>
   );
 }

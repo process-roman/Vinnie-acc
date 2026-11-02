@@ -95,16 +95,23 @@ export type CallScript = {
   closer: string;
 };
 
-/** The call script for a meltdown: the first whose trigger matches, else a generic one. */
+/** Which reason a call is about, most important first. */
+const CALL_PRIORITY: readonly Reason[] = ['brokenPromise', 'pushedOverBudget', 'alreadyOverBudget'];
+
+/**
+ * The call script for a meltdown: one of the scripts for its most important
+ * reason (picked at random among variants), else a generic one.
+ */
 export function selectCallScript(
   scripts: readonly CallScript[],
   reasons: readonly Reason[],
   heat: Heat,
+  rand: () => number = Math.random,
 ): CallScript | null {
   const allowed = scripts.filter((s) => heatAllows(heat, s.minHeat));
-  return (
-    allowed.find((s) => s.trigger !== 'any' && reasons.includes(s.trigger)) ??
-    allowed.find((s) => s.trigger === 'any') ??
-    null
+  const reason = CALL_PRIORITY.find(
+    (r) => reasons.includes(r) && allowed.some((s) => s.trigger === r),
   );
+  const pool = allowed.filter((s) => s.trigger === (reason ?? 'any'));
+  return pool.length ? pool[Math.floor(rand() * pool.length)] : null;
 }

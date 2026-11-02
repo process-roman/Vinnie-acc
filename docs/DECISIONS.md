@@ -221,3 +221,36 @@ achievement; nothing is ever shared automatically. Web previews the card only.
 iPhone Shortcut guide: a Wallet automation that opens
 `vinnie://add?amount=…&merchant=…`. Export and delete-all come with M7. The Apple Pay flow
 needs a real iPhone to verify.
+
+## 2026-11-02 — M7 onboarding and polish
+
+**Onboarding** (`src/app/onboarding.tsx`): meet Vinnie, pick a heat level (Unhinged locked
+behind a 17+ tap), set a budget (skippable), then either "Show me what he's got" (a labelled
+$14 example cold brew) or a real receipt. The office then plays a scripted first meltdown
+whatever the honeymoon says: punch (or knock at Gentle), the first call with replies, a free
+"just this once" repair (it doesn't count toward Good as New), the shop intro and the
+notification ask in character. An essential as the first real receipt gets a normal reaction
+instead. Onboarding is marked done when the receipt is handed over, so quitting mid-sequence
+doesn't log it twice. New installs, and anyone after "Delete everything", are redirected to it.
+
+**Settings, finished.** Sound and vibration switches; export receipts as CSV (examples left
+out, amounts as exact decimals) or everything as versioned JSON, through the share sheet on
+phones and a download on web; "Delete everything" (two taps) wipes entries, Vinnie, coins,
+ledger, merchants, notifications and settings and returns to onboarding.
+
+**Accessibility.** Reduce Motion turns off the camera shake and zoom, and fades the crack in
+instead. The budget pill has a symbol (⚠ near the limit, ✕ over) as well as colour, and a
+full spoken label. Text uses system scaling.
+
+**Analytics without money.** `src/domain/analytics.ts` lists every event and every allowed
+value; anything else (amounts, descriptions, merchants) is dropped before sending. Events go
+to PostHog only if `EXPO_PUBLIC_POSTHOG_KEY` is set at build time, with a random per-install
+id; otherwise they're logged in development. Crash reporting (Sentry) isn't wired up yet: it
+needs an account, a DSN and its config plugin.
+
+**Sound.** The switch is saved, but there are still no sound files (ringtone, glass crack,
+stings). Haptics follow their switch.
+
+**Content.** 250 reaction lines and 8 reactive call scripts (plus check-in and onboarding
+calls); variants for the same reason are picked at random, broken promises first.
+`npm run lint:content` checks placeholders, heat tags, coverage and banned words.

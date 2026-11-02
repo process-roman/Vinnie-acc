@@ -12,6 +12,11 @@ export type Settings = {
   quietStart: number;
   /** Hour quiet time ends (0–23). */
   quietEnd: number;
+  onboardingDone: boolean;
+  sound: boolean;
+  haptics: boolean;
+  /** Random, anonymous; never tied to an account or financial data. */
+  analyticsId: string | null;
   createdAt: number;
 };
 
@@ -22,6 +27,10 @@ type Row = {
   notifications_enabled: number;
   quiet_start: number;
   quiet_end: number;
+  onboarding_done: number;
+  sound: number;
+  haptics: number;
+  analytics_id: string | null;
   created_at: number;
 };
 
@@ -36,6 +45,10 @@ export async function getSettings(db: Db, now: number): Promise<Settings> {
     notificationsEnabled: r.notifications_enabled === 1,
     quietStart: r.quiet_start,
     quietEnd: r.quiet_end,
+    onboardingDone: r.onboarding_done === 1,
+    sound: r.sound === 1,
+    haptics: r.haptics === 1,
+    analyticsId: r.analytics_id,
     createdAt: r.created_at,
   };
 }
@@ -49,6 +62,10 @@ const COLUMNS: Record<keyof Editable, string> = {
   notificationsEnabled: 'notifications_enabled',
   quietStart: 'quiet_start',
   quietEnd: 'quiet_end',
+  onboardingDone: 'onboarding_done',
+  sound: 'sound',
+  haptics: 'haptics',
+  analyticsId: 'analytics_id',
 };
 
 const toSql = (v: Editable[keyof Editable]): SqlValue => (typeof v === 'boolean' ? (v ? 1 : 0) : v);
@@ -65,4 +82,10 @@ export async function updateSettings(db: Db, patch: Partial<Editable>): Promise<
 /** Playtests only: pretend the app was installed at `at` (ends the honeymoon early). */
 export async function setInstalledAt(db: Db, at: number): Promise<void> {
   await db.run('UPDATE settings SET created_at = ? WHERE id = 1', [at]);
+}
+
+/** Delete-all: back to a fresh install's settings. */
+export async function resetSettings(db: Db, now: number): Promise<void> {
+  await db.run('DELETE FROM settings');
+  await getSettings(db, now);
 }

@@ -6,13 +6,16 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Redirect } from 'expo-router';
 
 import callbacks from '@/content/callbacks.json';
 import calls from '@/content/calls.json';
+import onboarding from '@/content/onboarding.json';
 import { getCategory } from '@/domain/categories';
 import { balance } from '@/domain/coins';
 import { Entry, monthSpentMinor, toDateKey } from '@/domain/entries';
@@ -39,6 +42,7 @@ import { ShareSheet } from '@/ui/ShareSheet';
 import { ShopSheet } from '@/ui/ShopSheet';
 import { SitdownSheet } from '@/ui/SitdownSheet';
 import { ShareMoment } from '@/domain/shareCard';
+import { track } from '@/services/analytics';
 import { SpeechBubble } from '@/ui/SpeechBubble';
 import { colors, radius, space } from '@/ui/tokens';
 
@@ -108,7 +112,11 @@ type Undo = { id: string; label: string };
 export default function OfficeScreen() {
   const ready = useGame((s) => s.ready);
   // Paper until the database has loaded (a few milliseconds).
-  return ready ? <Office /> : <View style={styles.loading} />;
+  const onboarded = useGame((s) => s.onboardingDone);
+  if (!ready) return <View style={styles.loading} />;
+  // First launch (or after Delete everything): meet Vinnie first.
+  if (!onboarded) return <Redirect href="/onboarding" />;
+  return <Office />;
 }
 
 function Office() {
@@ -124,6 +132,8 @@ function Office() {
   const coins = useGame((s) => balance(s.coinTx));
   const pendingSitdown = useGame((s) => s.pendingSitdown);
   const pendingCheckIn = useGame((s) => s.pendingCheckIn);
+  const onboardingScript = useGame((s) => s.onboardingScript);
+  const [notifyAsk, setNotifyAsk] = useState(false);
   const sitdownReady = useGame((s) => s.sitdownAvailable());
   const inventory = useGame((s) => s.inventory);
   const cosmetics = useMemo(() => equippedBySlot(inventory), [inventory]);
@@ -139,6 +149,8 @@ function Office() {
   const [debugOpen, setDebugOpen] = useState(false);
 
   // Camera: zoom about a point (the spot Vinnie walks to) so he fills the glass.
+  // Reduce Motion: no camera zoom toward the glass.
+  const reducedMotion = useReducedMotion();
   const zoom = useSharedValue(1);
   const zoomX = useSharedValue(0);
   const zoomY = useSharedValue(0);
@@ -146,7 +158,7 @@ function Office() {
     transform: [{ translateX: zoomX.value }, { translateY: zoomY.value }, { scale: zoom.value }],
   }));
   const zoomTo = (at: Point | null, ms: number) => {
-    const s = at ? ZOOM : 1;
+    const s = at && !reducedMotion ? ZOOM : 1;
     const t = { duration: ms, easing: Easing.inOut(Easing.cubic) };
     zoom.set(withTiming(s, t));
     zoomX.set(withTiming(at ? (scene.width / 2 - at.x) * (s - 1) : 0, t));
@@ -257,7 +269,7 @@ function Office() {
   };
 
   /** Repair moment (blueprint 4.4): he walks up and tapes the glass himself. */
-  const tapeTheGlass = async () => {
+  const tapeTheGlass = async (line?: string) => {
     const canvas = office.current;
     if (!canvas) return;
     setStatus('Vinnie is walking up to the glass…');
@@ -267,7 +279,7 @@ function Office() {
     setStatus(ANIM_STATUS.repair);
     await sleep(1800);
     canvas.play('idle');
-    await say(pick(callbacks.repair));
+    await say(line ?? pick(callbacks.repair));
     zoomTo(null, 700);
     await canvas.walkTo(DESK_SPOT);
     setStatus(ANIM_STATUS.idle);
@@ -415,6 +427,57 @@ function Office() {
     [],
   );
 
+  // Straight from onboarding: the first receipt, a scripted meltdown (or a normal
+  // reaction for an essential), the free repair, the shop, then the notification ask.
+  useEffect(() => {
+    if (!onboardingScript || busy || !office.current || scene.width === 0) return;
+    const id = setTimeout(async () => {
+      const { entry, reaction, scripted } = onboardingScript;
+      game().clearOnboardingScript();
+      if (scripted) {
+        const values = {
+          amount: formatMoney(entry.amountMinor, 'USD', { trimZeroCents: true }),
+          category: getCategory(entry.category).label.toLowerCase(),
+        };
+        const line = entry.isExample
+          ? onboarding.meltdown[heat]
+          : fillPlaceholders(onboarding.meltdownReal[heat], values);
+        await play(entry, {
+          ...reaction,
+          tier: 'meltdown',
+          line,
+          escalation: heat === 'gentle' ? 'knock' : 'punch',
+          call: {
+            ...onboarding.call,
+            scriptId: onboarding.call.id,
+            declineRetry: calls.declineRetry,
+          },
+        });
+        if (game().character.crackLevel > 0) {
+          setBusy(true);
+          game().repairNow({ quiet: true });
+          await tapeTheGlass(onboarding.repair);
+          setBusy(false);
+        }
+      } else {
+        await play(entry, reaction);
+      }
+      track('onboarding_step', { step: 'shop' });
+      await say(onboarding.shop);
+      track('onboarding_step', { step: 'notifications' });
+      setNotifyAsk(true);
+    }, 900);
+    return () => clearTimeout(id);
+    // play/say/tapeTheGlass read fresh refs; the script is the trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onboardingScript, busy, scene.width]);
+
+  const answerNotifyAsk = async (yes: boolean) => {
+    setNotifyAsk(false);
+    const allowed = yes ? await game().setNotificationsEnabled(true) : false;
+    await say(allowed ? onboarding.notifyThanks : onboarding.notifySkip);
+  };
+
   // Opened from a "Vinnie is calling…" notification: he calls to check in.
   useEffect(() => {
     if (!pendingCheckIn || busy) return;
@@ -493,9 +556,22 @@ function Office() {
         >
           <Text style={styles.gearLabel}>⚙︎</Text>
         </Pressable>
-        <Pressable style={styles.budget} onPress={() => setSheet({ kind: 'budget' })}>
+        <Pressable
+          style={styles.budget}
+          onPress={() => setSheet({ kind: 'budget' })}
+          accessibilityRole="button"
+          accessibilityLabel={
+            'Budget: ' +
+            formatMoney(spent) +
+            ' spent' +
+            (limit === null ? '' : ' of ' + formatMoney(limit)) +
+            (share > 1 ? ', over budget' : share >= 0.85 ? ', nearly at the limit' : '')
+          }
+        >
           <Text style={styles.budgetLabel}>This month</Text>
           <Text style={[styles.budgetAmount, share > 1 && styles.over]}>
+            {/* A symbol as well as a colour, for colour-blind users. */}
+            {share > 1 ? '✕ ' : share >= 0.85 ? '⚠ ' : ''}
             {formatMoney(spent, 'USD', { trimZeroCents: true })}
           </Text>
           <Text style={styles.subtitle}>
@@ -637,6 +713,7 @@ function Office() {
               onPress={() => {
                 setSharing(sharePrompt);
                 setSharePrompt(null);
+                track('share_opened', { kind: sharePrompt.kind });
               }}
             >
               <Text style={styles.promptLabel}>📸 Share this moment</Text>
@@ -684,6 +761,7 @@ function Office() {
         </Pressable>
         <Pressable
           style={[styles.mainButton, busy && styles.dim]}
+          accessibilityRole="button"
           onPress={() => openNew()}
           disabled={busy}
         >
@@ -750,7 +828,12 @@ function Office() {
         onEdit={(entry) => setSheet({ kind: 'edit', entry })}
       />
       <BudgetSheet visible={shown?.kind === 'budget'} onClose={() => setSheet(null)} />
-      <SettingsSheet visible={shown?.kind === 'settings'} onClose={() => setSheet(null)} />
+      <SettingsSheet
+        visible={shown?.kind === 'settings'}
+        onClose={() => setSheet(null)}
+        // Fresh install again: the office redirects to onboarding.
+        onDeleted={() => setSheet(null)}
+      />
       <SitdownSheet
         visible={shown?.kind === 'sitdown'}
         onClose={() => {
@@ -764,6 +847,19 @@ function Office() {
         }}
       />
       <ShareSheet moment={sharing} onClose={() => setSharing(null)} />
+      {notifyAsk && (
+        <View style={styles.ask}>
+          <Text style={styles.askLine}>{onboarding.notifyAsk}</Text>
+          <View style={styles.askButtons}>
+            <Pressable style={styles.askNo} onPress={() => answerNotifyAsk(false)}>
+              <Text style={styles.askNoLabel}>{onboarding.notifyNo}</Text>
+            </Pressable>
+            <Pressable style={styles.askYes} onPress={() => answerNotifyAsk(true)}>
+              <Text style={styles.askYesLabel}>{onboarding.notifyYes}</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
       <ShopSheet
         visible={shown?.kind === 'shop'}
         onClose={() => setSheet(null)}
@@ -839,6 +935,37 @@ function Chip({ label, onPress }: { label: string; onPress: () => void }) {
 
 const styles = StyleSheet.create({
   loading: { flex: 1, backgroundColor: colors.paper },
+  ask: {
+    position: 'absolute',
+    left: space.lg,
+    right: space.lg,
+    bottom: 110,
+    backgroundColor: colors.card,
+    borderWidth: 3,
+    borderColor: colors.ink,
+    borderRadius: radius.md,
+    padding: space.lg,
+    gap: space.md,
+  },
+  askLine: { fontSize: 17, fontWeight: '800', color: colors.ink, textAlign: 'center' },
+  askButtons: { flexDirection: 'row', gap: space.sm },
+  askNo: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: colors.ink,
+    borderRadius: radius.md,
+    paddingVertical: space.md,
+    alignItems: 'center',
+  },
+  askNoLabel: { fontWeight: '800', color: colors.ink },
+  askYes: {
+    flex: 1,
+    backgroundColor: colors.mustard,
+    borderRadius: radius.md,
+    paddingVertical: space.md,
+    alignItems: 'center',
+  },
+  askYesLabel: { fontWeight: '800', color: colors.ink },
   gear: { padding: space.sm, marginLeft: 'auto', marginRight: space.sm },
   gearLabel: { fontSize: 22, color: colors.inkSoft },
   prompts: {

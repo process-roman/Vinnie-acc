@@ -57,7 +57,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "format": "prettier --write .",
-    "postinstall": "setup-skia-web public && node scripts/copy-web-assets.js"
+    "postinstall": "setup-skia-web public && node scripts/copy-web-assets.js",
+    "lint:content": "jest src/domain/reaction/__tests__/dialogue.test.ts"
   },
   "private": true,
   "jest": {
