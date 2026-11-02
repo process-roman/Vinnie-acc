@@ -107,3 +107,31 @@ logged or edited entry's description.
 
 **Room legend is static.** The Budget sheet explains the plant, rain, poster and receipt
 pile, which the office starts showing in M3.
+
+## 2026-11-02 — M3 office
+
+**Room state is derived.** `src/domain/roomState.ts` turns entries + budget into plant,
+weather, poster, receipt pile, espresso and cat states (thresholds from blueprint §3). Mood
+doesn't exist until M4, so "upset" means the latest receipt was `angry` or `meltdown` within
+the last two hours: the espresso machine goes cold and Deductible hides. The cat sleeps on
+the desk during a tracking streak of 2+ days.
+
+**Layered scene.** The base room is bricks and floor only. Window weather (sun, clouds,
+3-frame rain, storm with lightning) and the piggy-bank poster are separate wall layers in
+the same pixel space. Furniture and props are sprites with a slot (grid point, anchor, lift)
+and a depth; items on furniture sort just in front of it. Every sprite is drawn behind and
+in front of Vinnie, and a UI-thread opacity picks the copy, so walking never re-renders.
+
+**Animation.** One shared clock drives everything (Vinnie, steam, the cat's tail, rain,
+lightning). Vinnie's poses are row overrides on his base sprite; the animation table
+(`ANIMS`) lists frames, speed and looping. He faces left or right by flipping the sprite.
+
+**Taps.** Hit-testing is per pixel, front to back, then the window and poster, then the
+floor. Props get a line from `src/content/props.json` (never the same twice in a row);
+the cat's line goes to the status bar instead of a bubble.
+
+**Idle life.** When nothing is happening Vinnie walks between waypoints every 7–13 s
+(chair, espresso, window, plant, centre). Paused while playtest controls are open.
+
+**Repair preview.** The playtest "Repair" button now plays the blueprint's repair moment:
+he walks to the glass, tapes it, and says so. The behaviour that earns repairs is M4.

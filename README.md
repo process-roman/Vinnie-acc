@@ -25,9 +25,12 @@ npm run lint
 
 ## Status
 
-**M2 (tracker)** — everything from M1, now saved on the device (SQLite). History groups
-receipts by month with search, category filters, edit, delete and "Remove examples". The
-Budget sheet has a direct-entry limit, spent / left / per-day / days-left, a category
-breakdown and the office legend. Quick chips log your frequent purchases in one tap (with
-Undo), and `vinnie://add?amount=12.50&merchant=Starbucks&category=coffee` opens a
-pre-filled receipt. Tap the "Vinnie" title for playtest controls.
+**M3 (office)** — the office now shows the budget: the plant droops, wilts and dies, the
+window goes from sun to clouds to rain to a lightning storm, the piggy-bank poster cracks
+when you go over, and a crumpled receipt lands by the bin for every expense. Deductible the
+cat naps on the desk during a streak and hides when Vinnie is angry; the espresso machine
+steams unless he is. Vinnie walks around on his own, sits at his desk, and has poses for
+reading, celebrating, shouting, slamming the desk, the phone, punching and repairing the
+glass. Tap the plant, window, poster, phone, espresso, pile, cat or Vinnie for a line. Zoom
+with + and −. Saved data, History, Budget, quick chips and quick-add links from M2 are all
+still here. Tap the "Vinnie" title for playtest controls (budget %, every animation).

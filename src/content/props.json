@@ -1,0 +1,92 @@
+{
+  "plant": {
+    "healthy": [
+      "Look at that plant. Thriving. Like the budget. Keep it that way.",
+      "I water it every morning. It's the only thing in here that listens to me.",
+      "Green leaves, green budget. That's not a saying. It should be."
+    ],
+    "droopy": [
+      "Plant's looking a little tired. Kinda like your budget.",
+      "She's droopin'. She knows. Plants always know.",
+      "That's a 'please stop spending' droop if I ever saw one."
+    ],
+    "wilted": [
+      "The plant is wilting, kid. That's not a metaphor. Okay, it's a little bit a metaphor.",
+      "I'm giving it water. You give the budget a break.",
+      "Every leaf that drops is a latte. I counted."
+    ],
+    "dead": [
+      "The plant died. We're over budget. I'm not saying those are connected. I'm saying it.",
+      "Rest in peace, Ficus. You deserved better.",
+      "Don't look at the plant. Look at what you did."
+    ]
+  },
+  "window": {
+    "sunny": [
+      "Beautiful day in Brooklyn. Free, too. Best things are.",
+      "Sun's out. You know what's free outside? A walk.",
+      "Clear skies. Clear books. That's how I like 'em."
+    ],
+    "cloudy": [
+      "Clouds rolling in. Over the budget, too.",
+      "Little overcast. We're past halfway, kid. Pace yourself.",
+      "Gray out there. Could go either way. Like you."
+    ],
+    "rain": [
+      "It's raining. Eighty-five percent spent and it's raining. Coincidence? No.",
+      "Hear that rain? That's the budget crying.",
+      "Grab an umbrella. Don't BUY an umbrella. Grab one."
+    ],
+    "storm": [
+      "There's a thunderstorm IN the budget. I can hear it from here.",
+      "Lightning. Thunder. Overdraft. Name a worse trio.",
+      "Stay inside. Don't spend anything. That's an order."
+    ]
+  },
+  "cat": [
+    "Deductible ignores you.",
+    "Deductible blinks slowly. It's not affection. It's an audit.",
+    "Deductible is busy. Deductible is always busy.",
+    "Deductible knocks a pen off the desk and looks at you."
+  ],
+  "phone": [
+    "Don't touch the phone. When that thing rings, it's for YOU.",
+    "Rotary. Never broke once in thirty years. Can't say that about your budget.",
+    "I keep it close. Never know when somebody's gonna need a talking-to."
+  ],
+  "espresso": {
+    "steaming": [
+      "Espresso. Made it myself. Costs me eleven cents. ELEVEN.",
+      "You want one? It's on the house. Literally. It's my house.",
+      "Fresh pot. You know what the café charges for this? Don't. I'll get upset."
+    ],
+    "cold": [
+      "I'm too worked up for coffee right now.",
+      "Machine's cold. So's my heart. Give it a minute.",
+      "Not now. I'm thinking about what you did."
+    ]
+  },
+  "poster": {
+    "intact": [
+      "The piggy bank's smiling. Keep him smiling.",
+      "That's Penny. Penny believes in you. Don't make Penny cry.",
+      "Every dollar you don't spend, Penny gets a little rounder."
+    ],
+    "cracked": [
+      "You cracked Penny. You went over and you cracked Penny.",
+      "Look at that poster. Look at it. That's what over budget looks like.",
+      "Penny's got a crack in her now. She'll heal. If YOU change."
+    ]
+  },
+  "receipts": [
+    "Every receipt you give me, I keep. Every. One.",
+    "That pile's getting tall. I'm not throwing them out. Evidence.",
+    "{count} receipts this month. I read every one. Twice."
+  ],
+  "vinnie": [
+    "What? I'm working here.",
+    "Hands off the merchandise, pal.",
+    "You need something? Besides a budget?",
+    "Poke me again. I dare you."
+  ]
+}

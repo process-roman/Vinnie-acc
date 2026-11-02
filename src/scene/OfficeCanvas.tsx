@@ -1,5 +1,6 @@
-// Renderer spike (M0 / blueprint 0.2): pixel-art isometric office drawn with
-// Skia, an animated sprite, tap hit-testing and Reanimated-driven movement.
+// Vinnie's office: pixel-art isometric room drawn with Skia. The room shows the
+// budget (plant, window weather, poster, receipt pile, espresso, cat), Vinnie runs
+// a small animation state machine, and taps are hit-tested per pixel.
 
 import { Canvas, Group, Image, rect, SkImage } from '@shopify/react-native-skia';
 import {
@@ -22,58 +23,150 @@ import {
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
+import type { PropTarget } from '@/domain/propLines';
+import type { RoomState } from '@/domain/roomState';
+
 import { depth, gridToScreen, GridPoint, Point, screenToGrid } from './iso';
-import { getPixel } from './pixels';
+import { SceneSprite, slotDepth, slotPosition, SLOTS } from './layout';
+import { getPixel, PixelBuffer } from './pixels';
 import {
-  PropDef,
   PROPS,
   rasterizeBox,
+  rasterizeLightning,
+  rasterizePoster,
   rasterizeRoom,
+  rasterizeWindow,
+  RAIN_FRAMES,
   ROOM_H,
   ROOM_ORIGIN,
   ROOM_TILES,
   ROOM_W,
+  WAYPOINTS,
 } from './room';
 import { PIXEL_SAMPLING, toSkImage } from './skiaImage';
 import { buildAlertBubble } from './sprites/bubble';
 import {
-  buildVinnieIdleSheet,
-  IDLE_FRAME_MS,
-  IDLE_FRAMES,
+  buildPlant,
+  buildReceiptPile,
+  CAT_SITTING,
+  CAT_SLEEPING,
+  ESPRESSO,
+  LAMP,
+  PHONE,
+  STEAM_FRAMES,
+} from './sprites/props';
+import {
+  AnimName,
+  ANIM_NAMES,
+  ANIMS,
+  buildVinnieSheet,
   VINNIE_ANCHOR,
   VINNIE_H,
   VINNIE_W,
 } from './sprites/vinnie';
 
 const MS_PER_TILE = 260;
-const START: GridPoint = { gx: 2.5, gy: 3.5 };
-/** Front of the room, closest to the viewer: where he walks to hit the glass. */
-export const CAMERA_SPOT: GridPoint = { gx: ROOM_TILES - 1, gy: ROOM_TILES - 1 };
+const START: GridPoint = WAYPOINTS.chair;
+export const CAMERA_SPOT: GridPoint = WAYPOINTS.camera;
+
+// Animation tables as plain arrays so the UI-thread worklets can read them.
+const ANIM_FRAMES = ANIM_NAMES.map((n) => ANIMS[n].frames);
+const ANIM_MS = ANIM_NAMES.map((n) => ANIMS[n].ms);
+const ANIM_LOOP = ANIM_NAMES.map((n) => ANIMS[n].loop);
+const IDLE = ANIM_NAMES.indexOf('idle');
+const WALK = ANIM_NAMES.indexOf('walk');
+
+const LIGHTNING_EVERY_MS = 4200;
+
+export type TapTarget =
+  { kind: 'vinnie' } | { kind: 'prop'; target: PropTarget } | { kind: 'floor'; at: GridPoint };
 
 export type OfficeCanvasHandle = {
   walkTo(to: GridPoint): Promise<void>;
+  play(anim: AnimName): void;
   /** Vinnie's head, in this component's layout coordinates. */
   headPosition(): Point;
   /** Where his head would be if he stood at the grid point. */
   headPositionAt(p: GridPoint): Point;
+  position(): GridPoint;
   alert(ms?: number): void;
 };
 
 type Props = {
   width: number;
   height: number;
-  onEvent?: (message: string) => void;
+  room: RoomState;
+  onTap?: (t: TapTarget) => void;
   /** Ignore taps, e.g. while a reaction is playing. */
   disabled?: boolean;
   ref?: Ref<OfficeCanvasHandle>;
 };
 
-const propCentreDepth = (p: PropDef) =>
-  depth({ gx: p.footprint.gx + p.footprint.w / 2, gy: p.footprint.gy + p.footprint.d / 2 });
+// Images are built once per distinct buffer and reused across renders.
+const images = new WeakMap<PixelBuffer, SkImage>();
+const img = (b: PixelBuffer) => {
+  let i = images.get(b);
+  if (!i) {
+    i = toSkImage(b);
+    images.set(b, i);
+  }
+  return i;
+};
+const buffers = new Map<string, PixelBuffer>();
+const buf = (key: string, make: () => PixelBuffer) => {
+  let b = buffers.get(key);
+  if (!b) {
+    b = make();
+    buffers.set(key, b);
+  }
+  return b;
+};
 
 const clampToRoom = (n: number) => Math.min(ROOM_TILES - 0.4, Math.max(0.4, n));
 
-export function OfficeCanvas({ width, height, onEvent, disabled, ref }: Props) {
+function buildSprites(room: RoomState): SceneSprite[] {
+  const sprites: SceneSprite[] = PROPS.map((p) => ({
+    key: p.id,
+    frames: [buf(`box:${p.id}`, () => rasterizeBox(p.footprint, p.heightPx, p.colors))],
+    x: 0,
+    y: 0,
+    depth: depth({
+      gx: p.footprint.gx + p.footprint.w / 2,
+      gy: p.footprint.gy + p.footprint.d / 2,
+    }),
+  }));
+  const place = (
+    key: string,
+    slot: (typeof SLOTS)[keyof typeof SLOTS],
+    frames: PixelBuffer[],
+    order: number,
+    extra: Partial<SceneSprite> = {},
+  ) =>
+    sprites.push({ key, frames, ...slotPosition(slot), depth: slotDepth(slot, order), ...extra });
+
+  place('plant', SLOTS.plant, [buf(`plant:${room.plant}`, () => buildPlant(room.plant))], 0, {
+    tap: 'plant',
+  });
+  place(
+    'pile',
+    SLOTS.pile,
+    [buf(`pile:${room.receipts}`, () => buildReceiptPile(room.receipts))],
+    0,
+    { tap: 'receipts' },
+  );
+  place('lamp', SLOTS.lamp, [LAMP], 0);
+  place('phone', SLOTS.phone, [PHONE], 1, { tap: 'phone' });
+  place('espresso', SLOTS.espresso, [ESPRESSO], 0, { tap: 'espresso' });
+  if (room.espressoSteaming) place('steam', SLOTS.steam, STEAM_FRAMES, 1, { frameMs: 220 });
+  if (room.cat === 'sleeping') {
+    place('cat', SLOTS.catOnDesk, CAT_SLEEPING, 2, { frameMs: 900, tap: 'cat' });
+  } else if (room.cat === 'sitting') {
+    place('cat', SLOTS.catOnFloor, CAT_SITTING, 0, { frameMs: 700, tap: 'cat' });
+  }
+  return sprites.sort((a, b) => a.depth - b.depth);
+}
+
+export function OfficeCanvas({ width, height, room, onTap, disabled, ref }: Props) {
   // Whole device pixels per art pixel keeps every pixel the same size on screen.
   const ratio = PixelRatio.get();
   const fit = Math.min((width * ratio) / ROOM_W, (height * ratio) / ROOM_H);
@@ -83,30 +176,47 @@ export function OfficeCanvas({ width, height, onEvent, disabled, ref }: Props) {
   const offsetX = (width - canvasW) / 2;
   const offsetY = (height - canvasH) / 2;
 
-  const art = useMemo(() => {
-    const vinnie = buildVinnieIdleSheet();
-    const props = PROPS.map((def) => {
-      const buf = rasterizeBox(def.footprint, def.heightPx, def.colors);
-      return { def, buf, image: toSkImage(buf), depth: propCentreDepth(def) };
-    });
+  const statics = useMemo(() => {
+    const vinnie = buildVinnieSheet();
     return {
-      room: toSkImage(rasterizeRoom()),
-      vinnie: toSkImage(vinnie),
+      room: img(buf('room', rasterizeRoom)),
+      vinnie: img(vinnie),
       vinnieSheetW: vinnie.width,
-      bubble: toSkImage(buildAlertBubble()),
-      props,
+      bubble: img(buildAlertBubble()),
+      lightning: img(buf('lightning', rasterizeLightning)),
     };
   }, []);
 
-  const gx = useSharedValue(START.gx);
-  const gy = useSharedValue(START.gy);
-  const frame = useSharedValue(0);
-  const fps = useSharedValue(0);
+  const windowFrames = useMemo(() => {
+    const n = room.weather === 'rain' || room.weather === 'storm' ? RAIN_FRAMES : 1;
+    return Array.from({ length: n }, (_, i) =>
+      buf(`window:${room.weather}:${i}`, () => rasterizeWindow(room.weather, i)),
+    );
+  }, [room.weather]);
+  const poster = buf(`poster:${room.poster}`, () => rasterizePoster(room.poster));
+  const sprites = useMemo(() => buildSprites(room), [room]);
 
+  const clock = useSharedValue(0);
+  const fps = useSharedValue(0);
   useFrameCallback((info) => {
-    frame.value = Math.floor(info.timeSinceFirstFrame / IDLE_FRAME_MS) % IDLE_FRAMES.length;
+    clock.value = info.timeSinceFirstFrame;
     const dt = info.timeSincePreviousFrame;
     if (dt && dt > 0) fps.value = fps.value * 0.95 + (1000 / dt) * 0.05;
+  });
+
+  // Vinnie: position on the grid, current animation, which way he faces.
+  const gx = useSharedValue(START.gx);
+  const gy = useSharedValue(START.gy);
+  const anim = useSharedValue(ANIM_NAMES.indexOf('sit'));
+  const animStart = useSharedValue(0);
+  const facing = useSharedValue(1);
+
+  const frame = useDerivedValue(() => {
+    const a = anim.value;
+    const frames = ANIM_FRAMES[a];
+    let k = Math.max(0, Math.floor((clock.value - animStart.value) / ANIM_MS[a]));
+    k = ANIM_LOOP[a] ? k % frames.length : Math.min(k, frames.length - 1);
+    return frames[k];
   });
 
   // Top-left of the current frame, snapped to whole art pixels so it never blurs.
@@ -116,12 +226,19 @@ export function OfficeCanvas({ width, height, onEvent, disabled, ref }: Props) {
   const vy = useDerivedValue(
     () => Math.round(gridToScreen({ gx: gx.value, gy: gy.value }, ROOM_ORIGIN).y) - VINNIE_ANCHOR.y,
   );
+  const vinnieDepth = useDerivedValue(() => gx.value + gy.value);
   const frameClip = useDerivedValue(() => rect(vx.value, vy.value, VINNIE_W, VINNIE_H));
   const sheetX = useDerivedValue(() => vx.value - frame.value * VINNIE_W);
+  const flip = useDerivedValue(() => {
+    const cx = vx.value + VINNIE_W / 2;
+    return [{ translateX: cx }, { scaleX: facing.value }, { translateX: -cx }];
+  });
   const bubbleX = useDerivedValue(() => vx.value + 2);
   const bubbleY = useDerivedValue(() => vy.value - 11);
-
-  const vinnieDepth = useDerivedValue(() => gx.value + gy.value);
+  const flash = useDerivedValue(() => {
+    const t = clock.value % LIGHTNING_EVERY_MS;
+    return t < 90 || (t > 180 && t < 240) ? 1 : 0;
+  });
 
   const [alerting, setAlerting] = useState(false);
   const alertTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -137,19 +254,39 @@ export function OfficeCanvas({ width, height, onEvent, disabled, ref }: Props) {
     [],
   );
 
+  const play = (name: AnimName) => {
+    anim.value = ANIM_NAMES.indexOf(name);
+    animStart.value = clock.value;
+  };
+
   const walkTo = (to: GridPoint) =>
     new Promise<void>((resolve) => {
       const target = { gx: clampToRoom(to.gx), gy: clampToRoom(to.gy) };
       const dist = Math.hypot(target.gx - gx.value, target.gy - gy.value);
-      const timing = { duration: Math.max(1, dist * MS_PER_TILE), easing: Easing.linear };
+      // Screen direction: +gx goes right, +gy goes left.
+      const dx = target.gx - gx.value - (target.gy - gy.value);
+      if (Math.abs(dx) > 0.05) facing.value = dx < 0 ? -1 : 1;
+      if (dist < 0.05) {
+        play('idle');
+        resolve();
+        return;
+      }
+      play('walk');
+      const timing = { duration: dist * MS_PER_TILE, easing: Easing.linear };
       gx.value = withTiming(target.gx, timing);
       gy.value = withTiming(target.gy, timing, (finished) => {
-        if (finished) scheduleOnRN(resolve);
+        if (!finished) return;
+        if (anim.value === WALK) {
+          anim.value = IDLE;
+          animStart.value = clock.value;
+        }
+        scheduleOnRN(resolve);
       });
     });
 
   useImperativeHandle(ref, () => ({
     walkTo,
+    play,
     headPosition: () => ({
       x: offsetX + (vx.value + VINNIE_W / 2) * scale,
       y: offsetY + (vy.value + 4) * scale,
@@ -161,52 +298,59 @@ export function OfficeCanvas({ width, height, onEvent, disabled, ref }: Props) {
         y: offsetY + (Math.round(feet.y) - VINNIE_ANCHOR.y + 4) * scale,
       };
     },
+    position: () => ({ gx: gx.value, gy: gy.value }),
     alert: showAlert,
   }));
 
   // locationX/Y is undefined on web when the target is the canvas, so work from
-  // page coordinates and the press area's position instead.
+  // page coordinates and the press area's measured box (which includes any zoom).
   const pressArea = useRef<ComponentRef<typeof View>>(null);
   const onPress = (e: GestureResponderEvent) => {
     const { pageX, pageY } = e.nativeEvent;
-    pressArea.current?.measureInWindow((x, y) => onTap((pageX - x) / scale, (pageY - y) / scale));
+    pressArea.current?.measureInWindow((x, y, w) => {
+      const k = w / ROOM_W;
+      if (k > 0) hitTest((pageX - x) / k, (pageY - y) / k);
+    });
   };
 
-  /** Handles a tap at art-pixel coordinates. */
-  const onTap = (ax: number, ay: number) => {
-    if (ax >= vx.value && ax < vx.value + VINNIE_W && ay >= vy.value && ay < vy.value + VINNIE_H) {
-      showAlert();
-      onEvent?.('You poked Vinnie. He noticed.');
-      return;
-    }
+  /** Finds what's under an art-pixel coordinate, front to back. */
+  const hitTest = (ax: number, ay: number) => {
+    if (!onTap) return;
     const px = Math.floor(ax);
     const py = Math.floor(ay);
-    const inArt = px >= 0 && py >= 0 && px < ROOM_W && py < ROOM_H;
-    // Front-most prop first, hit-tested by its actual pixels.
-    const hit = inArt
-      ? [...art.props].sort((a, b) => b.depth - a.depth).find((p) => getPixel(p.buf, px, py)[3] > 0)
-      : undefined;
-    if (hit) {
-      onEvent?.(`Vinnie walks to the ${hit.def.id}.`);
-      walkTo(hit.def.standAt);
-      return;
+    if (px < 0 || py < 0 || px >= ROOM_W || py >= ROOM_H) return;
+    const vDepth = gx.value + gy.value;
+    const hits = (s: SceneSprite) => {
+      const f = s.frames[0];
+      const lx = px - s.x;
+      const ly = py - s.y;
+      return lx >= 0 && ly >= 0 && lx < f.width && ly < f.height && getPixel(f, lx, ly)[3] > 0;
+    };
+    const onVinnie =
+      ax >= vx.value && ax < vx.value + VINNIE_W && ay >= vy.value && ay < vy.value + VINNIE_H;
+    for (const s of [...sprites].reverse()) {
+      // Anything behind Vinnie loses to him.
+      if (onVinnie && s.depth < vDepth) break;
+      if (hits(s)) {
+        if (s.tap) onTap({ kind: 'prop', target: s.tap });
+        return;
+      }
     }
+    if (onVinnie) return onTap({ kind: 'vinnie' });
+    if (getPixel(windowFrames[0], px, py)[3] > 0) return onTap({ kind: 'prop', target: 'window' });
+    if (getPixel(poster, px, py)[3] > 0) return onTap({ kind: 'prop', target: 'poster' });
     const g = screenToGrid({ x: ax, y: ay }, ROOM_ORIGIN);
     if (g.gx >= 0 && g.gx < ROOM_TILES && g.gy >= 0 && g.gy < ROOM_TILES) {
-      onEvent?.('Vinnie paces.');
-      walkTo(g);
+      onTap({ kind: 'floor', at: g });
     }
   };
 
-  // Each prop is drawn both behind and in front of Vinnie; depth picks which copy
-  // shows, on the UI thread, so walking never needs a React re-render.
-  const sorted = [...art.props].sort((a, b) => a.depth - b.depth);
-  const propLayers = (behindVinnie: boolean) =>
-    sorted.map((p) => (
-      <PropLayer
-        key={p.def.id}
-        image={p.image}
-        propDepth={p.depth}
+  const layers = (behindVinnie: boolean) =>
+    sprites.map((s) => (
+      <SpriteLayer
+        key={`${s.key}:${behindVinnie ? 'b' : 'f'}`}
+        sprite={s}
+        clock={clock}
         vinnieDepth={vinnieDepth}
         behindVinnie={behindVinnie}
       />
@@ -223,28 +367,59 @@ export function OfficeCanvas({ width, height, onEvent, disabled, ref }: Props) {
         <Canvas style={{ width: canvasW, height: canvasH }}>
           <Group transform={[{ scale }]}>
             <Image
-              image={art.room}
+              image={statics.room}
               x={0}
               y={0}
               width={ROOM_W}
               height={ROOM_H}
               sampling={PIXEL_SAMPLING}
             />
-            {propLayers(true)}
-            <Group clip={frameClip}>
-              <Image
-                image={art.vinnie}
-                x={sheetX}
-                y={vy}
-                width={art.vinnieSheetW}
-                height={VINNIE_H}
-                sampling={PIXEL_SAMPLING}
+            {windowFrames.map((f, i) => (
+              <FrameImage
+                key={`win${i}`}
+                image={img(f)}
+                index={i}
+                count={windowFrames.length}
+                frameMs={120}
+                clock={clock}
               />
+            ))}
+            {room.weather === 'storm' && (
+              <Image
+                image={statics.lightning}
+                x={0}
+                y={0}
+                width={ROOM_W}
+                height={ROOM_H}
+                sampling={PIXEL_SAMPLING}
+                opacity={flash}
+              />
+            )}
+            <Image
+              image={img(poster)}
+              x={0}
+              y={0}
+              width={ROOM_W}
+              height={ROOM_H}
+              sampling={PIXEL_SAMPLING}
+            />
+            {layers(true)}
+            <Group clip={frameClip}>
+              <Group transform={flip}>
+                <Image
+                  image={statics.vinnie}
+                  x={sheetX}
+                  y={vy}
+                  width={statics.vinnieSheetW}
+                  height={VINNIE_H}
+                  sampling={PIXEL_SAMPLING}
+                />
+              </Group>
             </Group>
-            {propLayers(false)}
+            {layers(false)}
             {alerting && (
               <Image
-                image={art.bubble}
+                image={statics.bubble}
                 x={bubbleX}
                 y={bubbleY}
                 width={9}
@@ -260,26 +435,77 @@ export function OfficeCanvas({ width, height, onEvent, disabled, ref }: Props) {
   );
 }
 
-type PropLayerProps = {
+/** One frame of a looping animation; visible only on its turn. */
+function FrameImage({
+  image,
+  index,
+  count,
+  frameMs,
+  clock,
+  x = 0,
+  y = 0,
+  extraVisible,
+}: {
   image: SkImage;
-  propDepth: number;
-  vinnieDepth: SharedValue<number>;
-  /** True for the copy drawn before Vinnie. */
-  behindVinnie: boolean;
-};
-
-function PropLayer({ image, propDepth, vinnieDepth, behindVinnie }: PropLayerProps) {
-  const opacity = useDerivedValue(() => (vinnieDepth.value > propDepth === behindVinnie ? 1 : 0));
+  index: number;
+  count: number;
+  frameMs: number;
+  clock: SharedValue<number>;
+  x?: number;
+  y?: number;
+  extraVisible?: SharedValue<number>;
+}) {
+  const opacity = useDerivedValue(() => {
+    const onTurn = count === 1 || Math.floor(clock.value / frameMs) % count === index ? 1 : 0;
+    return extraVisible ? onTurn * extraVisible.value : onTurn;
+  });
   return (
     <Image
       image={image}
-      x={0}
-      y={0}
-      width={ROOM_W}
-      height={ROOM_H}
+      x={x}
+      y={y}
+      width={image.width()}
+      height={image.height()}
       sampling={PIXEL_SAMPLING}
       opacity={opacity}
     />
+  );
+}
+
+/**
+ * A sprite drawn both behind and in front of Vinnie; depth picks which copy shows,
+ * on the UI thread, so walking never needs a React re-render.
+ */
+function SpriteLayer({
+  sprite,
+  clock,
+  vinnieDepth,
+  behindVinnie,
+}: {
+  sprite: SceneSprite;
+  clock: SharedValue<number>;
+  vinnieDepth: SharedValue<number>;
+  behindVinnie: boolean;
+}) {
+  const visible = useDerivedValue<number>(() =>
+    vinnieDepth.value > sprite.depth === behindVinnie ? 1 : 0,
+  );
+  return (
+    <>
+      {sprite.frames.map((f, i) => (
+        <FrameImage
+          key={i}
+          image={img(f)}
+          index={i}
+          count={sprite.frames.length}
+          frameMs={sprite.frameMs ?? 1000}
+          clock={clock}
+          x={sprite.x}
+          y={sprite.y}
+          extraVisible={visible}
+        />
+      ))}
+    </>
   );
 }
 

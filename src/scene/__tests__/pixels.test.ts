@@ -1,7 +1,14 @@
 import { describe, expect, it } from '@jest/globals';
 
 import { drawLine, getPixel, hex, packSheet, spriteFromRows } from '../pixels';
-import { buildVinnieIdleSheet, IDLE_FRAMES, VINNIE_H, VINNIE_W } from '../sprites/vinnie';
+import {
+  ANIM_NAMES,
+  ANIMS,
+  buildVinnieSheet,
+  VINNIE_FRAME_COUNT,
+  VINNIE_H,
+  VINNIE_W,
+} from '../sprites/vinnie';
 
 describe('pixels', () => {
   const pal = { a: hex('#ff0000'), b: hex('#0000ff') };
@@ -33,14 +40,18 @@ describe('pixels', () => {
     expect(getPixel(s, 3, 2)).toEqual(pal.a);
   });
 
-  it('builds a Vinnie idle sheet with one frame per idle step', () => {
-    const sheet = buildVinnieIdleSheet();
-    expect(sheet.width).toBe(VINNIE_W * IDLE_FRAMES.length);
+  it('builds the Vinnie sheet, and every animation points at real frames', () => {
+    const sheet = buildVinnieSheet();
+    expect(sheet.width).toBe(VINNIE_W * VINNIE_FRAME_COUNT);
     expect(sheet.height).toBe(VINNIE_H);
-    // Feet stay planted while the upper body breathes.
-    const shoeRow = VINNIE_H - 1;
-    for (let i = 1; i < IDLE_FRAMES.length; i++) {
-      expect(getPixel(sheet, i * VINNIE_W + 1, shoeRow)).toEqual(getPixel(sheet, 1, shoeRow));
+    for (const name of ANIM_NAMES) {
+      for (const f of ANIMS[name].frames) expect(f).toBeLessThan(VINNIE_FRAME_COUNT);
     }
+    // Feet stay planted while idling: the shoe row matches across idle frames.
+    const shoe = VINNIE_H - 1;
+    const [a, b] = [ANIMS.idle.frames[0], ANIMS.idle.frames[2]];
+    expect(getPixel(sheet, b * VINNIE_W + 1, shoe)).toEqual(
+      getPixel(sheet, a * VINNIE_W + 1, shoe),
+    );
   });
 });
