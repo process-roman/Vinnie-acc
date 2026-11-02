@@ -45,6 +45,8 @@ export const SLOTS = {
   phone: { at: { gx: 5.05, gy: 2.55 }, anchor: { x: 3, y: 4 }, lift: DESK_TOP, on: 'desk' },
   catOnDesk: { at: { gx: 4.3, gy: 2.6 }, anchor: { x: 4, y: 4 }, lift: DESK_TOP, on: 'desk' },
   catOnFloor: { at: { gx: 6.7, gy: 2.6 }, anchor: { x: 3, y: 8 } },
+  catBed: { at: { gx: 6.7, gy: 2.6 }, anchor: { x: 6, y: 4 } },
+  catInBed: { at: { gx: 6.7, gy: 2.6 }, anchor: { x: 3, y: 8 }, lift: 2 },
   espresso: {
     at: { gx: 0.7, gy: 5.1 },
     anchor: { x: 4, y: 8 },

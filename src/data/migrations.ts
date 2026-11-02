@@ -65,6 +65,27 @@ export const MIGRATIONS: readonly string[] = [
     resolved_at INTEGER
   );
   `,
+  `
+  CREATE TABLE coin_tx (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    idempotency_key TEXT NOT NULL UNIQUE,
+    delta INTEGER NOT NULL,
+    reason TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE achievements (
+    id TEXT PRIMARY KEY,
+    progress INTEGER NOT NULL DEFAULT 0,
+    unlocked_at INTEGER
+  );
+
+  CREATE TABLE inventory (
+    item_id TEXT PRIMARY KEY,
+    equipped INTEGER NOT NULL DEFAULT 0,
+    bought_at INTEGER NOT NULL
+  );
+  `,
 ];
 
 export async function migrate(db: Db): Promise<void> {

@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Reply } from '@/domain/reaction/dialogue';
 import { VinnieAvatar } from '@/scene/VinnieAvatar';
 import { useCall } from '@/store/call';
+import { equippedBySlot } from '@/domain/shop';
 import { useGame } from '@/store/game';
 
 import { colors, radius, space } from './tokens';
@@ -43,6 +44,7 @@ function Call() {
   const { call, entry } = useCall((s) => s.current)!;
   const hangUp = useCall((s) => s.hangUp);
   const recordReply = useGame((s) => s.recordReply);
+  const outfit = useGame((s) => equippedBySlot(s.inventory).outfit);
   const [phase, setPhase] = useState<Phase>({ kind: 'ringing' });
   const [declines, setDeclines] = useState(0);
   const [answeredAt, setAnsweredAt] = useState<number | null>(null);
@@ -73,6 +75,7 @@ function Call() {
     setPhase({ kind: declines === 0 ? 'waitingToRetry' : 'realMature' });
   };
   const answer = () => {
+    useGame.getState().achievementEvent('answered');
     setAnsweredAt(Date.now());
     setPhase({ kind: 'talking', step: 0 });
   };
@@ -118,7 +121,7 @@ function Call() {
         <SafeAreaView style={styles.ringingInner}>
           <View style={styles.caller}>
             <View style={styles.avatarFrame}>
-              <VinnieAvatar size={120} />
+              <VinnieAvatar size={120} outfit={outfit} />
             </View>
             <Text style={styles.callerName}>Vinnie</Text>
             <Pulse>
@@ -173,7 +176,7 @@ function Call() {
             onPress={phase.kind === 'choosing' ? undefined : advance}
           >
             <View style={styles.speechAvatar}>
-              <VinnieAvatar size={44} />
+              <VinnieAvatar size={44} outfit={outfit} />
             </View>
             <Typed
               key={speech}

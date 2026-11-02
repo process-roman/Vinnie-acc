@@ -77,7 +77,17 @@ export function rasterizeWallLayer(paint: (p: WallPoint) => Rgba | null): PixelB
   return buf;
 }
 
-export function rasterizeRoom(): PixelBuffer {
+export type WallStyle = 'brick' | 'green_wallpaper';
+
+/** Striped green wallpaper above a wood wainscot (a shop item). */
+function wallpaper(u: number, v: number, shade: number): Rgba {
+  if (v < 12) return v === 11 ? hex('#3b2416') : shade ? hex('#5e3a22') : hex('#6e4429');
+  const stripe = Math.floor(u * 4) % 2 === 0;
+  if (shade) return stripe ? hex('#2f5a3d') : hex('#386b48');
+  return stripe ? hex('#3c7350') : hex('#478559');
+}
+
+export function rasterizeRoom(walls: WallStyle = 'brick'): PixelBuffer {
   const buf = createBuffer(ROOM_W, ROOM_H);
   const o = ROOM_ORIGIN;
   for (let y = 0; y < ROOM_H; y++) {
@@ -92,12 +102,69 @@ export function rasterizeRoom(): PixelBuffer {
     const c =
       v >= WALL_H - 2 || v < 2
         ? C.trim
-        : side === 'right'
-          ? brick(u, v, C.brickR, C.mortarR)
-          : brick(u, v, C.brickL, C.mortarL);
+        : walls === 'green_wallpaper'
+          ? wallpaper(u, v, side === 'left' ? 1 : 0)
+          : side === 'right'
+            ? brick(u, v, C.brickR, C.mortarR)
+            : brick(u, v, C.brickL, C.mortarL);
     setPixel(buf, x, y, c);
   });
   return buf;
+}
+
+/** A Persian rug lying flat in the middle of the floor (a shop item). */
+export function rasterizeRug(): PixelBuffer {
+  const buf = createBuffer(ROOM_W, ROOM_H);
+  const f = { gx: 2.6, gy: 4.0, w: 3.4, d: 2.0 };
+  const red = hex('#8e2b2b');
+  const cream = hex('#e8d8b0');
+  const navy = hex('#2e3f6b');
+  const gold = hex('#c9a227');
+  for (let y = 0; y < ROOM_H; y++) {
+    for (let x = 0; x < ROOM_W; x++) {
+      const g = screenToGrid({ x: x + 0.5, y: y + 0.5 }, ROOM_ORIGIN);
+      const a = g.gx - f.gx;
+      const b = g.gy - f.gy;
+      if (a < 0 || b < 0 || a >= f.w || b >= f.d) continue;
+      const edge = Math.min(a, b, f.w - a, f.d - b);
+      let c = red;
+      if (edge < 0.12) c = gold;
+      else if (edge < 0.3) c = navy;
+      else if (Math.abs(a - f.w / 2) / (f.w / 2) + Math.abs(b - f.d / 2) / (f.d / 2) < 0.55) {
+        c = Math.abs(a - f.w / 2) + Math.abs(b - f.d / 2) < 0.3 ? navy : cream;
+      }
+      setPixel(buf, x, y, c);
+    }
+  }
+  return buf;
+}
+
+const DOLLAR = ['..x..', '.xxxx', 'x.x..', '.xxx.', '..x.x', 'xxxx.', '..x..'];
+
+/** A neon "$" on the right wall, left of the window (a shop item). */
+export function rasterizeNeonSign(lit: boolean): PixelBuffer {
+  const board = hex('#2b1d16');
+  const neon = lit ? hex('#ff4fa3') : hex('#7a3a5a');
+  // Pink light bleeding onto the dark board around the tube.
+  const glow = hex('#6b2a4a');
+  const u0 = 1.0;
+  const u1 = 2.6;
+  const v0 = 24;
+  const v1 = 38;
+  return rasterizeWallLayer(({ side, u, v }) => {
+    if (side !== 'right' || u < u0 || u >= u1 || v < v0 || v >= v1) return null;
+    // Glyph pixel coordinates: 5 wide, 7 tall, centred on the board.
+    const gx = Math.floor((u - u0) * 8) - 4;
+    const gy = v1 - 1 - v - 3;
+    const on = gy >= 0 && gy < DOLLAR.length && gx >= 0 && gx < 5 && DOLLAR[gy][gx] === 'x';
+    if (on) return neon;
+    const near =
+      lit &&
+      [-1, 0, 1].some((dy) =>
+        [-1, 0, 1].some((dx) => DOLLAR[gy + dy]?.[gx + dx] === 'x' && gx + dx >= 0 && gx + dx < 5),
+      );
+    return near ? glow : board;
+  });
 }
 
 // --- Window (right wall): shows the budget as weather ------------------------------

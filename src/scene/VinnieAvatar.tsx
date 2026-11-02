@@ -10,8 +10,8 @@ import { buildVinnieSheet, VINNIE_W } from './sprites/vinnie';
 /** Rows from the top of the sprite: hair down to the collar. */
 const CROP_H = 11;
 
-export function VinnieAvatar({ size }: { size: number }) {
-  const image = useMemo(() => toSkImage(buildVinnieSheet()), []);
+export function VinnieAvatar({ size, outfit }: { size: number; outfit?: string }) {
+  const image = useMemo(() => toSkImage(buildVinnieSheet(outfit)), [outfit]);
   // Whole device pixels per art pixel, like the office.
   const ratio = PixelRatio.get();
   const scale = Math.max(1, Math.floor((size * ratio) / VINNIE_W)) / ratio;

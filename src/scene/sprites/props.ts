@@ -212,3 +212,32 @@ export const STEAM_FRAMES = [
   ['.v...', '..v..', '...v.', '...v.', '..v..', '.v...'],
   ['...v.', '..v..', '.v...', '.v...', '..v..', '..v..'],
 ].map((rows) => spriteFromRows(rows, STEAM));
+
+// --- Shop items -------------------------------------------------------------------
+
+export const CAT_BED = spriteFromRows(
+  ['..bbbbbbbb..', '.bppppppppb.', 'bppPPPPPPppb', 'bbppppppppbb', '.bbbbbbbbbb.'],
+  { b: hex('#6b3d7a'), p: hex('#c99ad6'), P: hex('#e6c6ee') },
+);
+
+export const DELUXE_ESPRESSO = spriteFromRows(
+  [
+    'RRRRRRRR',
+    'RSSSSSSR',
+    'RSgSSySR',
+    'RSSSSSSR',
+    'RRRkkRRR',
+    '...kk...',
+    '........',
+    '..qqqq..',
+    'SSSSSSSS',
+  ],
+  {
+    R: hex('#b3262b'),
+    S: hex('#d9dde3'),
+    g: hex('#4fae6a'),
+    y: hex('#e8c547'),
+    k: hex('#1f1f1f'),
+    q: hex('#fffdf6'),
+  },
+);

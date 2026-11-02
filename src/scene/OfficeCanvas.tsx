@@ -25,6 +25,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import type { PropTarget } from '@/domain/propLines';
 import type { RoomState } from '@/domain/roomState';
+import type { ItemSlot } from '@/domain/shop';
 
 import { depth, gridToScreen, GridPoint, Point, screenToGrid } from './iso';
 import { SceneSprite, slotDepth, slotPosition, SLOTS } from './layout';
@@ -34,7 +35,9 @@ import {
   rasterizeBox,
   rasterizeLightning,
   rasterizePoster,
+  rasterizeNeonSign,
   rasterizeRoom,
+  rasterizeRug,
   rasterizeWindow,
   RAIN_FRAMES,
   ROOM_H,
@@ -47,6 +50,8 @@ import { PIXEL_SAMPLING, toSkImage } from './skiaImage';
 import { buildAlertBubble } from './sprites/bubble';
 import {
   buildPlant,
+  CAT_BED,
+  DELUXE_ESPRESSO,
   buildReceiptPile,
   CAT_SITTING,
   CAT_SLEEPING,
@@ -96,6 +101,8 @@ type Props = {
   width: number;
   height: number;
   room: RoomState;
+  /** Equipped shop items by slot. */
+  cosmetics?: Partial<Record<ItemSlot, string>>;
   onTap?: (t: TapTarget) => void;
   /** Ignore taps, e.g. while a reaction is playing. */
   disabled?: boolean;
@@ -124,7 +131,10 @@ const buf = (key: string, make: () => PixelBuffer) => {
 
 const clampToRoom = (n: number) => Math.min(ROOM_TILES - 0.4, Math.max(0.4, n));
 
-function buildSprites(room: RoomState): SceneSprite[] {
+function buildSprites(
+  room: RoomState,
+  cosmetics: Partial<Record<ItemSlot, string>>,
+): SceneSprite[] {
   const sprites: SceneSprite[] = PROPS.map((p) => ({
     key: p.id,
     frames: [buf(`box:${p.id}`, () => rasterizeBox(p.footprint, p.heightPx, p.colors))],
@@ -156,17 +166,21 @@ function buildSprites(room: RoomState): SceneSprite[] {
   );
   place('lamp', SLOTS.lamp, [LAMP], 0);
   place('phone', SLOTS.phone, [PHONE], 1, { tap: 'phone' });
-  place('espresso', SLOTS.espresso, [ESPRESSO], 0, { tap: 'espresso' });
+  const machine = cosmetics.espresso === 'deluxe_espresso' ? DELUXE_ESPRESSO : ESPRESSO;
+  place('espresso', SLOTS.espresso, [machine], 0, { tap: 'espresso' });
+  if (cosmetics.cat === 'cat_bed') place('catBed', SLOTS.catBed, [CAT_BED], 0, { tap: 'cat' });
   if (room.espressoSteaming) place('steam', SLOTS.steam, STEAM_FRAMES, 1, { frameMs: 220 });
   if (room.cat === 'sleeping') {
     place('cat', SLOTS.catOnDesk, CAT_SLEEPING, 2, { frameMs: 900, tap: 'cat' });
   } else if (room.cat === 'sitting') {
-    place('cat', SLOTS.catOnFloor, CAT_SITTING, 0, { frameMs: 700, tap: 'cat' });
+    // With a bed, she sits in it.
+    const slot = cosmetics.cat === 'cat_bed' ? SLOTS.catInBed : SLOTS.catOnFloor;
+    place('cat', slot, CAT_SITTING, 1, { frameMs: 700, tap: 'cat' });
   }
   return sprites.sort((a, b) => a.depth - b.depth);
 }
 
-export function OfficeCanvas({ width, height, room, onTap, disabled, ref }: Props) {
+export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disabled, ref }: Props) {
   // Whole device pixels per art pixel keeps every pixel the same size on screen.
   const ratio = PixelRatio.get();
   const fit = Math.min((width * ratio) / ROOM_W, (height * ratio) / ROOM_H);
@@ -176,16 +190,20 @@ export function OfficeCanvas({ width, height, room, onTap, disabled, ref }: Prop
   const offsetX = (width - canvasW) / 2;
   const offsetY = (height - canvasH) / 2;
 
-  const statics = useMemo(() => {
-    const vinnie = buildVinnieSheet();
-    return {
-      room: img(buf('room', rasterizeRoom)),
-      vinnie: img(vinnie),
-      vinnieSheetW: vinnie.width,
+  const statics = useMemo(
+    () => ({
       bubble: img(buildAlertBubble()),
       lightning: img(buf('lightning', rasterizeLightning)),
-    };
-  }, []);
+      rug: img(buf('rug', rasterizeRug)),
+      neonOn: img(buf('neon:on', () => rasterizeNeonSign(true))),
+      neonOff: img(buf('neon:off', () => rasterizeNeonSign(false))),
+    }),
+    [],
+  );
+  const walls = cosmetics.walls === 'green_wallpaper' ? 'green_wallpaper' : 'brick';
+  const roomImage = img(buf(`room:${walls}`, () => rasterizeRoom(walls)));
+  const outfit = cosmetics.outfit ?? '';
+  const vinnieSheet = buf(`vinnie:${outfit}`, () => buildVinnieSheet(outfit));
 
   const windowFrames = useMemo(() => {
     const n = room.weather === 'rain' || room.weather === 'storm' ? RAIN_FRAMES : 1;
@@ -194,7 +212,7 @@ export function OfficeCanvas({ width, height, room, onTap, disabled, ref }: Prop
     );
   }, [room.weather]);
   const poster = buf(`poster:${room.poster}`, () => rasterizePoster(room.poster));
-  const sprites = useMemo(() => buildSprites(room), [room]);
+  const sprites = useMemo(() => buildSprites(room, cosmetics), [room, cosmetics]);
 
   const clock = useSharedValue(0);
   const fps = useSharedValue(0);
@@ -235,6 +253,11 @@ export function OfficeCanvas({ width, height, room, onTap, disabled, ref }: Prop
   });
   const bubbleX = useDerivedValue(() => vx.value + 2);
   const bubbleY = useDerivedValue(() => vy.value - 11);
+  // Cheap neon: lit most of the time, with the odd flicker.
+  const neon = useDerivedValue(() => {
+    const t = clock.value % 5300;
+    return t > 4900 && t < 4980 ? 0 : t > 5040 && t < 5090 ? 0 : 1;
+  });
   const flash = useDerivedValue(() => {
     const t = clock.value % LIGHTNING_EVERY_MS;
     return t < 90 || (t > 180 && t < 240) ? 1 : 0;
@@ -367,13 +390,44 @@ export function OfficeCanvas({ width, height, room, onTap, disabled, ref }: Prop
         <Canvas style={{ width: canvasW, height: canvasH }}>
           <Group transform={[{ scale }]}>
             <Image
-              image={statics.room}
+              image={roomImage}
               x={0}
               y={0}
               width={ROOM_W}
               height={ROOM_H}
               sampling={PIXEL_SAMPLING}
             />
+            {cosmetics.floor === 'rug' && (
+              <Image
+                image={statics.rug}
+                x={0}
+                y={0}
+                width={ROOM_W}
+                height={ROOM_H}
+                sampling={PIXEL_SAMPLING}
+              />
+            )}
+            {cosmetics.sign === 'neon_sign' && (
+              <>
+                <Image
+                  image={statics.neonOff}
+                  x={0}
+                  y={0}
+                  width={ROOM_W}
+                  height={ROOM_H}
+                  sampling={PIXEL_SAMPLING}
+                />
+                <Image
+                  image={statics.neonOn}
+                  x={0}
+                  y={0}
+                  width={ROOM_W}
+                  height={ROOM_H}
+                  sampling={PIXEL_SAMPLING}
+                  opacity={neon}
+                />
+              </>
+            )}
             {windowFrames.map((f, i) => (
               <FrameImage
                 key={`win${i}`}
@@ -407,10 +461,10 @@ export function OfficeCanvas({ width, height, room, onTap, disabled, ref }: Prop
             <Group clip={frameClip}>
               <Group transform={flip}>
                 <Image
-                  image={statics.vinnie}
+                  image={img(vinnieSheet)}
                   x={sheetX}
                   y={vy}
-                  width={statics.vinnieSheetW}
+                  width={vinnieSheet.width}
                   height={VINNIE_H}
                   sampling={PIXEL_SAMPLING}
                 />

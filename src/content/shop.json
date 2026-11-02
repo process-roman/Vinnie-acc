@@ -1,0 +1,83 @@
+{
+  "gifts": [
+    {
+      "id": "espresso_shot",
+      "name": "Espresso shot",
+      "price": 10,
+      "mood": 6,
+      "line": "Espresso? You know me. Don't tell anyone you know me."
+    },
+    {
+      "id": "newspaper",
+      "name": "Morning paper",
+      "price": 12,
+      "mood": 6,
+      "line": "A newspaper! A real one! Paper you can hold! Thank you, kid."
+    },
+    {
+      "id": "cannoli",
+      "name": "Cannoli",
+      "price": 20,
+      "mood": 10,
+      "line": "Cannoli. You shouldn't have. You really shouldn't, it was twenty coins."
+    },
+    {
+      "id": "pizza",
+      "name": "Slice of pizza",
+      "price": 30,
+      "mood": 14,
+      "line": "A slice! Plain cheese! You get me. Nobody gets me."
+    }
+  ],
+  "items": [
+    {
+      "id": "rug",
+      "name": "Persian rug",
+      "price": 60,
+      "slot": "floor",
+      "line": "A rug! It really ties the room together."
+    },
+    {
+      "id": "cat_bed",
+      "name": "Bed for Deductible",
+      "price": 50,
+      "slot": "cat",
+      "line": "A bed for Deductible. She'll ignore it for a week, then never leave it."
+    },
+    {
+      "id": "neon_sign",
+      "name": "Neon \"$\" sign",
+      "price": 80,
+      "slot": "sign",
+      "line": "Neon! Classy. Very 1987. I love it."
+    },
+    {
+      "id": "deluxe_espresso",
+      "name": "Deluxe espresso machine",
+      "price": 90,
+      "slot": "espresso",
+      "line": "Look at her. Chrome. Red. Beautiful. Paid for in full, right?"
+    },
+    {
+      "id": "green_wallpaper",
+      "name": "Green wallpaper",
+      "price": 120,
+      "slot": "walls",
+      "line": "Wallpaper. Like a real office. Like a real accountant. Which I am."
+    },
+    {
+      "id": "blue_tie",
+      "name": "Blue tie",
+      "price": 40,
+      "slot": "outfit",
+      "line": "Blue tie? Okay. It's a power move. I'll allow it."
+    },
+    {
+      "id": "sunday_vest",
+      "name": "Sunday vest",
+      "price": 70,
+      "slot": "outfit",
+      "line": "The Sunday vest. My mother would cry. Good tears."
+    }
+  ]
+}

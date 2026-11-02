@@ -1,0 +1,94 @@
+[
+  {
+    "id": "first_receipt",
+    "name": "First Receipt",
+    "description": "Log your first expense.",
+    "coins": 25,
+    "goal": 1
+  },
+  {
+    "id": "answered",
+    "name": "Picked Up",
+    "description": "Answer Vinnie's call.",
+    "coins": 30,
+    "goal": 1
+  },
+  {
+    "id": "glass",
+    "name": "Glass Jaw",
+    "description": "Make Vinnie punch the screen.",
+    "coins": 20,
+    "goal": 1
+  },
+  {
+    "id": "apology",
+    "name": "Honest Word",
+    "description": "Tell him \"Yeah… my bad.\"",
+    "coins": 10,
+    "goal": 1
+  },
+  {
+    "id": "paper_trail",
+    "name": "Paper Trail",
+    "description": "Track on 5 different days.",
+    "coins": 30,
+    "goal": 5
+  },
+  {
+    "id": "first_gift",
+    "name": "Peace Offering",
+    "description": "Buy Vinnie his first gift.",
+    "coins": 10,
+    "goal": 1
+  },
+  {
+    "id": "seven_sanity",
+    "name": "Seven Days of Sanity",
+    "description": "Track 7 days in a row.",
+    "coins": 50,
+    "goal": 7
+  },
+  {
+    "id": "sitdown",
+    "name": "The Sit-Down",
+    "description": "Complete a weekly review.",
+    "coins": 20,
+    "goal": 1
+  },
+  {
+    "id": "saver",
+    "name": "Into the Vault",
+    "description": "Log your first savings.",
+    "coins": 20,
+    "goal": 1
+  },
+  {
+    "id": "walked_away",
+    "name": "Walked Away",
+    "description": "Log your first \"Skipped it\".",
+    "coins": 20,
+    "goal": 1
+  },
+  {
+    "id": "repaired",
+    "name": "Good as New",
+    "description": "Get the glass fully repaired.",
+    "coins": 30,
+    "goal": 1
+  },
+  {
+    "id": "under_control",
+    "name": "Under Control",
+    "description": "Finish a month within budget.",
+    "coins": 100,
+    "goal": 1
+  },
+  {
+    "id": "secret",
+    "name": "Most Important Meal",
+    "description": "Something about breakfast.",
+    "coins": 25,
+    "goal": 1,
+    "secret": true
+  }
+]

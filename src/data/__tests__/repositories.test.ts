@@ -15,6 +15,16 @@ import {
 import { getCharacter, resetCharacter, saveCharacter } from '../repositories/character';
 import { insertLedger, listLedger, resolveLedger } from '../repositories/ledger';
 import { categoryForMerchant, learnMerchant } from '../repositories/merchants';
+import {
+  grantCoins,
+  listAchievements,
+  listCoinTx,
+  listInventory,
+  saveAchievements,
+  saveInventory,
+  spendCoins,
+  walletBalance,
+} from '../repositories/progression';
 import { getSettings, updateSettings } from '../repositories/settings';
 import { createTestDb } from './testDb';
 
@@ -41,7 +51,7 @@ describe('migrations', () => {
   it('are idempotent', async () => {
     await migrate(db);
     const row = await db.get<{ user_version: number }>('PRAGMA user_version');
-    expect(row?.user_version).toBe(2);
+    expect(row?.user_version).toBe(3);
   });
 });
 
@@ -224,5 +234,49 @@ describe('promise ledger', () => {
     await resolveLedger(db, [{ id: 'p1', resolved: 'broken' }], 20);
     await resolveLedger(db, [{ id: 'p1', resolved: 'kept' }], 30);
     expect(await listLedger(db)).toEqual([{ ...p, resolved: 'broken', resolvedAt: 20 }]);
+  });
+});
+
+describe('coins, achievements, inventory', () => {
+  it('keeps the wallet equal to the sum of grants, ignoring repeated keys', async () => {
+    await grantCoins(db, { key: 'day:2026-11-01', delta: 5, reason: 'Tracking day' }, 1);
+    await grantCoins(db, { key: 'day:2026-11-01', delta: 5, reason: 'Tracking day' }, 2);
+    await grantCoins(db, { key: 'ach:first_receipt', delta: 25, reason: 'First Receipt' }, 3);
+    expect(await walletBalance(db)).toBe(30);
+    expect((await listCoinTx(db)).map((g) => g.key)).toEqual([
+      'day:2026-11-01',
+      'ach:first_receipt',
+    ]);
+  });
+
+  it('spends atomically and never goes below zero', async () => {
+    await grantCoins(db, { key: 'g', delta: 20, reason: 'x' }, 1);
+    expect(await spendCoins(db, { key: 'buy:1', delta: -30, reason: 'Pizza' }, 2)).toBe(false);
+    expect(await walletBalance(db)).toBe(20);
+    expect(await spendCoins(db, { key: 'buy:2', delta: -20, reason: 'Cannoli' }, 3)).toBe(true);
+    expect(await spendCoins(db, { key: 'buy:2', delta: -20, reason: 'Cannoli' }, 4)).toBe(false);
+    expect(await walletBalance(db)).toBe(0);
+  });
+
+  it('saves achievement progress and unlocks', async () => {
+    await saveAchievements(db, { paper_trail: { progress: 3, unlockedAt: null } });
+    await saveAchievements(db, { paper_trail: { progress: 5, unlockedAt: 99 } });
+    expect(await listAchievements(db)).toEqual({ paper_trail: { progress: 5, unlockedAt: 99 } });
+  });
+
+  it('keeps bought items across restarts', async () => {
+    await saveInventory(db, [{ itemId: 'rug', equipped: true }], 1);
+    await saveInventory(
+      db,
+      [
+        { itemId: 'rug', equipped: false },
+        { itemId: 'blue_tie', equipped: true },
+      ],
+      2,
+    );
+    expect(await listInventory(db)).toEqual([
+      { itemId: 'rug', equipped: false },
+      { itemId: 'blue_tie', equipped: true },
+    ]);
   });
 });

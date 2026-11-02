@@ -2,7 +2,7 @@
 // sleeves, suspenders, crooked red tie, calculator watch. Every pose is the base
 // sprite with some rows replaced. Final art replaces this sheet.
 
-import { createBuffer, hex, packSheet, PixelBuffer, spriteFromRows } from '../pixels';
+import { createBuffer, hex, packSheet, PixelBuffer, Rgba, spriteFromRows } from '../pixels';
 
 const PALETTE = {
   h: hex('#2b1d16'), // hair, brows, moustache
@@ -229,8 +229,31 @@ export const ANIMS: Record<AnimName, Anim> = {
 
 export const ANIM_NAMES = Object.keys(ANIMS) as AnimName[];
 
-export function buildVinnieSheet(): PixelBuffer {
-  return packSheet(FRAMES);
+/** Outfits from the shop are colour swaps on the base palette. */
+const OUTFITS: Record<string, [keyof typeof PALETTE, Rgba][]> = {
+  blue_tie: [['r', hex('#2f5fb3')]],
+  sunday_vest: [
+    ['b', hex('#3d5a3a')],
+    ['g', hex('#4f7350')],
+    ['r', hex('#c9a227')],
+  ],
+};
+
+function recolor(buf: PixelBuffer, from: Rgba, to: Rgba): void {
+  const d = buf.data;
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i] === from[0] && d[i + 1] === from[1] && d[i + 2] === from[2] && d[i + 3] > 0) {
+      d[i] = to[0];
+      d[i + 1] = to[1];
+      d[i + 2] = to[2];
+    }
+  }
+}
+
+export function buildVinnieSheet(outfit?: string): PixelBuffer {
+  const sheet = packSheet(FRAMES);
+  for (const [key, to] of OUTFITS[outfit ?? ''] ?? []) recolor(sheet, PALETTE[key], to);
+  return sheet;
 }
 
 /** Number of frames in the sheet (for tests and the sheet width). */

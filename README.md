@@ -25,10 +25,9 @@ npm run lint
 
 ## Status
 
-**M4 (Vinnie's brain)** — Vinnie has a mood (shown in the header) that receipts, call replies
-and declined calls move, and that drifts back toward neutral over time. Meltdowns respect
-cooldowns (glass every 48 h, calls every 72 h) and a 3-day honeymoon for new users. He keeps a
-promise ledger: break "won't happen again" within a week and he calls you on it; keep it for
-a week and he notices. The crack is saved and only heals as you log on later days without a
-meltdown, one level per day. 120 dialogue lines. Everything from M1–M3 is still here; tap
-the "Vinnie" title for playtest controls.
+**M5 (progression)** — coins for tracking days, saving and walking away, streaks and
+achievements, kept as an idempotent ledger (same-day deletes give them back). 13 achievements
+with an unlock toast (one secret). The 🪙 button opens Appease Vinnie: gifts lift his mood,
+office items (rug, cat bed, neon sign, deluxe espresso machine, wallpaper, outfits) appear in
+the room and stay. Everything from M1–M4 is still here; tap the "Vinnie" title for playtest
+controls (including +100 coins).

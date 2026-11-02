@@ -23,8 +23,27 @@ import {
   updateEntry,
 } from '@/data/repositories/entries';
 import { clearLedger, insertLedger, listLedger, resolveLedger } from '@/data/repositories/ledger';
+import {
+  clearProgression,
+  grantCoins,
+  listAchievements,
+  listCoinTx,
+  listInventory,
+  saveAchievements,
+  saveInventory,
+  spendCoins,
+} from '@/data/repositories/progression';
 import { categoryForMerchant, learnMerchant } from '@/data/repositories/merchants';
 import { getSettings, setInstalledAt, updateSettings } from '@/data/repositories/settings';
+import {
+  Achievement,
+  AchievementEvent,
+  AchievementState,
+  derivedProgress,
+  lastMonthUnderControl,
+  updateAchievements,
+} from '@/domain/achievements';
+import { balance, CoinGrant, grantsForEntry, reversalForDeletedEntry } from '@/domain/coins';
 import { Entry, toDateKey, toMonthKey } from '@/domain/entries';
 import { Currency } from '@/domain/money';
 import { clampMood, DECLINE_MOOD, driftMood, MOOD_START, REPLY_MOOD } from '@/domain/mood';
@@ -34,6 +53,7 @@ import { HONEYMOON_MS } from '@/domain/reaction/escalation';
 import { keptPromises, LedgerEntry, LedgerEvent } from '@/domain/reaction/ledger';
 import { NewEntry, planReaction, Reaction } from '@/domain/reaction/react';
 import { crackWorse, repairDue, repairOnce } from '@/domain/repair';
+import { canBuy, equip, GIFTS, itemById, Owned } from '@/domain/shop';
 
 export type { CharacterState, StoredEntry };
 
@@ -69,6 +89,20 @@ type GameState = {
   ledger: LedgerEntry[];
   /** A pre-filled receipt waiting to be opened (from a quick-add link). */
   prefill: QuickAdd | null;
+  coinTx: CoinGrant[];
+  achievements: AchievementState;
+  inventory: Owned[];
+  /** Achievement unlocks waiting to be shown, oldest first. */
+  toasts: Achievement[];
+
+  /** Counts an achievement event (a call answered, a punch, a gift, a repair...). */
+  achievementEvent(ev: AchievementEvent): void;
+  dismissToast(): void;
+  /** Buys a gift or office item. Returns Vinnie's thank-you line, or null if it can't. */
+  buy(id: string): string | null;
+  toggleEquip(id: string): void;
+  /** Playtests: free coins. */
+  grantDebugCoins(n: number): void;
 
   init(): Promise<void>;
   logEntry(input: LogInput, now?: Date): { entry: StoredEntry; reaction: Reaction };
@@ -144,6 +178,30 @@ export const useGame = create<GameState>()((set, get) => {
     write((d) => resolveLedger(d, events, now));
   };
 
+  /** Applies coin grants whose keys haven't been used. */
+  const grant = (grants: CoinGrant[]) => {
+    const used = new Set(get().coinTx.map((g) => g.key));
+    const fresh = grants.filter((g) => !used.has(g.key));
+    if (!fresh.length) return;
+    set((s) => ({ coinTx: [...s.coinTx, ...fresh] }));
+    const now = Date.now();
+    write(async (d) => {
+      for (const g of fresh) await grantCoins(d, g, now);
+    });
+  };
+
+  /** Re-checks achievements, pays out new unlocks and queues their toasts. */
+  const checkAchievements = (events: Partial<Record<AchievementEvent, number>> = {}) => {
+    const { state, unlocked } = updateAchievements(
+      get().achievements,
+      { ...derivedProgress(get().entries), ...events },
+      Date.now(),
+    );
+    set((s) => ({ achievements: state, toasts: [...s.toasts, ...unlocked] }));
+    grant(unlocked.map((a) => ({ key: `ach:${a.id}`, delta: a.coins, reason: a.name })));
+    write((d) => saveAchievements(d, state));
+  };
+
   return {
     ready: false,
     entries: [],
@@ -156,6 +214,10 @@ export const useGame = create<GameState>()((set, get) => {
     character: FRESH_CHARACTER(Date.now()),
     ledger: [],
     prefill: null,
+    coinTx: [],
+    achievements: {},
+    inventory: [],
+    toasts: [],
 
     init() {
       // Safe to call from several places (root layout, quick-add route): loads once.
@@ -183,7 +245,14 @@ export const useGame = create<GameState>()((set, get) => {
           installedAt: settings.createdAt,
           character,
           ledger: await listLedger(db),
+          coinTx: await listCoinTx(db),
+          achievements: await listAchievements(db),
+          inventory: await listInventory(db),
         });
+        // A month that just closed within budget earns "Under Control".
+        const prevMonth = toMonthKey(new Date(now.getFullYear(), now.getMonth() - 1, 1));
+        const goodMonth = lastMonthUnderControl(get().entries, await getLimit(db, prevMonth), now);
+        checkAchievements(goodMonth ? { under_control: 1 } : {});
       })();
       return loading;
     },
@@ -232,6 +301,8 @@ export const useGame = create<GameState>()((set, get) => {
           await learnMerchant(d, input.description, input.category, entry.createdAt);
         }
       });
+      grant(grantsForEntry(entry, s.entries, new Set(get().coinTx.map((g) => g.key))));
+      checkAchievements();
       return { entry, reaction };
     },
 
@@ -249,8 +320,12 @@ export const useGame = create<GameState>()((set, get) => {
 
     deleteEntry(id) {
       const now = Date.now();
+      const entry = get().entries.find((e) => e.id === id);
       set((s) => ({ entries: s.entries.filter((e) => e.id !== id) }));
       write((d) => removeEntry(d, id, now));
+      // Same-day deletes (and Undo) take back what that entry earned.
+      const back = entry && reversalForDeletedEntry(entry, get().coinTx, toDateKey(new Date(now)));
+      if (back) grant([back]);
     },
 
     removeExamples() {
@@ -273,6 +348,7 @@ export const useGame = create<GameState>()((set, get) => {
       set((s) => ({ ledger: [...s.ledger, l] }));
       write((d) => insertLedger(d, l));
       setCharacter({ mood: clampMood(get().character.mood + (REPLY_MOOD[tag] ?? 0)) });
+      if (tag === 'admit') get().achievementEvent('apology');
     },
 
     declined() {
@@ -292,6 +368,7 @@ export const useGame = create<GameState>()((set, get) => {
         // from the same spot.
         ...(c.crackLevel === 0 ? { crackSeed: Math.floor(Math.random() * 1e9), impact } : {}),
       });
+      get().achievementEvent('glass');
     },
 
     callPlaced() {
@@ -308,12 +385,58 @@ export const useGame = create<GameState>()((set, get) => {
       if (!repairDue(crack, get().entries, now)) return false;
       const fixed = repairOnce(crack, now);
       setCharacter({ crackLevel: fixed.level, lastRepairDay: fixed.lastRepairDay });
+      if (fixed.level === 0) get().achievementEvent('repaired');
       return true;
     },
 
     repairNow() {
-      const c = get().character;
-      setCharacter({ crackLevel: Math.max(0, c.crackLevel - 1) as CharacterState['crackLevel'] });
+      const level = Math.max(0, get().character.crackLevel - 1) as CharacterState['crackLevel'];
+      setCharacter({ crackLevel: level });
+      if (level === 0) get().achievementEvent('repaired');
+    },
+
+    achievementEvent(ev) {
+      const cur = get().achievements[ev]?.progress ?? 0;
+      checkAchievements({ [ev]: cur + 1 });
+    },
+
+    dismissToast() {
+      set((s) => ({ toasts: s.toasts.slice(1) }));
+    },
+
+    buy(id) {
+      const s = get();
+      const coins = balance(s.coinTx);
+      const check = canBuy(id, coins, s.inventory);
+      if (!check.ok) return null;
+      const now = Date.now();
+      const spend: CoinGrant = { key: `buy:${id}:${now}`, delta: -check.cost, reason: id };
+      set({ coinTx: [...s.coinTx, spend] });
+      // The database refuses the spend if the balance changed underneath; it's atomic.
+      write((d) => spendCoins(d, spend, now));
+      const gift = GIFTS.find((g) => g.id === id);
+      if (gift) {
+        // Gifts lift his mood. They never repair the glass.
+        setCharacter({ mood: clampMood(s.character.mood + gift.mood) });
+        get().achievementEvent('first_gift');
+        return gift.line;
+      }
+      const inventory = equip([...s.inventory, { itemId: id, equipped: false }], id, true);
+      set({ inventory });
+      write((d) => saveInventory(d, inventory, now));
+      return itemById(id)?.line ?? null;
+    },
+
+    toggleEquip(id) {
+      const owned = get().inventory.find((o) => o.itemId === id);
+      if (!owned) return;
+      const inventory = equip(get().inventory, id, !owned.equipped);
+      set({ inventory });
+      write((d) => saveInventory(d, inventory, Date.now()));
+    },
+
+    grantDebugCoins(n) {
+      grant([{ key: `debug:${Date.now()}`, delta: n, reason: 'Playtest' }]);
     },
 
     collectKeptPromises(now = new Date()) {
@@ -388,9 +511,14 @@ export const useGame = create<GameState>()((set, get) => {
         recentLineIds: [],
         ledger: [],
         character: FRESH_CHARACTER(now),
+        coinTx: [],
+        achievements: {},
+        inventory: [],
+        toasts: [],
       });
       write(async (d) => {
         await clearEntries(d);
+        await clearProgression(d);
         await clearBudgets(d);
         await clearLedger(d);
         await resetCharacter(d, now);

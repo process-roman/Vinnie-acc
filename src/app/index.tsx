@@ -13,7 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import callbacks from '@/content/callbacks.json';
 import { getCategory } from '@/domain/categories';
-import { Entry, monthSpentMinor } from '@/domain/entries';
+import { balance } from '@/domain/coins';
+import { Entry, monthSpentMinor, toDateKey } from '@/domain/entries';
 import { formatMoney } from '@/domain/money';
 import { pickPropLine, PropTarget } from '@/domain/propLines';
 import { QuickChip, quickChips } from '@/domain/quickChips';
@@ -22,6 +23,7 @@ import { fillPlaceholders, Heat } from '@/domain/reaction/dialogue';
 import { Reaction } from '@/domain/reaction/react';
 import { Tier } from '@/domain/reaction/tier';
 import { roomState } from '@/domain/roomState';
+import { equippedBySlot } from '@/domain/shop';
 import { Point } from '@/scene/iso';
 import { CAMERA_SPOT, OfficeCanvas, OfficeCanvasHandle, TapTarget } from '@/scene/OfficeCanvas';
 import { Waypoint, WAYPOINTS } from '@/scene/room';
@@ -31,6 +33,7 @@ import { useFx } from '@/store/fx';
 import { LogInput, StoredEntry, useGame } from '@/store/game';
 import { BudgetSheet, HistorySheet } from '@/ui/LedgerSheets';
 import { ReceiptSheet, ReceiptValues } from '@/ui/ReceiptSheet';
+import { ShopSheet } from '@/ui/ShopSheet';
 import { SpeechBubble } from '@/ui/SpeechBubble';
 import { colors, radius, space } from '@/ui/tokens';
 
@@ -90,6 +93,7 @@ type OpenSheet =
   | { kind: 'edit'; entry: StoredEntry }
   | { kind: 'history' }
   | { kind: 'budget' }
+  | { kind: 'shop' }
   | null;
 type Undo = { id: string; label: string };
 
@@ -109,6 +113,9 @@ function Office() {
   const prefill = useGame((s) => s.prefill);
   const mood = useGame((s) => s.character.mood);
   const crackLevel = useGame((s) => s.character.crackLevel);
+  const coins = useGame((s) => balance(s.coinTx));
+  const inventory = useGame((s) => s.inventory);
+  const cosmetics = useMemo(() => equippedBySlot(inventory), [inventory]);
   const game = useGame.getState;
 
   const office = useRef<OfficeCanvasHandle>(null);
@@ -258,18 +265,28 @@ function Office() {
     }
   };
 
-  // A week without the thing he made you promise to quit: he noticed.
+  // On opening: a promise kept for a week, or a gap since the last receipt.
   const checkedPromises = useRef(false);
   useEffect(() => {
     if (checkedPromises.current || !office.current) return;
     checkedPromises.current = true;
     const kept = game().collectKeptPromises();
-    if (!kept.length) return;
-    const category = getCategory(kept[0].category).label.toLowerCase();
-    const id = setTimeout(() => {
-      office.current?.play('celebrate');
-      say(fillPlaceholders(pick(callbacks.promiseKept), { category }));
-    }, 1500);
+    let greet: (() => void) | null = null;
+    if (kept.length) {
+      const category = getCategory(kept[0].category).label.toLowerCase();
+      greet = () => {
+        office.current?.play('celebrate');
+        say(fillPlaceholders(pick(callbacks.promiseKept), { category }));
+      };
+    } else if (entries.length) {
+      // Soft streaks: a gap is noticed with a joke, never punished.
+      const last = entries.reduce((a, e) => (e.date > a ? e.date : a), '');
+      const twoDaysAgo = new Date();
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+      if (last <= toDateKey(twoDaysAgo)) greet = () => say(pick(callbacks.gap));
+    }
+    if (!greet) return;
+    const id = setTimeout(greet, 1500);
     return () => clearTimeout(id);
     // Runs once the office is up.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -419,7 +436,18 @@ function Office() {
           </View>
         </Pressable>
       </View>
-      <MoodBar mood={mood} />
+      <View style={styles.statusRow}>
+        <MoodBar mood={mood} />
+        <Pressable
+          style={styles.coinButton}
+          onPress={() => setSheet({ kind: 'shop' })}
+          disabled={busy}
+          accessibilityLabel={'Appease Vinnie. ' + coins + ' coins'}
+        >
+          <Text style={styles.coinLabel}>🪙 {coins}</Text>
+          <Text style={styles.gift}>🎁</Text>
+        </Pressable>
+      </View>
 
       <View
         ref={sceneBox}
@@ -436,6 +464,7 @@ function Office() {
                 width={scene.width}
                 height={scene.height}
                 room={room}
+                cosmetics={cosmetics}
                 onTap={onSceneTap}
                 disabled={busy}
               />
@@ -476,6 +505,7 @@ function Office() {
             onPress={() => game().setHeat(HEATS[(HEATS.indexOf(heat) + 1) % HEATS.length])}
           />
           <Chip label="Nearly broke" onPress={() => game().loadNearlyBrokeDemo()} />
+          <Chip label="+100 coins" onPress={() => game().grantDebugCoins(100)} />
           <Chip label={`Repair (${crackLevel})`} onPress={repairGlass} />
           <Chip label="Reset" onPress={() => game().reset()} />
           {spent > 0 &&
@@ -604,6 +634,15 @@ function Office() {
         onEdit={(entry) => setSheet({ kind: 'edit', entry })}
       />
       <BudgetSheet visible={shown?.kind === 'budget'} onClose={() => setSheet(null)} />
+      <ShopSheet
+        visible={shown?.kind === 'shop'}
+        onClose={() => setSheet(null)}
+        onBought={(line) => {
+          setSheet(null);
+          office.current?.play('celebrate');
+          say(line);
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -670,7 +709,20 @@ function Chip({ label, onPress }: { label: string; onPress: () => void }) {
 
 const styles = StyleSheet.create({
   loading: { flex: 1, backgroundColor: colors.paper },
+  statusRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  coinButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.card,
+    borderRadius: radius.lg,
+    paddingVertical: space.sm,
+    paddingHorizontal: space.md,
+  },
+  coinLabel: { fontWeight: '800', color: colors.ink, fontVariant: ['tabular-nums'] },
+  gift: { fontSize: 16 },
   mood: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.sm,

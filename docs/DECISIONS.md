@@ -168,3 +168,28 @@ banned-word check below Unhinged.
 
 **Playtest controls.** "Nearly broke" also ends the honeymoon and clears cooldowns, so the
 meltdown always escalates in a demo. "Repair" skips the once-a-day rule.
+
+## 2026-11-02 — M5 progression
+
+**Coins are a ledger.** `coin_tx` has a unique idempotency key per grant; the wallet is
+always `SUM(delta)`. Grants: first entry of a day +5 (`day:<date>`), saved/skipped +5 at most
+twice a day (`entry:<id>`), a 7-day streak +30 once per streak (`streak7:<start>`), and each
+achievement's coins (`ach:<id>`). Spending is a negative row inside a transaction that checks
+the balance, so it can't go below zero. Deleting an entry (or Undo) the same day adds a
+reversal row for that entry's coins; later deletes keep them. The blueprint's "first receipt
++25" is the First Receipt achievement, not a separate grant, so it isn't paid twice.
+
+**Achievements.** Six are derived from entries (first receipt, 5 tracked days, 7-day streak,
+first save, first skip, the breakfast secret); seven count events (call answered, glass
+punched, "my bad", first gift, weekly sit-down, full repair, a month within budget). Progress
+only goes up, so deleting entries never takes an achievement away. "Under Control" is checked
+at launch against last month. "The Sit-Down" unlocks once M6's weekly review exists.
+
+**Soft streaks.** The 7-day streak and its achievement use the best run ever; a gap pauses the
+bonus but takes nothing back. After two quiet days Vinnie notices with a joke on opening.
+
+**Shop.** Gifts (espresso, newspaper, cannoli, pizza) lift his mood and never touch the glass.
+Office items are slot-based and permanent: rug (floor), cat bed (Deductible sits in it),
+neon "$" (wall, flickers), deluxe espresso machine, green wallpaper, and two outfits (blue tie,
+Sunday vest) that are colour swaps on his sprite sheet. One item per slot; bought items can be
+put away and used again. No paid coin packs.

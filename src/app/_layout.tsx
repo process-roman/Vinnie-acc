@@ -6,6 +6,7 @@ import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { FxProvider, useFx } from '@/store/fx';
 import { useGame } from '@/store/game';
+import { AchievementToast } from '@/ui/AchievementToast';
 import { CallOverlay } from '@/ui/CallOverlay';
 import { CrackOverlay } from '@/ui/CrackOverlay';
 import { colors } from '@/ui/tokens';
@@ -21,6 +22,7 @@ function ShakingApp() {
         />
       </Animated.View>
       <CallOverlay />
+      <AchievementToast />
       {/* Last child: draws over every screen, sheet, bar and the call. */}
       <CrackOverlay />
     </>
