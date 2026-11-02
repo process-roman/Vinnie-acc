@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { formatMoney, keypadToMinor, pressKey } from '../money';
+import { formatMoney, keypadToMinor, parseDecimalToMinor, pressKey } from '../money';
 
 describe('money', () => {
   it('reads keypad digits as cents', () => {
@@ -27,5 +27,21 @@ describe('money', () => {
     expect(formatMoney(120000)).toBe('$1,200.00');
     expect(formatMoney(1200, 'USD', { trimZeroCents: true })).toBe('$12');
     expect(formatMoney(1250, 'USD', { trimZeroCents: true })).toBe('$12.50');
+  });
+});
+
+describe('parseDecimalToMinor', () => {
+  it('parses dollar amounts without floats', () => {
+    expect(parseDecimalToMinor('12.50')).toBe(1250);
+    expect(parseDecimalToMinor('12.5')).toBe(1250);
+    expect(parseDecimalToMinor('12')).toBe(1200);
+    expect(parseDecimalToMinor('$1,299.99')).toBe(129999);
+    expect(parseDecimalToMinor('0.29')).toBe(29);
+  });
+
+  it('rejects bad input', () => {
+    for (const bad of ['', 'abc', '-5', '0', '1.234', '12.', '1e3', '99999999999']) {
+      expect(parseDecimalToMinor(bad)).toBeNull();
+    }
   });
 });

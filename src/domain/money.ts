@@ -17,6 +17,26 @@ export function pressKey(digits: string, key: string): string {
   return next.length > MAX_KEYPAD_DIGITS ? digits : next;
 }
 
+/** Same cap as the keypad. */
+export const MAX_MINOR = 10 ** MAX_KEYPAD_DIGITS - 1;
+
+/**
+ * Parses a decimal amount like "12.50", "12", "1,299.99" or "$6.5" into minor units
+ * without floating point. Returns null for anything invalid, zero, negative or too big.
+ */
+export function parseDecimalToMinor(text: string): number | null {
+  const clean = text.trim().replace(/^\$/, '').replace(/,/g, '');
+  const m = /^(\d+)(?:\.(\d{1,2}))?$/.exec(clean);
+  if (!m) return null;
+  const minor = parseInt(m[1], 10) * 100 + parseInt((m[2] ?? '0').padEnd(2, '0'), 10);
+  return minor > 0 && minor <= MAX_MINOR ? minor : null;
+}
+
+/** Minor units as keypad digits, so an amount can be pre-filled in the keypad. */
+export function minorToKeypad(minor: number): string {
+  return minor > 0 ? String(minor) : '';
+}
+
 const formatters = new Map<string, Intl.NumberFormat>();
 
 function formatter(currency: Currency, cents: boolean): Intl.NumberFormat {

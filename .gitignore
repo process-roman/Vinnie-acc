@@ -44,3 +44,4 @@ example
 
 # Skia web runtime, copied by postinstall
 public/canvaskit.wasm
+public/sql-wasm-browser.*

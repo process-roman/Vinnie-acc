@@ -9,4 +9,11 @@ module.exports = defineConfig([
   {
     ignores: ['dist/*', 'public/*'],
   },
+  {
+    // Build scripts run under Node.
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: { __dirname: 'readonly', require: 'readonly', process: 'readonly' },
+    },
+  },
 ]);

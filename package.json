@@ -16,6 +16,7 @@
     "expo-linking": "~58.0.15",
     "expo-router": "~58.0.29",
     "expo-splash-screen": "~58.0.12",
+    "expo-sqlite": "~58.0.15",
     "expo-status-bar": "~58.0.4",
     "expo-symbols": "~58.0.4",
     "expo-system-ui": "~58.0.7",
@@ -31,10 +32,12 @@
     "react-native-screens": "~4.30.1",
     "react-native-web": "~0.21.4",
     "react-native-worklets": "0.13.0",
+    "sql.js": "^1.15.2",
     "zustand": "^5.0.16"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
+    "@types/sql.js": "^1.4.11",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~58.0.4",
     "eslint-config-prettier": "^10.1.8",
@@ -50,7 +53,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "format": "prettier --write .",
-    "postinstall": "setup-skia-web public"
+    "postinstall": "setup-skia-web public && node scripts/copy-web-assets.js"
   },
   "private": true,
   "jest": {
@@ -61,6 +64,10 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
-    }
+    },
+    "testMatch": [
+      "**/*.test.ts",
+      "**/*.test.tsx"
+    ]
   }
 }

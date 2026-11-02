@@ -1,9 +1,11 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { FxProvider, useFx } from '@/store/fx';
+import { useGame } from '@/store/game';
 import { CallOverlay } from '@/ui/CallOverlay';
 import { CrackOverlay } from '@/ui/CrackOverlay';
 import { colors } from '@/ui/tokens';
@@ -26,6 +28,9 @@ function ShakingApp() {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    useGame.getState().init();
+  }, []);
   return (
     <FxProvider>
       <StatusBar style="dark" />

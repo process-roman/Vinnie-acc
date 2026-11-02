@@ -71,3 +71,39 @@ hide before beta.
 
 **Dev server port.** `.claude/launch.json` uses 8090 because another local Expo project
 uses 8081.
+
+## 2026-11-02 — M2 tracker
+
+**Plain SQL instead of Drizzle.** Repositories talk to a four-method `Db` interface
+(`src/data/db.ts`) with hand-written SQL and a numbered migration list tracked by
+`PRAGMA user_version`. On devices it's backed by `expo-sqlite`; on web and in Jest by
+`sql.js` (the same SQLite, compiled to wasm). That keeps the SQL identical everywhere and
+lets repository tests run in Node against a real in-memory database. Drizzle would add a
+build step and a second schema language for little gain at this size.
+
+**Web database.** `expo-sqlite` on web needs `.wasm` Metro config and
+cross-origin-isolation headers. Instead, web loads `public/sql-wasm-browser.js` (copied by
+`postinstall`, not committed) and saves the database to `localStorage` after each change.
+It's for development and demos, not a shipping target.
+
+**Writes go through the store.** The zustand store updates state immediately and queues the
+matching database write; writes run in order and failures are logged. The store loads
+everything at launch (`init()`), and the Office shows paper until it's ready.
+
+**Budgets carry forward.** A month without its own budget uses the most recent earlier
+month's limit. First launch sets $2,000 until onboarding asks (M7).
+
+**Soft deletes.** Deleted entries keep their row with `deleted_at`, ready for sync later.
+
+**Quick chips** need at least two matching purchases (same category and description) in the
+last 30 days, ranked by frequency then recency, at the most common price. Tapping one logs
+it and Vinnie reacts; Undo (5 s) deletes the entry.
+
+**Quick-add links** use an Expo Router route: `vinnie://add?amount=&merchant=&category=`
+opens `src/app/add.tsx`, which parses the parameters (invalid ones are dropped), looks up a
+learned category for the merchant when none is given, and hands a pre-fill to the Office.
+Merchant names are normalised (`STARBUCKS #1234` → `starbucks`) and learned from every
+logged or edited entry's description.
+
+**Room legend is static.** The Budget sheet explains the plant, rain, poster and receipt
+pile, which the office starts showing in M3.

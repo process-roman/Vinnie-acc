@@ -1,12 +1,13 @@
-// New Receipt sheet (blueprint Screen 2), M1 version: no date picker yet (always today).
+// New / Edit Receipt sheet (blueprint Screen 2). The parent remounts it (via `key`)
+// for each new receipt or edit, so its state always starts from `initial`.
 
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { CATEGORIES } from '@/domain/categories';
-import { EntryType } from '@/domain/entries';
-import { formatMoney, keypadToMinor, pressKey } from '@/domain/money';
-import { NewEntry } from '@/domain/reaction/react';
+import { EntryType, toDateKey } from '@/domain/entries';
+import { dayLabel } from '@/domain/history';
+import { formatMoney, keypadToMinor, minorToKeypad, pressKey } from '@/domain/money';
 
 import { Sheet } from './Sheet';
 import { colors, radius, space } from './tokens';
@@ -19,17 +20,36 @@ const TYPES: { id: EntryType; label: string }[] = [
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '00', '0', 'back'];
 
-type Props = {
-  visible: boolean;
-  onClose: () => void;
-  onSubmit: (entry: NewEntry) => void;
+export type ReceiptValues = {
+  type: EntryType;
+  amountMinor: number;
+  category: string;
+  description: string;
+  date: string;
 };
 
-export function ReceiptSheet({ visible, onClose, onSubmit }: Props) {
-  const [type, setType] = useState<EntryType>('expense');
-  const [digits, setDigits] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('coffee');
+type Props = {
+  visible: boolean;
+  mode: 'new' | 'edit';
+  initial: Partial<ReceiptValues> & { category: string };
+  onClose: () => void;
+  onSubmit: (values: ReceiptValues) => void;
+  onDelete?: () => void;
+};
+
+function shiftDate(date: string, days: number): string {
+  const [y, m, d] = date.split('-').map(Number);
+  return toDateKey(new Date(y, m - 1, d + days));
+}
+
+export function ReceiptSheet({ visible, mode, initial, onClose, onSubmit, onDelete }: Props) {
+  const today = toDateKey(new Date());
+  const [type, setType] = useState<EntryType>(initial.type ?? 'expense');
+  const [digits, setDigits] = useState(minorToKeypad(initial.amountMinor ?? 0));
+  const [description, setDescription] = useState(initial.description ?? '');
+  const [category, setCategory] = useState(initial.category);
+  const [date, setDate] = useState(initial.date ?? today);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const amountMinor = keypadToMinor(digits);
   const needsCategory = type !== 'saved';
@@ -41,15 +61,27 @@ export function ReceiptSheet({ visible, onClose, onSubmit }: Props) {
       amountMinor,
       category: needsCategory ? category : 'other',
       description: description.trim(),
+      date,
     });
-    // Keep the type and category: the next receipt is often the same kind.
-    setDigits('');
-    setDescription('');
   };
 
   return (
     <Sheet visible={visible} onClose={onClose}>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.body}>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{mode === 'edit' ? 'Edit receipt' : 'New receipt'}</Text>
+          {mode === 'edit' && onDelete && (
+            <Pressable
+              onPress={() => (confirmDelete ? onDelete() : setConfirmDelete(true))}
+              style={[styles.delete, confirmDelete && styles.deleteConfirm]}
+            >
+              <Text style={[styles.deleteLabel, confirmDelete && styles.deleteLabelConfirm]}>
+                {confirmDelete ? 'Tap again to delete' : 'Delete'}
+              </Text>
+            </Pressable>
+          )}
+        </View>
+
         <View style={styles.segment}>
           {TYPES.map((t) => (
             <Pressable
@@ -102,13 +134,32 @@ export function ReceiptSheet({ visible, onClose, onSubmit }: Props) {
           </View>
         )}
 
+        <View style={styles.dateRow}>
+          <Pressable
+            onPress={() => setDate((d) => shiftDate(d, -1))}
+            style={styles.dateStep}
+            accessibilityLabel="Previous day"
+          >
+            <Text style={styles.dateStepLabel}>‹</Text>
+          </Pressable>
+          <Text style={styles.dateLabel}>{dayLabel(date, new Date())}</Text>
+          <Pressable
+            onPress={() => setDate((d) => shiftDate(d, 1))}
+            disabled={date >= today}
+            style={[styles.dateStep, date >= today && styles.disabled]}
+            accessibilityLabel="Next day"
+          >
+            <Text style={styles.dateStepLabel}>›</Text>
+          </Pressable>
+        </View>
+
         <View style={styles.keypad}>
           {KEYS.map((k) => (
             <Pressable
               key={k}
               onPress={() => setDigits((d) => pressKey(d, k))}
               style={({ pressed }) => [styles.key, pressed && styles.keyPressed]}
-              accessibilityLabel={k === 'back' ? 'Delete' : k}
+              accessibilityLabel={k === 'back' ? 'Delete digit' : k}
             >
               <Text style={styles.keyLabel}>{k === 'back' ? '⌫' : k}</Text>
             </Pressable>
@@ -118,9 +169,11 @@ export function ReceiptSheet({ visible, onClose, onSubmit }: Props) {
         <Pressable
           onPress={submit}
           disabled={amountMinor === 0}
-          style={[styles.submit, amountMinor === 0 && styles.submitDisabled]}
+          style={[styles.submit, amountMinor === 0 && styles.disabled]}
         >
-          <Text style={styles.submitLabel}>Give Vinnie the Receipt</Text>
+          <Text style={styles.submitLabel}>
+            {mode === 'edit' ? 'Save changes' : 'Give Vinnie the Receipt'}
+          </Text>
         </Pressable>
       </ScrollView>
     </Sheet>
@@ -129,6 +182,12 @@ export function ReceiptSheet({ visible, onClose, onSubmit }: Props) {
 
 const styles = StyleSheet.create({
   body: { gap: space.md },
+  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  title: { fontSize: 18, fontWeight: '800', color: colors.ink },
+  delete: { paddingVertical: 6, paddingHorizontal: space.md, borderRadius: radius.pill },
+  deleteConfirm: { backgroundColor: colors.brick },
+  deleteLabel: { color: colors.brick, fontWeight: '700' },
+  deleteLabelConfirm: { color: colors.card },
   segment: {
     flexDirection: 'row',
     backgroundColor: colors.paper,
@@ -175,6 +234,17 @@ const styles = StyleSheet.create({
   dot: { width: 8, height: 8, borderRadius: 4 },
   chipLabel: { color: colors.ink, fontWeight: '600' },
   chipLabelOn: { color: colors.card },
+  dateRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.lg },
+  dateStep: {
+    width: 40,
+    height: 36,
+    borderRadius: radius.sm,
+    backgroundColor: colors.paper,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dateStepLabel: { fontSize: 22, fontWeight: '800', color: colors.ink },
+  dateLabel: { minWidth: 120, textAlign: 'center', fontWeight: '700', color: colors.ink },
   keypad: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
   key: {
     width: '31.5%',
@@ -194,6 +264,6 @@ const styles = StyleSheet.create({
     paddingVertical: space.md,
     alignItems: 'center',
   },
-  submitDisabled: { opacity: 0.45 },
+  disabled: { opacity: 0.4 },
   submitLabel: { fontSize: 18, fontWeight: '800', color: colors.ink },
 });
