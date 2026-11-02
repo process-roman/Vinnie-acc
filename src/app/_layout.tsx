@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { FxProvider, useFx } from '@/store/fx';
+import { CallOverlay } from '@/ui/CallOverlay';
 import { CrackOverlay } from '@/ui/CrackOverlay';
 import { colors } from '@/ui/tokens';
 
@@ -17,7 +18,8 @@ function ShakingApp() {
           screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.paper } }}
         />
       </Animated.View>
-      {/* Last child: draws over every screen, sheet and bar. */}
+      <CallOverlay />
+      {/* Last child: draws over every screen, sheet, bar and the call. */}
       <CrackOverlay />
     </>
   );

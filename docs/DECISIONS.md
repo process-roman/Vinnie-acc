@@ -41,3 +41,33 @@ it when a step needs component tests.
   `npm run lint` calls ESLint directly. Upgrade Node to the current LTS.
 - The project lives in OneDrive. `node_modules` (~600 MB) will sync unless the folder is
   moved or excluded.
+
+## 2026-11-02 — M1 hook prototype
+
+**Call UI is an overlay, not a route.** The incoming call and the in-call conversation are
+mounted in the root layout between the app and the crack overlay, so the cracked glass stays
+on top and the office stays visible behind the call. A `call` route can wrap the same
+component later for notification deep links (M6).
+
+**Simplified reaction engine.** `src/domain/reaction/tier.ts` implements the §7.2 tiers with
+the reasons behind them (`pushedOverBudget`, `crossed85`, `repeat`, …). Dialogue lines and
+call scripts select on those reasons. Mood, cooldowns, the honeymoon period and the promise
+ledger are M4; for now every meltdown escalates, which is what the playtest needs to see.
+Added a `nearLimit` rule (any discretionary spend while already past 85% is at least
+`judge`) — the blueprint table leaves that case at `neutral`.
+
+**State is in memory (zustand).** Nothing survives an app restart yet; SQLite comes in M2.
+Replies are recorded (`replies` in the game store) for the promise ledger later.
+
+**Content.** 45 reaction lines and 3 call scripts in `src/content/*.json`, tested so every
+placeholder resolves and every tier has a line at every heat. `{Category}` is the
+capitalised form of `{category}` for sentence starts.
+
+**Playtest controls.** Tapping the "Vinnie" title shows heat, a "Nearly broke" scenario
+(month filled to $1,995 of $2,000 so the next treat goes over), repair and reset. Remove or
+hide before beta.
+
+**No sound yet.** No ringtone or crack sound assets; ringing vibrates on native.
+
+**Dev server port.** `.claude/launch.json` uses 8090 because another local Expo project
+uses 8081.

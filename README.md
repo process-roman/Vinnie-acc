@@ -25,7 +25,9 @@ npm run lint
 
 ## Status
 
-**M0 (foundations)** — Expo + TypeScript + Expo Router scaffold, Skia pixel-art renderer
-spike (isometric office, animated Vinnie, tap-to-walk, depth sorting) and the full-app crack
-overlay spike (3 levels, shake, haptics, taps pass through). The screen at `src/app/index.tsx`
-is a test bench with debug buttons.
+**M1 (hook prototype)** — log a receipt (expense, saved or skipped) and Vinnie reads it
+and reacts with a line picked for the tier, category and heat. Go over budget and he walks
+up to the glass, the camera zooms in, he punches the screen and calls you: answer, pick a
+reply, or decline (he calls back once, then "Real mature."). History and Budget sheets are
+simple stand-ins. Tap the "Vinnie" title for playtest controls; "Nearly broke" sets up a
+meltdown on the next treat. State is in memory only.

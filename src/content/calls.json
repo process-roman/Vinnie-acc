@@ -1,0 +1,88 @@
+{
+  "declineRetry": "Real mature.",
+  "scripts": [
+    {
+      "id": "call_over_budget",
+      "trigger": "pushedOverBudget",
+      "minHeat": "gentle",
+      "lines": [
+        "Yeah, it's me. Don't hang up.",
+        "{Category}. {amount}. And that put us over the budget. OVER, kid.",
+        "I gave you one number. One. My mother kept a family of six under budget with a coupon book and spite."
+      ],
+      "replies": [
+        {
+          "text": "I needed it.",
+          "tag": "excuse_needed",
+          "response": "Needed. Uh huh. You needed {category} like I need another receipt in this pile."
+        },
+        {
+          "text": "Won't happen again.",
+          "tag": "promise_never_again",
+          "response": "Okay. I'm writing that down. In pen. Don't make me find it later."
+        },
+        {
+          "text": "Yeah… my bad.",
+          "tag": "admit",
+          "response": "...Alright. That's all I wanted. Honesty. It's free, you know. The only free thing."
+        }
+      ],
+      "closer": "Now go drink some water and don't buy anything. I'm hanging up. I'm hanging up."
+    },
+    {
+      "id": "call_already_over",
+      "trigger": "alreadyOverBudget",
+      "minHeat": "gentle",
+      "lines": [
+        "It's Vinnie. You know why I'm calling.",
+        "We're already over. And now {amount} on {category}?",
+        "Do you see my window? It's thunderstorming in here. Indoors. Because of you."
+      ],
+      "replies": [
+        {
+          "text": "It's an investment.",
+          "tag": "excuse_investment",
+          "response": "An INVESTMENT? In what? Your portfolio is {category}!"
+        },
+        {
+          "text": "Won't happen again.",
+          "tag": "promise_never_again",
+          "response": "You said that last time. I keep every receipt, kid. Every one."
+        },
+        {
+          "text": "Yeah… my bad.",
+          "tag": "admit",
+          "response": "Okay. Okay. We fix it together. Starting now. Starting right now."
+        }
+      ],
+      "closer": "Rest of the month, we're eating rice. Both of us. Solidarity. Bye."
+    },
+    {
+      "id": "call_generic",
+      "trigger": "any",
+      "minHeat": "gentle",
+      "lines": [
+        "Hey. It's me. I saw the receipt.",
+        "{amount} on {category}. I had to call. I physically had to."
+      ],
+      "replies": [
+        {
+          "text": "I needed it.",
+          "tag": "excuse_needed",
+          "response": "Everybody needs something. Not everybody needs it {count} times a month."
+        },
+        {
+          "text": "It's an investment.",
+          "tag": "excuse_investment",
+          "response": "Don't. Don't say investment to an accountant. I'll have a stroke."
+        },
+        {
+          "text": "Yeah… my bad.",
+          "tag": "admit",
+          "response": "See? Was that hard? That wasn't hard."
+        }
+      ],
+      "closer": "Alright. I gotta go. Deductible's eating a receipt. Bye."
+    }
+  ]
+}

@@ -2,6 +2,8 @@
 // per seed and each level reveals more of it, so escalation looks like the same
 // crack spreading rather than a new one.
 
+import { rng } from '@/domain/random';
+
 import { createBuffer, drawLine, hex, PixelBuffer, setPixel } from './pixels';
 
 export type CrackLevel = 0 | 1 | 2 | 3;
@@ -14,18 +16,6 @@ const LEVELS: Record<Exclude<CrackLevel, 0>, { rays: number; reach: number; ring
   3: { rays: 12, reach: 1.2, rings: 2 },
 };
 const MAX_RAYS = 12;
-
-/** Small deterministic PRNG (mulberry32). */
-export function rng(seed: number): () => number {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 
 function polyline(points: Pt[], maxLen: number): Segment[] {
   const out: Segment[] = [];

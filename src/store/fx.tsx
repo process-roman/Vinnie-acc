@@ -17,20 +17,17 @@ type Fx = {
   crackSeed: number;
   shakeX: SharedValue<number>;
   punch(at?: Point): void;
+  /** Gentle heat: he knocks on the glass. A small shake, no crack. */
+  knock(): void;
   repair(): void;
 };
 
 const FxContext = createContext<Fx | null>(null);
 
-function shake(x: SharedValue<number>) {
+function shake(x: SharedValue<number>, strength = 1) {
   const d = 45;
   x.value = withSequence(
-    withTiming(-10, { duration: d }),
-    withTiming(9, { duration: d }),
-    withTiming(-7, { duration: d }),
-    withTiming(5, { duration: d }),
-    withTiming(-2, { duration: d }),
-    withTiming(0, { duration: d }),
+    ...[-10, 9, -7, 5, -2, 0].map((v) => withTiming(v * strength, { duration: d })),
   );
 }
 
@@ -55,6 +52,10 @@ export function FxProvider({ children }: { children: ReactNode }) {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
+      },
+      knock() {
+        shake(shakeX, 0.3);
+        if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       },
       repair() {
         setCrackLevel((l) => {

@@ -1,54 +1,187 @@
-// M0 spike screen: a rough Office layout used to check the renderer and the crack
-// overlay against real UI (header, bottom bar, a sheet). Replaced in M2/M3.
+// Office (home). M1: log a receipt, Vinnie reads it and reacts; a meltdown walks
+// him to the glass, he punches it, and calls you.
 
 import { ComponentRef, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Entry, monthSpentMinor } from '@/domain/entries';
+import { formatMoney } from '@/domain/money';
+import { Heat } from '@/domain/reaction/dialogue';
+import { NewEntry, Reaction } from '@/domain/reaction/react';
+import { Tier } from '@/domain/reaction/tier';
+import { Point } from '@/scene/iso';
 import { CAMERA_SPOT, OfficeCanvas, OfficeCanvasHandle } from '@/scene/OfficeCanvas';
+import { PROPS } from '@/scene/room';
+import { useCall } from '@/store/call';
 import { useFx } from '@/store/fx';
+import { useGame } from '@/store/game';
+import { BudgetSheet, HistorySheet } from '@/ui/LedgerSheets';
+import { ReceiptSheet } from '@/ui/ReceiptSheet';
+import { SpeechBubble } from '@/ui/SpeechBubble';
 import { colors, radius, space } from '@/ui/tokens';
+
+const DESK_SPOT = PROPS.find((p) => p.id === 'desk')!.standAt;
+const ZOOM = 1.35;
+const ZOOM_MS = 1400;
+
+const STATUS: Record<Tier, string> = {
+  approve: 'Vinnie approves.',
+  neutral: 'Vinnie filed it.',
+  judge: 'Vinnie is judging you.',
+  angry: 'Vinnie is fuming.',
+  meltdown: 'Vinnie needs a minute.',
+};
+
+const HEATS: Heat[] = ['gentle', 'classic', 'unhinged'];
+const HEAT_LABEL: Record<Heat, string> = {
+  gentle: 'Gentle',
+  classic: 'Classic',
+  unhinged: 'Unhinged',
+};
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+type Bubble = { id: number; text: string; anchor: Point; done: () => void };
+type OpenSheet = 'receipt' | 'history' | 'budget' | null;
 
 export default function OfficeScreen() {
   const fx = useFx();
+  const ring = useCall((s) => s.ring);
+  const entries = useGame((s) => s.entries);
+  const limit = useGame((s) => s.limitMinor);
+  const heat = useGame((s) => s.heat);
+  const game = useGame.getState;
+
   const office = useRef<OfficeCanvasHandle>(null);
   const sceneBox = useRef<ComponentRef<typeof View>>(null);
-  const [sceneSize, setSceneSize] = useState({ width: 0, height: 0 });
-  const [status, setStatus] = useState('Vinnie is doing your taxes. Tap around.');
-  const [taps, setTaps] = useState(0);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [scene, setScene] = useState({ width: 0, height: 0 });
+  const [status, setStatus] = useState('Vinnie is doing your taxes.');
+  const [sheet, setSheet] = useState<OpenSheet>(null);
   const [busy, setBusy] = useState(false);
+  const [bubble, setBubble] = useState<Bubble | null>(null);
+  const [debugOpen, setDebugOpen] = useState(false);
 
-  const tap = (label: string) => {
-    setTaps((n) => n + 1);
-    setStatus(`Tapped ${label}.`);
+  // Camera: zoom about a point (the spot Vinnie walks to) so he fills the glass.
+  const zoom = useSharedValue(1);
+  const zoomX = useSharedValue(0);
+  const zoomY = useSharedValue(0);
+  const zoomStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: zoomX.value }, { translateY: zoomY.value }, { scale: zoom.value }],
+  }));
+  const zoomTo = (at: Point | null, ms: number) => {
+    const s = at ? ZOOM : 1;
+    const t = { duration: ms, easing: Easing.inOut(Easing.cubic) };
+    zoom.value = withTiming(s, t);
+    zoomX.value = withTiming(at ? (scene.width / 2 - at.x) * (s - 1) : 0, t);
+    zoomY.value = withTiming(at ? (scene.height / 2 - at.y) * (s - 1) : 0, t);
   };
 
-  const punch = async () => {
-    if (busy || !office.current) return;
-    setBusy(true);
-    setStatus('Vinnie is walking up to the glass…');
-    await office.current.walkTo(CAMERA_SPOT);
-    office.current.alert(700);
-    await new Promise((r) => setTimeout(r, 700));
-    const head = office.current.headPosition();
-    sceneBox.current?.measureInWindow((x, y) => {
-      fx.punch({ x: x + head.x, y: y + head.y });
-      setStatus('Vinnie punched the screen.');
-      setBusy(false);
+  const say = (text: string) =>
+    new Promise<void>((resolve) => {
+      const head = office.current?.headPosition() ?? { x: scene.width / 2, y: scene.height / 2 };
+      setBubble({
+        id: Date.now(),
+        text,
+        anchor: { x: head.x, y: head.y - 10 },
+        done: () => {
+          setBubble(null);
+          resolve();
+        },
+      });
     });
+
+  const sceneOrigin = () =>
+    new Promise<Point>((resolve) =>
+      sceneBox.current
+        ? sceneBox.current.measureInWindow((x, y) => resolve({ x, y }))
+        : resolve({ x: 0, y: 0 }),
+    );
+
+  const play = async (entry: Entry, reaction: Reaction) => {
+    const canvas = office.current;
+    if (!canvas) return;
+    setBusy(true);
+    try {
+      setStatus('Vinnie is reading your receipt…');
+      await canvas.walkTo(DESK_SPOT);
+      await sleep(450);
+      await say(reaction.line);
+
+      if (reaction.escalation !== 'none' && reaction.call) {
+        setStatus('Vinnie is walking up to the glass…');
+        const head = canvas.headPositionAt(CAMERA_SPOT);
+        zoomTo(head, ZOOM_MS);
+        await canvas.walkTo(CAMERA_SPOT);
+        canvas.alert(800);
+        await sleep(800);
+        if (reaction.escalation === 'punch') {
+          const origin = await sceneOrigin();
+          // The zoom keeps his head fixed on screen, so this is where the fist lands.
+          fx.punch({ x: origin.x + head.x, y: origin.y + head.y });
+          setStatus('Vinnie punched the screen.');
+        } else {
+          fx.knock();
+          setStatus('Vinnie knocked on the glass.');
+        }
+        await sleep(1100);
+        setStatus('Vinnie is calling you…');
+        await ring(reaction.call, entry);
+        zoomTo(null, 700);
+        await canvas.walkTo(DESK_SPOT);
+      }
+      setStatus(STATUS[reaction.tier]);
+    } finally {
+      setBusy(false);
+    }
   };
+
+  const submit = (input: NewEntry) => {
+    setSheet(null);
+    const { entry, reaction } = game().logEntry(input);
+    play(entry, reaction);
+  };
+
+  const now = new Date();
+  const spent = monthSpentMinor(entries, now);
+  const share = limit ? spent / limit : 0;
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <View style={styles.header}>
-        <View>
+        {/* Prototype: tap the title for playtest controls. */}
+        <Pressable onPress={() => setDebugOpen((o) => !o)} accessibilityLabel="Playtest controls">
           <Text style={styles.title}>Vinnie</Text>
-          <Text style={styles.subtitle}>November</Text>
-        </View>
-        <Pressable style={styles.budget} onPress={() => tap('the budget pill')}>
-          <Text style={styles.budgetAmount}>$1,248</Text>
-          <Text style={styles.subtitle}>of $2,000</Text>
+          <Text style={styles.subtitle}>
+            {now.toLocaleString('en-US', { month: 'long' })} · {HEAT_LABEL[heat]}
+          </Text>
+        </Pressable>
+        <Pressable style={styles.budget} onPress={() => setSheet('budget')}>
+          <Text style={styles.budgetLabel}>This month</Text>
+          <Text style={[styles.budgetAmount, share > 1 && styles.over]}>
+            {formatMoney(spent, 'USD', { trimZeroCents: true })}
+          </Text>
+          <Text style={styles.subtitle}>
+            of {limit === null ? 'no budget' : formatMoney(limit, 'USD', { trimZeroCents: true })}
+          </Text>
+          <View style={styles.meter}>
+            <View
+              style={[
+                styles.meterFill,
+                {
+                  width: `${Math.min(100, share * 100)}%`,
+                  backgroundColor:
+                    share > 1 ? colors.brick : share >= 0.85 ? colors.mustard : colors.good,
+                },
+              ]}
+            />
+          </View>
         </Pressable>
       </View>
 
@@ -56,58 +189,80 @@ export default function OfficeScreen() {
         ref={sceneBox}
         style={styles.scene}
         onLayout={({ nativeEvent: { layout } }) =>
-          setSceneSize({ width: layout.width, height: layout.height })
+          setScene({ width: layout.width, height: layout.height })
         }
       >
-        {sceneSize.width > 0 && <OfficeCanvas ref={office} {...sceneSize} onEvent={setStatus} />}
+        <Animated.View style={[StyleSheet.absoluteFill, zoomStyle]}>
+          {scene.width > 0 && (
+            <OfficeCanvas
+              ref={office}
+              width={scene.width}
+              height={scene.height}
+              onEvent={setStatus}
+              disabled={busy}
+            />
+          )}
+          {bubble && (
+            <SpeechBubble
+              key={bubble.id}
+              text={bubble.text}
+              anchor={bubble.anchor}
+              parentWidth={scene.width}
+              parentHeight={scene.height}
+              onDone={bubble.done}
+            />
+          )}
+        </Animated.View>
       </View>
-      <Text style={styles.status}>{status}</Text>
+      <Text style={styles.status} accessibilityLiveRegion="polite">
+        {status}
+      </Text>
 
-      <View style={styles.debug}>
-        <DebugButton
-          label={busy ? 'Punching…' : `Punch (crack ${fx.crackLevel}/3)`}
-          onPress={punch}
-        />
-        <DebugButton label="Repair" onPress={fx.repair} />
-        <DebugButton
-          label={sheetOpen ? 'Close sheet' : 'Open sheet'}
-          onPress={() => setSheetOpen((o) => !o)}
-        />
-      </View>
-      <Text style={styles.taps}>UI taps that got through: {taps}</Text>
+      {debugOpen && (
+        <View style={styles.debug}>
+          <Chip
+            label={`Heat: ${HEAT_LABEL[heat]}`}
+            onPress={() => game().setHeat(HEATS[(HEATS.indexOf(heat) + 1) % HEATS.length])}
+          />
+          <Chip label="Nearly broke" onPress={() => game().loadNearlyBrokeDemo()} />
+          <Chip label={`Repair (${fx.crackLevel})`} onPress={fx.repair} />
+          <Chip label="Reset" onPress={() => game().reset()} />
+        </View>
+      )}
 
       <View style={styles.bottomBar}>
-        <Pressable style={styles.barItem} onPress={() => tap('History')}>
+        <Pressable style={styles.barItem} onPress={() => setSheet('history')} disabled={busy}>
           <Text style={styles.barLabel}>History</Text>
         </Pressable>
-        <Pressable style={styles.mainButton} onPress={() => tap('New Receipt')}>
-          <Text style={styles.mainButtonLabel}>+ New Receipt</Text>
+        <Pressable
+          style={[styles.mainButton, busy && styles.mainButtonBusy]}
+          onPress={() => setSheet('receipt')}
+          disabled={busy}
+        >
+          <Text style={styles.mainButtonLabel}>
+            {busy ? 'Vinnie is reading…' : '+ New Receipt'}
+          </Text>
         </Pressable>
-        <Pressable style={styles.barItem} onPress={() => tap('Budget')}>
+        <Pressable style={styles.barItem} onPress={() => setSheet('budget')} disabled={busy}>
           <Text style={styles.barLabel}>Budget</Text>
         </Pressable>
       </View>
 
-      {sheetOpen && (
-        <View style={styles.sheet}>
-          <Text style={styles.sheetTitle}>Test sheet</Text>
-          <Text style={styles.sheetBody}>
-            The crack should draw over this sheet, and these buttons should still work through it.
-          </Text>
-          <View style={styles.debug}>
-            <DebugButton label="Tap me" onPress={() => tap('the sheet button')} />
-            <DebugButton label="Close" onPress={() => setSheetOpen(false)} />
-          </View>
-        </View>
-      )}
+      <ReceiptSheet
+        visible={sheet === 'receipt'}
+        onClose={() => setSheet(null)}
+        onSubmit={submit}
+      />
+      <HistorySheet visible={sheet === 'history'} onClose={() => setSheet(null)} />
+      <BudgetSheet visible={sheet === 'budget'} onClose={() => setSheet(null)} />
     </SafeAreaView>
   );
 }
 
-function DebugButton({ label, onPress }: { label: string; onPress: () => void }) {
+function Chip({ label, onPress }: { label: string; onPress: () => void }) {
   return (
-    <Pressable style={styles.debugButton} onPress={onPress}>
-      <Text style={styles.debugLabel}>{label}</Text>
+    <Pressable style={styles.chip} onPress={onPress}>
+      <Text style={styles.chipLabel}>{label}</Text>
     </Pressable>
   );
 }
@@ -120,7 +275,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: space.md,
   },
-  title: { fontSize: 26, fontWeight: '800', color: colors.brick },
+  title: { fontSize: 28, fontWeight: '800', color: colors.brick },
   subtitle: { fontSize: 12, color: colors.inkSoft },
   budget: {
     backgroundColor: colors.card,
@@ -128,21 +283,37 @@ const styles = StyleSheet.create({
     paddingVertical: space.sm,
     paddingHorizontal: space.lg,
     alignItems: 'flex-end',
+    minWidth: 140,
   },
-  budgetAmount: { fontSize: 20, fontWeight: '800', color: colors.ink },
-  scene: { flex: 1, justifyContent: 'center' },
+  budgetLabel: { fontSize: 11, color: colors.inkSoft },
+  budgetAmount: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: colors.ink,
+    fontVariant: ['tabular-nums'],
+  },
+  over: { color: colors.brick },
+  meter: {
+    alignSelf: 'stretch',
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.line,
+    marginTop: 6,
+    overflow: 'hidden',
+  },
+  meterFill: { height: 6, borderRadius: 3 },
+  scene: { flex: 1, overflow: 'hidden' },
   status: { textAlign: 'center', color: colors.inkSoft, marginVertical: space.sm },
   debug: { flexDirection: 'row', gap: space.sm, justifyContent: 'center', flexWrap: 'wrap' },
-  debugButton: {
+  chip: {
     backgroundColor: colors.card,
     borderColor: colors.line,
     borderWidth: 1,
     borderRadius: radius.pill,
-    paddingVertical: space.sm,
+    paddingVertical: 6,
     paddingHorizontal: space.md,
   },
-  debugLabel: { color: colors.ink, fontWeight: '600' },
-  taps: { textAlign: 'center', color: colors.inkSoft, fontSize: 12, marginTop: space.sm },
+  chipLabel: { color: colors.ink, fontWeight: '600', fontSize: 13 },
   bottomBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -159,22 +330,6 @@ const styles = StyleSheet.create({
     paddingVertical: space.md,
     paddingHorizontal: space.xl,
   },
+  mainButtonBusy: { opacity: 0.6 },
   mainButtonLabel: { fontSize: 18, fontWeight: '800', color: colors.ink },
-  sheet: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: colors.card,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
-    padding: space.xl,
-    gap: space.md,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 12,
-  },
-  sheetTitle: { fontSize: 18, fontWeight: '800', color: colors.ink },
-  sheetBody: { color: colors.inkSoft },
 });

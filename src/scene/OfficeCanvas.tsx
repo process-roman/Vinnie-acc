@@ -54,6 +54,8 @@ export type OfficeCanvasHandle = {
   walkTo(to: GridPoint): Promise<void>;
   /** Vinnie's head, in this component's layout coordinates. */
   headPosition(): Point;
+  /** Where his head would be if he stood at the grid point. */
+  headPositionAt(p: GridPoint): Point;
   alert(ms?: number): void;
 };
 
@@ -61,6 +63,8 @@ type Props = {
   width: number;
   height: number;
   onEvent?: (message: string) => void;
+  /** Ignore taps, e.g. while a reaction is playing. */
+  disabled?: boolean;
   ref?: Ref<OfficeCanvasHandle>;
 };
 
@@ -69,7 +73,7 @@ const propCentreDepth = (p: PropDef) =>
 
 const clampToRoom = (n: number) => Math.min(ROOM_TILES - 0.4, Math.max(0.4, n));
 
-export function OfficeCanvas({ width, height, onEvent, ref }: Props) {
+export function OfficeCanvas({ width, height, onEvent, disabled, ref }: Props) {
   // Whole device pixels per art pixel keeps every pixel the same size on screen.
   const ratio = PixelRatio.get();
   const fit = Math.min((width * ratio) / ROOM_W, (height * ratio) / ROOM_H);
@@ -77,6 +81,7 @@ export function OfficeCanvas({ width, height, onEvent, ref }: Props) {
   const canvasW = ROOM_W * scale;
   const canvasH = ROOM_H * scale;
   const offsetX = (width - canvasW) / 2;
+  const offsetY = (height - canvasH) / 2;
 
   const art = useMemo(() => {
     const vinnie = buildVinnieIdleSheet();
@@ -147,8 +152,15 @@ export function OfficeCanvas({ width, height, onEvent, ref }: Props) {
     walkTo,
     headPosition: () => ({
       x: offsetX + (vx.value + VINNIE_W / 2) * scale,
-      y: (vy.value + 4) * scale,
+      y: offsetY + (vy.value + 4) * scale,
     }),
+    headPositionAt: (p) => {
+      const feet = gridToScreen(p, ROOM_ORIGIN);
+      return {
+        x: offsetX + feet.x * scale,
+        y: offsetY + (Math.round(feet.y) - VINNIE_ANCHOR.y + 4) * scale,
+      };
+    },
     alert: showAlert,
   }));
 
@@ -201,11 +213,12 @@ export function OfficeCanvas({ width, height, onEvent, ref }: Props) {
     ));
 
   return (
-    <View style={{ width, height: canvasH }}>
+    <View style={{ width, height }}>
       <Pressable
         ref={pressArea}
         onPress={onPress}
-        style={{ marginLeft: offsetX, width: canvasW, height: canvasH }}
+        disabled={disabled}
+        style={{ marginLeft: offsetX, marginTop: offsetY, width: canvasW, height: canvasH }}
       >
         <Canvas style={{ width: canvasW, height: canvasH }}>
           <Group transform={[{ scale }]}>
