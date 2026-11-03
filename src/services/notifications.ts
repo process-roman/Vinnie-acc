@@ -2,6 +2,7 @@
 
 import * as Notifications from 'expo-notifications';
 import { AndroidImportance, IosAuthorizationStatus } from 'expo-notifications';
+import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import type { NotificationKind } from '@/domain/notifications';
@@ -28,7 +29,10 @@ export async function configureNotifications(): Promise<void> {
       shouldSetBadge: false,
     }),
   });
-  if (Platform.OS === 'android') {
+  // Expo Go on Android rejects custom channels (it falls back to its default one);
+  // development and store builds get Vinnie's own channels.
+  if (Platform.OS !== 'android' || Constants.executionEnvironment === 'storeClient') return;
+  try {
     await Notifications.setNotificationChannelAsync(CHANNEL, {
       name: 'Vinnie',
       importance: AndroidImportance.DEFAULT,
@@ -38,6 +42,9 @@ export async function configureNotifications(): Promise<void> {
       importance: AndroidImportance.HIGH,
       vibrationPattern: [0, 700, 500, 700],
     });
+  } catch (e) {
+    // Notifications still work on the default channel.
+    console.warn('[vinnie] could not create notification channels', e);
   }
 }
 
