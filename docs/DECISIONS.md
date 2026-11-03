@@ -254,3 +254,11 @@ stings). Haptics follow their switch.
 **Content.** 250 reaction lines and 8 reactive call scripts (plus check-in and onboarding
 calls); variants for the same reason are picked at random, broken promises first.
 `npm run lint:content` checks placeholders, heat tags, coverage and banned words.
+
+## 2026-11-02 — Fix: app failed to open in Expo Go
+
+`index.ts` loaded Skia's web runtime inside `if (Platform.OS === 'web')`. Production exports
+drop that branch, but the dev server doesn't, so Android and iOS dev bundles tried to include
+CanvasKit and failed on its `require("fs")`. The web loader now lives in `src/boot.web.ts`
+(with a no-op `src/boot.ts` for phones), so phones never see it. Check phone bundles against
+a running dev server (`/index.ts.bundle?platform=android&dev=true`), not only `expo export`.
