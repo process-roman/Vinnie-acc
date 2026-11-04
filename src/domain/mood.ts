@@ -67,3 +67,14 @@ export function driftMood(mood: number, since: number, now: number): { mood: num
   const step = Math.min(days * MOOD_DRIFT_PER_DAY, Math.abs(mood - MOOD_START));
   return { mood: mood + Math.sign(MOOD_START - mood) * step, at: since + days * DAY };
 }
+
+/** When his mood last fell into anger: the moment the cat runs for cover. */
+export function lastUpsetAfter(
+  before: number,
+  after: number,
+  lastUpsetAt: number | null,
+  now: number,
+): number | null {
+  const upset = ['angry', 'meltdown'].includes(moodState(after));
+  return upset && after < before ? now : lastUpsetAt;
+}

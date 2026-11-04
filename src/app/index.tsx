@@ -140,6 +140,7 @@ function Office() {
   const lastCategory = useGame((s) => s.lastCategory);
   const prefill = useGame((s) => s.prefill);
   const mood = useGame((s) => s.character.mood);
+  const lastUpsetAt = useGame((s) => s.character.lastUpsetAt);
   const crackLevel = useGame((s) => s.character.crackLevel);
   const coins = useGame((s) => balance(s.coinTx));
   const pendingSitdown = useGame((s) => s.pendingSitdown);
@@ -604,7 +605,7 @@ function Office() {
     return () => clearInterval(id);
   }, []);
   const room = useMemo(
-    () => roomState(entries, limit, new Date(), mood),
+    () => roomState(entries, limit, new Date(), mood, lastUpsetAt),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `minute` only forces a refresh
     [entries, limit, minute],
   );

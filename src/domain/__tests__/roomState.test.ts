@@ -14,7 +14,8 @@ import {
 } from '../propLines';
 import { rng } from '../random';
 import { Tier } from '../reaction/tier';
-import { plantFor, roomState, trackingStreak, weatherFor } from '../roomState';
+import { lastUpsetAfter } from '../mood';
+import { CAT_HIDES_MS, plantFor, roomState, trackingStreak, weatherFor } from '../roomState';
 
 const now = new Date(2026, 10, 20, 15);
 const HOUR = 3600 * 1000;
@@ -75,7 +76,10 @@ describe('roomState', () => {
   it('steams the espresso when he is relaxed, and hides the cat when he is angry', () => {
     expect(roomState([], null, now, 60)).toMatchObject({ espressoSteaming: true, cat: 'sitting' });
     expect(roomState([], null, now, 50)).toMatchObject({ espressoSteaming: false });
-    expect(roomState([], null, now, 30)).toMatchObject({ espressoSteaming: false, cat: 'hiding' });
+    expect(roomState([], null, now, 30, now.getTime())).toMatchObject({
+      espressoSteaming: false,
+      cat: 'hiding',
+    });
   });
 
   it('puts the cat to sleep on the desk during a tracking streak', () => {
@@ -187,5 +191,31 @@ describe('poking Luc', () => {
       expect(line).not.toBe(last);
       last = line;
     }
+  });
+});
+
+describe('Luc hiding from Vinnie', () => {
+  const HOUR = CAT_HIDES_MS;
+
+  it('lasts an hour, however long Vinnie stays angry', () => {
+    const at = now.getTime();
+    expect(roomState([], null, now, 20, at - HOUR + 1000).cat).toBe('hiding');
+    expect(roomState([], null, now, 20, at - HOUR).cat).toBe('sitting');
+  });
+
+  it('does not hide when Vinnie is calm, or with no record of him getting angry', () => {
+    expect(roomState([], null, now, 60, now.getTime()).cat).toBe('sitting');
+    expect(roomState([], null, now, 20, null).cat).toBe('sitting');
+  });
+
+  it('restarts the hour each time the mood falls into anger', () => {
+    expect(lastUpsetAfter(40, 30, null, 500)).toBe(500);
+    expect(lastUpsetAfter(30, 24, 500, 900)).toBe(900);
+  });
+
+  it('keeps the old time when his mood holds, rises, or stays out of anger', () => {
+    expect(lastUpsetAfter(30, 30, 500, 900)).toBe(500);
+    expect(lastUpsetAfter(20, 28, 500, 900)).toBe(500);
+    expect(lastUpsetAfter(60, 50, 500, 900)).toBe(500);
   });
 });

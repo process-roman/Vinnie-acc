@@ -123,6 +123,9 @@ export const MIGRATIONS: readonly string[] = [
     limit_minor INTEGER NOT NULL CHECK (limit_minor > 0)
   );
   `,
+  `
+  ALTER TABLE character_state ADD COLUMN last_upset_at INTEGER;
+  `,
 ];
 
 export async function migrate(db: Db): Promise<void> {

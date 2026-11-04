@@ -16,6 +16,8 @@ export type CharacterState = {
   lastCrackAt: number | null;
   lastCallAt: number | null;
   lastRepairDay: string | null;
+  /** When his mood last fell into anger. */
+  lastUpsetAt: number | null;
 };
 
 type Row = {
@@ -28,6 +30,7 @@ type Row = {
   last_crack_at: number | null;
   last_call_at: number | null;
   last_repair_day: string | null;
+  last_upset_at: number | null;
 };
 
 /** Reads the state, creating it on first launch. */
@@ -43,13 +46,15 @@ export async function getCharacter(db: Db, now: number): Promise<CharacterState>
     lastCrackAt: r.last_crack_at,
     lastCallAt: r.last_call_at,
     lastRepairDay: r.last_repair_day,
+    lastUpsetAt: r.last_upset_at,
   };
 }
 
 export async function saveCharacter(db: Db, c: CharacterState): Promise<void> {
   await db.run(
     `UPDATE character_state SET mood = ?, mood_at = ?, crack_level = ?, crack_seed = ?,
-       impact_x = ?, impact_y = ?, last_crack_at = ?, last_call_at = ?, last_repair_day = ?
+       impact_x = ?, impact_y = ?, last_crack_at = ?, last_call_at = ?, last_repair_day = ?,
+       last_upset_at = ?
      WHERE id = 1`,
     [
       c.mood,
@@ -61,6 +66,7 @@ export async function saveCharacter(db: Db, c: CharacterState): Promise<void> {
       c.lastCrackAt,
       c.lastCallAt,
       c.lastRepairDay,
+      c.lastUpsetAt,
     ],
   );
 }

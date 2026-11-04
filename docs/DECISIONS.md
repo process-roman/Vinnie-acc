@@ -385,3 +385,6 @@ the name, amount and percent so nothing depends on colour. The 12 category colou
 **Sound on Android ignores the ringer.** expo-audio's `playsInSilentMode: false` silently refuses to play on
 Android whenever the ringer's on vibrate or silent. Media volume is the convention there, so that setting is
 now iPhone-only. Turning the Sounds switch on plays a coin so you can tell right away.
+
+**Luc hides for an hour.** He runs when Vinnie's mood falls into anger and comes back an hour later, even if
+Vinnie's still angry, since the mood itself recovers over days. Another fall restarts the hour.

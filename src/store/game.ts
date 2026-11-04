@@ -81,6 +81,7 @@ import {
   clampMood,
   declineMood,
   driftMood,
+  lastUpsetAfter,
   MOOD_START,
   REPLY_MOOD,
 } from '@/domain/mood';
@@ -108,6 +109,7 @@ const KEPT_PROMISE_MOOD = 6;
 export type LogInput = NewEntry & { date?: string };
 
 const FRESH_CHARACTER = (now: number): CharacterState => ({
+  lastUpsetAt: null,
   mood: MOOD_START,
   moodAt: now,
   crackLevel: 0,
@@ -251,7 +253,14 @@ const DEMO: [string, number, string][] = [
 export const useGame = create<GameState>()((set, get) => {
   /** Updates Vinnie's state and saves it. */
   const setCharacter = (patch: Partial<CharacterState>) => {
-    const character = { ...get().character, ...patch };
+    const before = get().character;
+    const character = { ...before, ...patch };
+    character.lastUpsetAt = lastUpsetAfter(
+      before.mood,
+      character.mood,
+      before.lastUpsetAt,
+      Date.now(),
+    );
     set({ character });
     write((d) => saveCharacter(d, character));
   };
