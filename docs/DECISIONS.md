@@ -349,7 +349,7 @@ start. The median stops one mad purchase teaching him that's normal, and the cap
 talked into anything. Custom categories get the same treatment: the form asks need/want and, optionally,
 a number, so there's never a category with no limit.
 
-**Reactions.** Over the line: judging. Over 2.5x: angry. Over 6x: meltdown. Separately, a month's total in a
+**Reactions.** Over the line: judging. Over 1.5x: angry. Over 2.5x: meltdown, so the glass and the call, cooldowns allowing. Separately, a month's total in a
 category above 6x the line is judged, which catches many small purchases.
 
 **Ceilings.** Health stops at judging, with lines about concern, because of the tone rule on medical costs.

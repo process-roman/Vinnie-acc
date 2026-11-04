@@ -58,8 +58,8 @@ export type TierResult = { tier: Tier; reasons: Reason[] };
 const max = (a: Tier, b: Tier): Tier => (TIER_ORDER.indexOf(a) >= TIER_ORDER.indexOf(b) ? a : b);
 
 /** How many times over a category's limit starts to make him angry, then lose it. */
-export const WAY_OVER_LIMIT = 2.5;
-export const ABSURD_OVER_LIMIT = 6;
+export const WAY_OVER_LIMIT = 1.5;
+export const ABSURD_OVER_LIMIT = 2.5;
 /** A month's total in a category is too much at this many times its one-purchase limit. */
 export const HEAVY_MONTH_LIMITS = 6;
 

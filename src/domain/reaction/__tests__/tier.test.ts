@@ -165,18 +165,18 @@ describe('category limits', () => {
     const groceries = { kind: 'essential' as const };
     expect(limited({ ...groceries, amountMinor: 15000 }).tier).toBe('approve');
     expect(limited({ ...groceries, amountMinor: 30000 }).tier).toBe('judge');
-    expect(limited({ ...groceries, amountMinor: 100000 }).tier).toBe('angry');
-    expect(limited({ ...groceries, amountMinor: 200000 }).tier).toBe('meltdown');
+    expect(limited({ ...groceries, amountMinor: 40000 }).tier).toBe('angry');
+    expect(limited({ ...groceries, amountMinor: 100000 }).tier).toBe('meltdown');
   });
 
   it('gives the reasons for it', () => {
     expect(limited({ amountMinor: 30000 }).reasons).toContain('overLimit');
-    expect(limited({ amountMinor: 100000 }).reasons).toContain('wayOverLimit');
+    expect(limited({ amountMinor: 40000 }).reasons).toContain('wayOverLimit');
     expect(limited({ amountMinor: 200000 }).reasons).toContain('absurdOverLimit');
   });
 
   it('works for wants too', () => {
-    expect(limited({ amountMinor: 100000 }).tier).toBe('angry');
+    expect(limited({ amountMinor: 40000 }).tier).toBe('angry');
     expect(limited({ amountMinor: 200000 }).tier).toBe('meltdown');
     expect(limited({ amountMinor: 1000, categoryLimitMinor: 800 }).tier).toBe('judge');
   });

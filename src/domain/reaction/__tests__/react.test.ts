@@ -64,11 +64,11 @@ describe('planReaction', () => {
 
   it('only quotes real numbers', () => {
     const r = planReaction(
-      { ...latte, amountMinor: 25000, category: 'shopping' },
+      { ...latte, amountMinor: 15000, category: 'shopping' },
       ctx({ entries: [past(10000)] }),
     );
     expect(r.tier).toBe('judge');
-    expect(r.line).toContain('$250');
+    expect(r.line).toContain('$150');
   });
 
   it('never escalates on essentials', () => {
