@@ -6,6 +6,7 @@ import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { FxProvider, useFx } from '@/store/fx';
 import { configureNotifications, listenForTaps } from '@/services/notifications';
+import { prepareSounds } from '@/services/sound';
 import { useGame } from '@/store/game';
 import { AchievementToast } from '@/ui/AchievementToast';
 import { CallOverlay } from '@/ui/CallOverlay';
@@ -34,6 +35,7 @@ export default function RootLayout() {
   useEffect(() => {
     const game = useGame.getState();
     configureNotifications();
+    prepareSounds();
     // Plan the week's notifications once everything has loaded.
     game.init().then(() => useGame.getState().rescheduleNotifications());
     return listenForTaps((t) => useGame.getState().notificationOpened(t));

@@ -51,6 +51,7 @@ import { ShopSheet } from '@/ui/ShopSheet';
 import { SitdownSheet } from '@/ui/SitdownSheet';
 import { ShareMoment } from '@/domain/shareCard';
 import { track } from '@/services/analytics';
+import { playSound, useLoopingSound } from '@/services/sound';
 import { SpeechBubble } from '@/ui/SpeechBubble';
 import { colors, radius, space } from '@/ui/tokens';
 
@@ -216,6 +217,7 @@ function Office() {
     try {
       setStatus('Vinnie is reading your receipt…');
       await canvas.walkTo(DESK_SPOT);
+      playSound('rustle');
       canvas.play('inspect');
       await sleep(900);
       canvas.play(TIER_ANIM[reaction.tier]);
@@ -288,6 +290,7 @@ function Office() {
     setStatus('Vinnie is walking up to the glass…');
     zoomTo(canvas.headPositionAt(CAMERA_SPOT), ZOOM_MS);
     await canvas.walkTo(CAMERA_SPOT);
+    playSound('tape');
     canvas.play('repair');
     setStatus(ANIM_STATUS.repair);
     await sleep(1800);
@@ -370,21 +373,25 @@ function Office() {
       lastCatLine.current = line;
       bubble?.done();
       if (taps === 1) {
+        playSound('meow');
         const at = canvas.catPosition();
         await say(line, at ? { at, speaker: 'Luc' } : undefined);
         return;
       }
       if (taps === 2) {
+        playSound('meow');
         canvas.alert(900);
         await say(line);
         return;
       }
       catStreak.current = NO_TAPS;
       game().catTeased();
+      playSound('yowl');
       canvas.alert(1400);
       canvas.play('shout');
       if (!reducedMotion) {
         catRunning.current = true;
+        playSound('scurry');
         canvas.runCat().then(() => {
           catRunning.current = false;
         });
@@ -400,6 +407,7 @@ function Office() {
       return;
     }
     const target: PropTarget = t.kind === 'vinnie' ? 'vinnie' : t.target;
+    if (target === 'espresso' && room.espressoSteaming) playSound('hiss');
     const line = pickPropLine(target, room, lastLines.current[target], Math.random);
     lastLines.current[target] = line;
     if (target === 'vinnie') canvas.alert(700);
@@ -600,6 +608,8 @@ function Office() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `minute` only forces a refresh
     [entries, limit, minute],
   );
+  // Rain against the window, while there's rain in it.
+  useLoopingSound('rain', room.weather === 'rain' || room.weather === 'storm');
   const spent = monthSpentMinor(entries, now);
   const share = limit ? spent / limit : 0;
 

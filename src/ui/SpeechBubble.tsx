@@ -4,6 +4,8 @@
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useLoopingSound } from '@/services/sound';
+
 import { colors } from './tokens';
 
 const CHAR_MS = 26;
@@ -34,6 +36,8 @@ export function SpeechBubble({
 }: Props) {
   const [shown, setShown] = useState(0);
   const typed = shown >= text.length;
+  // Vinnie's voice. Luc makes his own noises.
+  useLoopingSound('talk', !typed && speaker === 'Vinnie');
 
   useEffect(() => {
     if (typed) return;

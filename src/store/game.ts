@@ -94,6 +94,7 @@ import {
   registerCustomCategories,
 } from '@/domain/categories';
 import { NewEntry, planReaction, Reaction } from '@/domain/reaction/react';
+import { setSoundEnabled } from '@/services/sound';
 import { crackWorse, repairDue, repairOnce } from '@/domain/repair';
 import { canBuy, equip, GIFTS, itemById, Owned } from '@/domain/shop';
 
@@ -328,6 +329,7 @@ export const useGame = create<GameState>()((set, get) => {
         db = await openDb();
         const now = new Date();
         const settings = await getSettings(db, now.getTime());
+        setSoundEnabled(settings.sound);
         const customCategories = await listCustomCategories(db);
         // Before anything looks an entry's category up.
         registerCustomCategories(customCategories);
@@ -762,6 +764,7 @@ export const useGame = create<GameState>()((set, get) => {
 
     setSound(on) {
       set({ sound: on });
+      setSoundEnabled(on);
       write((d) => updateSettings(d, { sound: on }));
     },
 
@@ -793,6 +796,7 @@ export const useGame = create<GameState>()((set, get) => {
       const now = Date.now();
       await cancelAll();
       registerCustomCategories([]);
+      setSoundEnabled(true);
       set({
         customCategories: [],
         categoryLimits: {},

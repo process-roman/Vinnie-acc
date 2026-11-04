@@ -23,6 +23,7 @@ import { formatMoney, parseDecimalToMinor } from '@/domain/money';
 import { fillPlaceholders, Heat } from '@/domain/reaction/dialogue';
 import { VinniePortrait } from '@/scene/VinniePortrait';
 import { track } from '@/services/analytics';
+import { useLoopingSound } from '@/services/sound';
 import { useGame } from '@/store/game';
 import { space } from '@/ui/tokens';
 
@@ -278,6 +279,7 @@ export default function Onboarding() {
 function Dialogue({ text, onTyped }: { text: string; onTyped: () => void }) {
   const [shown, setShown] = useState(0);
   const done = shown >= text.length;
+  useLoopingSound('talk', !done);
   useEffect(() => {
     if (done) return;
     const id = setInterval(() => setShown((n) => n + 1), CHAR_MS);

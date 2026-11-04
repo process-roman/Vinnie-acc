@@ -13,6 +13,7 @@ import {
 } from 'react-native-reanimated';
 
 import type { Point } from '@/scene/iso';
+import { playSound } from '@/services/sound';
 
 import { useGame } from './game';
 
@@ -47,6 +48,8 @@ export function FxProvider({ children }: { children: ReactNode }) {
       punch(at) {
         const { width, height } = Dimensions.get('window');
         useGame.getState().crackGlass({ x: at.x / width, y: at.y / height });
+        playSound('punch');
+        playSound('crack');
         if (!reduced) shake(shakeX);
         buzz(() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -54,6 +57,7 @@ export function FxProvider({ children }: { children: ReactNode }) {
         });
       },
       knock() {
+        playSound('thud');
         if (!reduced) shake(shakeX, 0.3);
         buzz(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium));
       },

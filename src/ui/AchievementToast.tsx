@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { playSound } from '@/services/sound';
 import { useGame } from '@/store/game';
 
 import { colors, radius, space } from './tokens';
@@ -17,6 +18,7 @@ export function AchievementToast() {
 
   useEffect(() => {
     if (!toast) return;
+    playSound('coin');
     const id = setTimeout(dismiss, SHOW_MS);
     return () => clearTimeout(id);
   }, [toast, dismiss]);

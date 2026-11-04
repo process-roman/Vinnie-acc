@@ -362,3 +362,15 @@ the domain module instead of being passed through all of them. It's the one piec
 `src/domain`. The store calls it on load and on every change.
 
 **Removing a category** archives it. Old receipts need the name.
+
+## Sound
+
+**Generated, not recorded.** `scripts/generate-sounds.js` (`npm run sounds`) synthesizes every effect from
+waveforms and seeded noise into `assets/sounds`, the same way the placeholder art is drawn in code. So
+there's nothing to license, and they can be swapped for recordings by replacing the files.
+
+**Playback** uses expo-audio (`services/sound.ts`). It follows the Sound switch and the phone's silent mode,
+mixes with other audio, and asks for no microphone permission. Failures are logged and ignored.
+
+**Vinnie's voice** is one looping babble that plays while his text types, not a sound per letter, which
+would mean restarting a player dozens of times a second.

@@ -18,6 +18,7 @@ import { VinnieAvatar } from '@/scene/VinnieAvatar';
 import { useCall } from '@/store/call';
 import { equippedBySlot } from '@/domain/shop';
 import { track } from '@/services/analytics';
+import { playSound, useLoopingSound } from '@/services/sound';
 import { useGame } from '@/store/game';
 
 import { colors, radius, space } from './tokens';
@@ -51,6 +52,7 @@ function Call() {
   const [declines, setDeclines] = useState(0);
   const [answeredAt, setAnsweredAt] = useState<number | null>(null);
   const seconds = useSeconds(answeredAt, phase.kind !== 'ended');
+  useLoopingSound('ring', phase.kind === 'ringing');
 
   // Vibrate while ringing (native only; there's no ringtone asset yet).
   useEffect(() => {
@@ -71,6 +73,7 @@ function Call() {
   }, [phase.kind, hangUp]);
 
   const decline = () => {
+    playSound('click');
     // Hanging up on him costs mood every time, and more the second time.
     useGame.getState().declined(declines + 1);
     track('call_declined');
@@ -78,6 +81,7 @@ function Call() {
     setPhase({ kind: declines === 0 ? 'waitingToRetry' : 'gaveUp' });
   };
   const answer = () => {
+    playSound('click');
     useGame.getState().achievementEvent('answered');
     track('call_answered');
     setAnsweredAt(Date.now());
@@ -165,7 +169,10 @@ function Call() {
           </Text>
           {phase.kind !== 'ended' && (
             <Pressable
-              onPress={() => setPhase({ kind: 'ended' })}
+              onPress={() => {
+                playSound('click');
+                setPhase({ kind: 'ended' });
+              }}
               style={styles.hangUp}
               accessibilityLabel="Hang up"
             >
@@ -222,6 +229,7 @@ function Typed({
 }) {
   const [shown, setShown] = useState(0);
   const typed = shown >= text.length;
+  useLoopingSound('talk', !typed);
   useEffect(() => {
     if (typed) return;
     const id = setInterval(() => setShown((n) => n + 1), CHAR_MS);

@@ -7,6 +7,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { ACHIEVEMENTS } from '@/domain/achievements';
 import { balance } from '@/domain/coins';
 import { canBuy, GIFTS, ITEMS } from '@/domain/shop';
+import { playSound } from '@/services/sound';
 import { useGame } from '@/store/game';
 
 import { Sheet } from './Sheet';
@@ -36,6 +37,7 @@ export function ShopSheet({ visible, onClose, onBought }: Props) {
 
   const purchase = (id: string) => {
     const line = buy(id);
+    if (line) playSound('coin');
     if (line) onBought(line);
   };
 
