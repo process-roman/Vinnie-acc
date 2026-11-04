@@ -1,9 +1,9 @@
 {
   "plant": {
     "healthy": [
-      "Look at that plant. Thriving. Like the budget. Keep it that way.",
+      "Look at that plant. Thriving. Like the budget. Bellissimo.",
       "I water it every morning. It's the only thing in here that listens to me.",
-      "Green leaves, green budget. That's not a saying. It should be."
+      "Under budget, and she's blooming. Plants know. Don't ask me how."
     ],
     "droopy": [
       "Plant's looking a little tired. Kinda like your budget.",
@@ -17,30 +17,30 @@
     ],
     "dead": [
       "The plant died. We're over budget. I'm not saying those are connected. I'm saying it.",
-      "Rest in peace, Ficus. You deserved better.",
-      "Don't look at the plant. Look at what you did."
+      "Riposa in pace, Ficus. You deserved better.",
+      "Don't look at the plant. I've seen a lot of bodies... of work. Don't look at it."
     ]
   },
   "window": {
     "sunny": [
-      "Beautiful day in Brooklyn. Free, too. Best things are.",
+      "Beautiful day. Almost like Sicily, if you squint and hate yourself.",
       "Sun's out. You know what's free outside? A walk.",
       "Clear skies. Clear books. That's how I like 'em."
     ],
     "cloudy": [
       "Clouds rolling in. Over the budget, too.",
-      "Little overcast. We're past halfway, kid. Pace yourself.",
+      "Little overcast. We're past halfway, kid. Piano, piano.",
       "Gray out there. Could go either way. Like you."
     ],
     "rain": [
-      "It's raining. Eighty-five percent spent and it's raining. Coincidence? No.",
+      "It's raining. Most of the budget's gone and it's raining. Coincidence? No.",
       "Hear that rain? That's the budget crying.",
       "Grab an umbrella. Don't BUY an umbrella. Grab one."
     ],
     "storm": [
-      "There's a thunderstorm IN the budget. I can hear it from here.",
+      "There's a thunderstorm IN the budget. Madonna, I can hear it from here.",
       "Lightning. Thunder. Overdraft. Name a worse trio.",
-      "Stay inside. Don't spend anything. That's an order."
+      "Stay inside. Don't spend anything. That's an order, capiche?"
     ]
   },
   "cat": [
@@ -51,13 +51,13 @@
   ],
   "phone": [
     "Don't touch the phone. When that thing rings, it's for YOU.",
-    "Rotary. Never broke once in thirty years. Can't say that about your budget.",
-    "I keep it close. Never know when somebody's gonna need a talking-to."
+    "Rotary. Can't be tapped. Well. Harder to tap.",
+    "Thirty years, this phone. It's heard things. It doesn't talk. That's why I kept it."
   ],
   "espresso": {
     "steaming": [
-      "Espresso. Made it myself. Costs me eleven cents. ELEVEN.",
-      "You want one? It's on the house. Literally. It's my house.",
+      "Espresso. Real one. Not the bean water you pay for out there.",
+      "You want one? On the house. Literally. I live in this office. Don't ask.",
       "Fresh pot. You know what the café charges for this? Don't. I'll get upset."
     ],
     "cold": [
@@ -81,12 +81,33 @@
   "receipts": [
     "Every receipt you give me, I keep. Every. One.",
     "That pile's getting tall. I'm not throwing them out. Evidence.",
-    "{count} receipts this month. I read every one. Twice."
+    "{count} receipts this month. I read every one. Twice. Old habit."
   ],
   "vinnie": [
-    "What? I'm working here.",
-    "Hands off the merchandise, pal.",
-    "You need something? Besides a budget?",
-    "Poke me again. I dare you."
+    "I used to handle complicated accounts. Yours are just annoying.",
+    "Some of my old clients had fewer subscriptions. And more aliases.",
+    "Where I learned accounting isn't important. Where your money went is.",
+    "Twenty-five years, I never lost a ledger. Misplaced a few. On purpose.",
+    "I left Palermo for my health. Let's leave it at that.",
+    "You got questions? The grand jury had questions. I was very polite.",
+    "Vinnie's my name. This decade.",
+    "Two sets of books. That's how I learned to read. Anyway, what do you want?",
+    "I don't do cash anymore. Mostly. Stop poking me.",
+    "Hands off the merchandise, pal. Last guy who poked me is in Arizona now. By choice."
+  ],
+  "vinnieFedUp": [
+    { "minHeat": "gentle", "text": "Ehi! What am I, a doorbell? Vai, vai. Go." },
+    { "minHeat": "gentle", "text": "Vaffanapoli. It means go to Naples. Lovely town. Go now." },
+    { "minHeat": "gentle", "text": "Ma basta! Go bother the cat. She bites, I just complain." },
+    { "minHeat": "classic", "text": "VAFFANAPOLI!" },
+    { "minHeat": "classic", "text": "Ma che vuoi?! Vaffanapoli! Take the cat with you!" },
+    {
+      "minHeat": "classic",
+      "text": "Touch me again and you're going to Naples. Vaffanapoli. One way."
+    },
+    { "minHeat": "unhinged", "text": "Vaffanculo." },
+    { "minHeat": "unhinged", "text": "VAFFANCULO! ...The receipts are on the desk." },
+    { "minHeat": "unhinged", "text": "Vaffanculo. With love. Now log something." },
+    { "minHeat": "unhinged", "text": "Go fuck yourself. In Italian that's a compliment. It isn't." }
   ]
 }

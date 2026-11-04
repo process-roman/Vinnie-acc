@@ -262,3 +262,19 @@ drop that branch, but the dev server doesn't, so Android and iOS dev bundles tri
 CanvasKit and failed on its `require("fs")`. The web loader now lives in `src/boot.web.ts`
 (with a no-op `src/boot.ts` for phones), so phones never see it. Check phone bundles against
 a running dev server (`/index.ts.bundle?platform=android&dev=true`), not only `expo export`.
+
+## Vinnie's voice (after M7)
+
+**Italian, with a past.** The owner asked for a fully Italian Vinnie who used to work with the
+mafia, which replaces the blueprint's "avoid mob jokes". He only hints at it and never threatens
+the player. All lines were rewritten; the tone rules in 7.6 still apply.
+
+**Swearing by heat.** Italian swears count as profanity: vaffanculo, cazzo and the like are Unhinged
+only, and the content test bans them below that. Gentle and Classic get "vaffanapoli". Mild words
+like mannaggia and madonn' are fine below Unhinged.
+
+**Three taps.** Three taps on Vinnie, each within 1.5s of the last, and he tells you off. Taps count
+even while he's talking.
+
+**`underBudget` reason.** Lines that say you're under budget require this condition, so he never says
+it when it isn't true.

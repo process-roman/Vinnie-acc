@@ -4,21 +4,84 @@
     "tier": "approve",
     "minHeat": "gentle",
     "categories": ["groceries"],
-    "text": "Groceries! Actual food! Look at you, making adult decisions."
+    "text": "Groceries! Actual food! Mamma mia, you're becoming a person."
   },
   {
     "id": "ap_groceries_2",
     "tier": "approve",
     "minHeat": "gentle",
     "categories": ["groceries"],
-    "text": "{amount} on groceries. You know what that is? That's dinner you didn't order. Beautiful."
+    "text": "{amount} on groceries. That's dinner you didn't order. Bellissimo."
+  },
+  {
+    "id": "ap_groceries_3",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "You're gonna cook? With a pan? Madonna, I'm getting emotional."
+  },
+  {
+    "id": "ap_groceries_4",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "Nobody ever went broke buying onions. Write that down."
+  },
+  {
+    "id": "ap_groceries_5",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "Garlic, I hope. Tell me there's garlic in that bag."
+  },
+  {
+    "id": "ap_groceries_6",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "My mother fed a whole family on a coupon book and spite. This she'd respect."
+  },
+  {
+    "id": "ap_groceries_7",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "A fridge with food in it. Now that's an asset, capiche?"
+  },
+  {
+    "id": "ap_groceries_8",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "Good. Mangia. At home, where the markup is zero."
+  },
+  {
+    "id": "ap_groceries_9",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "Jarred sauce I forgive. Once. We'll talk."
+  },
+  {
+    "id": "ap_groceries_10",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "I knew guys who'd rob a truck for groceries at these prices. You just paid. Classy."
+  },
+  {
+    "id": "ap_groceries_11",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "text": "A receipt from an actual store, with actual food. I'm framing it."
   },
   {
     "id": "ap_bills_1",
     "tier": "approve",
     "minHeat": "gentle",
     "categories": ["bills"],
-    "text": "Bills paid. Lights stay on. My mother would be proud of you. She'd never say it, but she would."
+    "text": "Bills paid. Lights stay on. My mother would be proud. She'd never say it, but she would."
   },
   {
     "id": "ap_bills_2",
@@ -28,18 +91,144 @@
     "text": "Rent's rent, kid. Nobody gets yelled at for a roof."
   },
   {
+    "id": "ap_bills_3",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["bills"],
+    "text": "Paid on time. I worked whole decades with guys who never once tried that."
+  },
+  {
+    "id": "ap_bills_4",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["bills"],
+    "text": "{amount} for bills. Boring. I love boring. Boring never got subpoenaed."
+  },
+  {
+    "id": "ap_bills_5",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["bills"],
+    "text": "Utilities. Unglamorous. Essential. Like me."
+  },
+  {
+    "id": "ap_bills_6",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["bills"],
+    "text": "Nobody's gonna clap for this. I'm clapping. Bravo."
+  },
+  {
+    "id": "ap_bills_7",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["bills"],
+    "text": "Pay what you owe, when you owe it. Where I come from, that's the whole religion."
+  },
+  {
+    "id": "ap_bills_8",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["bills"],
+    "text": "Phone bill's paid. Good. Now you got no excuse when I call."
+  },
+  {
     "id": "ap_transport_1",
     "tier": "approve",
     "minHeat": "gentle",
     "categories": ["transport"],
-    "text": "Getting from A to B. Necessary. I'll allow it."
+    "text": "Getting from A to B. Necessary. Vai, vai. Go."
+  },
+  {
+    "id": "ap_transport_2",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["transport"],
+    "text": "Getting to work so you can make money. That's the circle of life."
+  },
+  {
+    "id": "ap_transport_3",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["transport"],
+    "text": "Gas in the tank. I know a guy who... never mind. Good purchase."
+  },
+  {
+    "id": "ap_transport_4",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["transport"],
+    "text": "Train fare. Cheapest seat in the city, and nobody follows you. Usually."
+  },
+  {
+    "id": "ap_transport_5",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["transport"],
+    "text": "Bike repair? Love it. Legs are free."
+  },
+  {
+    "id": "ap_transport_classic_1",
+    "tier": "approve",
+    "minHeat": "classic",
+    "categories": ["transport"],
+    "text": "A monthly pass? Cheaper per ride. That's math, amico."
+  },
+  {
+    "id": "ap_transport_classic_2",
+    "tier": "approve",
+    "minHeat": "classic",
+    "categories": ["transport"],
+    "text": "Getting around isn't a luxury. Unless it's a limo. Was it a limo?"
   },
   {
     "id": "ap_health_1",
     "tier": "approve",
     "minHeat": "gentle",
     "categories": ["health"],
-    "text": "Your health? Never cheap out on that. Ever. Good."
+    "text": "Your health? Never cheap out on that. Ever. Bravo."
+  },
+  {
+    "id": "ap_health_2",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "text": "Pharmacy? Take care of yourself. That's an order."
+  },
+  {
+    "id": "ap_health_3",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "text": "Dentist. Expensive, sure. Trust me, teeth are more expensive."
+  },
+  {
+    "id": "ap_health_4",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "text": "Doctor's visit. Smart. Salute."
+  },
+  {
+    "id": "ap_health_5",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "text": "Your health is the one thing I never argue about. Capiche?"
+  },
+  {
+    "id": "ap_health_6",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "text": "Prescription? Take it. My mother says take it with food."
+  },
+  {
+    "id": "ap_health_7",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "text": "I knew a doctor who made house calls, no questions asked. Anyway. Good for you."
   },
   {
     "id": "ap_saved_1",
@@ -54,96 +243,6 @@
     "minHeat": "gentle",
     "conditions": ["saved"],
     "text": "{amount} saved. I'm proud of you. Don't make this weird."
-  },
-  {
-    "id": "ap_skipped_1",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "conditions": ["skipped"],
-    "text": "You walked away from it? Come here. No, I'm not hugging you. Come here though."
-  },
-  {
-    "id": "ap_skipped_2",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "conditions": ["skipped"],
-    "text": "{amount} you didn't spend. That's the best purchase you made all week."
-  },
-  {
-    "id": "ap_generic_1",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "text": "Now THAT is a receipt I like to see."
-  },
-  {
-    "id": "ap_groceries_3",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "Vegetables? In THIS economy? Proud of you, kid."
-  },
-  {
-    "id": "ap_groceries_4",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "You're feeding yourself like a grown-up. My mother would've hugged you. I won't. But she would."
-  },
-  {
-    "id": "ap_groceries_5",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "Groceries. You're gonna cook. I believe in you. Mostly."
-  },
-  {
-    "id": "ap_bills_3",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["bills"],
-    "text": "Paying the electric. Lights on, books balanced. Beautiful."
-  },
-  {
-    "id": "ap_bills_4",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["bills"],
-    "text": "{amount} for bills. Boring. I love boring."
-  },
-  {
-    "id": "ap_transport_2",
-    "tier": "approve",
-    "minHeat": "classic",
-    "categories": ["transport"],
-    "text": "Bus fare's a bargain. Taxis are for people who hate money."
-  },
-  {
-    "id": "ap_transport_3",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["transport"],
-    "text": "Getting to work so you can make money. That's the circle of life."
-  },
-  {
-    "id": "ap_transport_4",
-    "tier": "approve",
-    "minHeat": "classic",
-    "categories": ["transport"],
-    "text": "A monthly pass? Cheaper per ride. That's math, baby."
-  },
-  {
-    "id": "ap_health_2",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["health"],
-    "text": "Pharmacy? Take care of yourself. That's an order."
-  },
-  {
-    "id": "ap_health_3",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["health"],
-    "text": "Doctor, dentist, whatever. You don't skimp on that. Ever."
   },
   {
     "id": "ap_saved_3",
@@ -167,6 +266,62 @@
     "text": "I'm not crying. It's the espresso steam."
   },
   {
+    "id": "ap_saved_6",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["saved"],
+    "text": "You put {amount} away? Let me sit down. Madonna. I'm sitting down."
+  },
+  {
+    "id": "ap_saved_7",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["saved"],
+    "text": "Savings! The most beautiful word in English. After 'refund.'"
+  },
+  {
+    "id": "ap_saved_8",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["saved"],
+    "text": "Money in an account where you can see it. Legal, even. Bellissimo."
+  },
+  {
+    "id": "ap_saved_9",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["saved"],
+    "text": "Future you just sent a thank-you card. No return address. Smart."
+  },
+  {
+    "id": "ap_saved_10",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["saved"],
+    "text": "{amount} saved. That goes in the good ledger. I don't show people the other one."
+  },
+  {
+    "id": "ap_saved_11",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["saved"],
+    "text": "Money still in the account on payday. That's what I like to see."
+  },
+  {
+    "id": "ap_skipped_1",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["skipped"],
+    "text": "You walked away from it? Come here. No, I'm not hugging you. Come here though."
+  },
+  {
+    "id": "ap_skipped_2",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["skipped"],
+    "text": "{amount} you didn't spend. Best purchase you made all week."
+  },
+  {
     "id": "ap_skipped_3",
     "tier": "approve",
     "minHeat": "gentle",
@@ -185,240 +340,211 @@
     "tier": "approve",
     "minHeat": "gentle",
     "conditions": ["skipped"],
-    "text": "{amount} still in your pocket. Feels good, right? That's what rich feels like."
-  },
-  {
-    "id": "ap_generic_2",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "text": "Now we're talking. That's a responsible receipt."
-  },
-  {
-    "id": "ap_generic_3",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "text": "Keep giving me receipts like this and I'll retire happy."
-  },
-  {
-    "id": "ap_groceries_6",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "Bananas. Bread. Responsibility. I could cry."
-  },
-  {
-    "id": "ap_groceries_7",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "You went to the grocery store like a person with a plan. I see you."
-  },
-  {
-    "id": "ap_groceries_8",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "Cooking at home? My mother's spirit just nodded."
-  },
-  {
-    "id": "ap_groceries_9",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "{amount} at the market. That feeds you for days. That's math I like."
-  },
-  {
-    "id": "ap_groceries_10",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "Groceries again! You're on a streak of being an adult."
-  },
-  {
-    "id": "ap_groceries_11",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["groceries"],
-    "text": "Nobody ever went broke buying onions. Write that down."
-  },
-  {
-    "id": "ap_bills_5",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["bills"],
-    "text": "Phone bill paid. Now you can call me. Not that you do."
-  },
-  {
-    "id": "ap_bills_6",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["bills"],
-    "text": "Utilities. Unglamorous. Essential. Like me."
-  },
-  {
-    "id": "ap_bills_7",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["bills"],
-    "text": "Paying on time? That's how you build credit, kid. And character."
-  },
-  {
-    "id": "ap_bills_8",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["bills"],
-    "text": "{amount} for bills. Nobody's gonna clap. I'm clapping."
-  },
-  {
-    "id": "ap_transport_5",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["transport"],
-    "text": "Gas in the tank. Gotta get to work somehow."
-  },
-  {
-    "id": "ap_transport_6",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["transport"],
-    "text": "Train fare. Cheapest seat in the city, and you get to read."
-  },
-  {
-    "id": "ap_transport_7",
-    "tier": "approve",
-    "minHeat": "classic",
-    "categories": ["transport"],
-    "text": "Getting around isn't a luxury. Unless it's a limo. Was it a limo?"
-  },
-  {
-    "id": "ap_transport_8",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["transport"],
-    "text": "Bike repair? Love it. Legs are free."
-  },
-  {
-    "id": "ap_health_4",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["health"],
-    "text": "Prescription? Take it. Take care of yourself."
-  },
-  {
-    "id": "ap_health_5",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["health"],
-    "text": "Dentist. Expensive, sure. Teeth are more expensive."
-  },
-  {
-    "id": "ap_health_6",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["health"],
-    "text": "Your health is the one thing I never argue about."
-  },
-  {
-    "id": "ap_health_7",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "categories": ["health"],
-    "text": "Doctor's visit. Smart. Cheaper than ignoring it."
-  },
-  {
-    "id": "ap_saved_6",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "conditions": ["saved"],
-    "text": "You put {amount} away? Let me sit down. I'm sitting down."
-  },
-  {
-    "id": "ap_saved_7",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "conditions": ["saved"],
-    "text": "Savings! The most beautiful word in English. After 'refund.'"
-  },
-  {
-    "id": "ap_saved_8",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "conditions": ["saved"],
-    "text": "That money's gonna grow up big and strong. Like you, but with interest."
-  },
-  {
-    "id": "ap_saved_9",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "conditions": ["saved"],
-    "text": "Future you just sent me a thank-you card."
-  },
-  {
-    "id": "ap_saved_10",
-    "tier": "approve",
-    "minHeat": "gentle",
-    "conditions": ["saved"],
-    "text": "{amount} saved. I'm writing it in the good ledger. The gold one."
+    "text": "{amount} still in your pocket. That's what rich feels like."
   },
   {
     "id": "ap_skipped_6",
     "tier": "approve",
     "minHeat": "gentle",
     "conditions": ["skipped"],
-    "text": "You wanted it. You didn't buy it. That's the whole game, kid."
+    "text": "You said no to yourself. Hardest 'no' there is. Bravo."
   },
   {
     "id": "ap_skipped_7",
     "tier": "approve",
     "minHeat": "gentle",
     "conditions": ["skipped"],
-    "text": "Walked right past it? Look at you. A hero in the sneakers you already own."
+    "text": "Walked away clean. No witnesses. That's how it's done."
   },
   {
     "id": "ap_skipped_8",
     "tier": "approve",
     "minHeat": "gentle",
     "conditions": ["skipped"],
-    "text": "Not buying something counts. I'm counting it. {amount}."
+    "text": "You know who walks away from a bad deal? The ones who get to retire. Like me."
   },
   {
     "id": "ap_skipped_9",
     "tier": "approve",
     "minHeat": "gentle",
     "conditions": ["skipped"],
-    "text": "That's {amount} that stays home with you. Good."
+    "text": "Not buying something counts. I'm counting it. {amount}."
   },
   {
     "id": "ap_skipped_10",
     "tier": "approve",
     "minHeat": "gentle",
     "conditions": ["skipped"],
-    "text": "You said no to yourself. Hardest 'no' there is. Proud of you."
+    "text": "That's {amount} that stays home with the family. Good."
   },
   {
-    "id": "ap_generic_4",
+    "id": "ap_underBudget_1",
     "tier": "approve",
     "minHeat": "gentle",
-    "text": "Clean receipt. I like clean."
+    "conditions": ["underBudget"],
+    "text": "Under budget. Look at you, making my blood pressure somebody else's problem."
   },
   {
-    "id": "ap_generic_5",
+    "id": "ap_underBudget_2",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["underBudget"],
+    "text": "Still under the number. Mamma mia, is this what peace feels like?"
+  },
+  {
+    "id": "ap_underBudget_3",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["underBudget"],
+    "text": "You're under budget and I got nothing to yell about. I don't know what to do with my hands."
+  },
+  {
+    "id": "ap_underBudget_4",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["underBudget"],
+    "text": "{remaining} still in the budget. Keep it there, capiche?"
+  },
+  {
+    "id": "ap_underBudget_5",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "conditions": ["underBudget"],
+    "text": "{daysLeft} days left and {remaining} to work with. Bellissimo."
+  },
+  {
+    "id": "ap_1",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "text": "Now THAT is a receipt I like to see."
+  },
+  {
+    "id": "ap_2",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "text": "Clean receipt. I like clean. Clean books, nobody asks questions."
+  },
+  {
+    "id": "ap_3",
     "tier": "approve",
     "minHeat": "gentle",
     "text": "Nothing to yell about. I'm almost disappointed. Almost."
   },
-  { "id": "ne_generic_1", "tier": "neutral", "minHeat": "gentle", "text": "Fine. Noted. Filed." },
   {
-    "id": "ne_generic_2",
+    "id": "ap_4",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "text": "Bravo. Keep giving me receipts like this and I might retire. Again."
+  },
+  {
+    "id": "ap_5",
+    "tier": "approve",
+    "minHeat": "gentle",
+    "text": "Perfetto. That one I could show the auditors."
+  },
+  {
+    "id": "ne_essential_big_1",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["groceries", "bills", "transport", "health"],
+    "conditions": ["big"],
+    "text": "That's a big one, but it's {category}. Life costs what it costs. It's in the books."
+  },
+  {
+    "id": "ne_essential_big_2",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["groceries", "bills", "transport", "health"],
+    "conditions": ["big"],
+    "text": "Ouch. No yelling. {Category} happens to everybody."
+  },
+  {
+    "id": "ne_essential_big_3",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["groceries", "bills", "transport", "health"],
+    "conditions": ["big"],
+    "text": "Big one. Not your fault. I'm just writing it down, capiche?"
+  },
+  {
+    "id": "ne_essential_big_4",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["groceries", "bills", "transport", "health"],
+    "conditions": ["big"],
+    "text": "Madonna, the prices. Not you. The prices."
+  },
+  {
+    "id": "ne_1",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "text": "Fine. Noted. Filed."
+  },
+  {
+    "id": "ne_2",
     "tier": "neutral",
     "minHeat": "gentle",
     "text": "A treat's a treat. Don't make it a lifestyle."
   },
   {
-    "id": "ne_generic_3",
+    "id": "ne_3",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "text": "Eh. I've seen worse. I've done worse."
+  },
+  {
+    "id": "ne_4",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "text": "It's in the books. The real ones."
+  },
+  {
+    "id": "ne_5",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "text": "Va bene. Carry on."
+  },
+  {
+    "id": "ne_6",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "text": "Moderation. My mother would approve. She'd complain, but she'd approve."
+  },
+  {
+    "id": "ne_7",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "text": "A normal amount of money for a normal thing. Boring. Good."
+  },
+  {
+    "id": "ne_8",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "text": "Okay. I'm allowing it. Don't tell the cat."
+  },
+  {
+    "id": "ne_classic_1",
     "tier": "neutral",
     "minHeat": "classic",
     "text": "I'm watching you. Carry on."
+  },
+  {
+    "id": "ne_classic_2",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "text": "I'm gonna allow it. Don't push me."
+  },
+  {
+    "id": "ne_classic_3",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "text": "Hmm. I'm not saying anything. I'm thinking it, in Italian."
+  },
+  {
+    "id": "ne_classic_4",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "text": "Fine. But I remember things. It's what they paid me for."
   },
   {
     "id": "ne_coffee_1",
@@ -430,9 +556,51 @@
   {
     "id": "ne_coffee_2",
     "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["coffee"],
+    "text": "Coffee. Fine. Make the next one at home."
+  },
+  {
+    "id": "ne_coffee_3",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["coffee"],
+    "text": "I hope the barista spelled your name right for that price."
+  },
+  {
+    "id": "ne_coffee_4",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["coffee"],
+    "text": "An espresso I understand. What you got, I'm not sure it has a name."
+  },
+  {
+    "id": "ne_coffee_5",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["coffee"],
+    "text": "In Italy you drink it standing up, you pay, you leave. That's a system."
+  },
+  {
+    "id": "ne_coffee_classic_1",
+    "tier": "neutral",
     "minHeat": "classic",
     "categories": ["coffee"],
-    "text": "If that had oat milk in it, I don't wanna know."
+    "text": "If that had oat milk in it, I don't wanna know. Oats don't have nipples."
+  },
+  {
+    "id": "ne_coffee_classic_2",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "text": "Coffee. The official fuel of people who complain about money."
+  },
+  {
+    "id": "ne_coffee_classic_3",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "text": "One cup. Savor it. Slowly. Like it costs money. Because it does."
   },
   {
     "id": "ne_dining_1",
@@ -440,59 +608,6 @@
     "minHeat": "gentle",
     "categories": ["dining"],
     "text": "Dinner out. Hope it was good. Was it {amount} good?"
-  },
-  {
-    "id": "ne_games_1",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["games"],
-    "text": "A game. Okay. Does it pay rent? It does not."
-  },
-  {
-    "id": "ne_subs_1",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["subscriptions"],
-    "text": "Another subscription. You collecting 'em?"
-  },
-  {
-    "id": "ne_other_1",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["other"],
-    "text": "'Other.' Very mysterious. I'll allow it. This time."
-  },
-  {
-    "id": "ne_generic_4",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "text": "Hm. Fine. I've seen worse. I've seen MUCH worse."
-  },
-  {
-    "id": "ne_generic_5",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "text": "Okay. It's in the books."
-  },
-  {
-    "id": "ne_generic_6",
-    "tier": "neutral",
-    "minHeat": "classic",
-    "text": "I'm gonna allow it. Don't push me."
-  },
-  {
-    "id": "ne_coffee_3",
-    "tier": "neutral",
-    "minHeat": "classic",
-    "categories": ["coffee"],
-    "text": "Coffee. The official fuel of people who complain about money."
-  },
-  {
-    "id": "ne_coffee_4",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["coffee"],
-    "text": "Coffee. Fine. Make the next one at home."
   },
   {
     "id": "ne_dining_2",
@@ -504,9 +619,30 @@
   {
     "id": "ne_dining_3",
     "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["dining"],
+    "text": "A meal with friends is worth something. Not everything. Something."
+  },
+  {
+    "id": "ne_dining_4",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["dining"],
+    "text": "Restaurant. Tip well. Sit facing the door."
+  },
+  {
+    "id": "ne_dining_classic_1",
+    "tier": "neutral",
     "minHeat": "classic",
     "categories": ["dining"],
-    "text": "Did you at least take leftovers? Tell me you took leftovers."
+    "text": "Did you take leftovers? Tell me you took leftovers."
+  },
+  {
+    "id": "ne_dining_classic_2",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "categories": ["dining"],
+    "text": "Nice dinner? Next time cook for me. I'll bring wine. Don't ask from where."
   },
   {
     "id": "ne_delivery_1",
@@ -518,9 +654,30 @@
   {
     "id": "ne_delivery_2",
     "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["delivery"],
+    "text": "Somebody biked across town for your noodles. Tip that kid."
+  },
+  {
+    "id": "ne_delivery_3",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["delivery"],
+    "text": "Once is fine. Once."
+  },
+  {
+    "id": "ne_delivery_classic_1",
+    "tier": "neutral",
     "minHeat": "classic",
     "categories": ["delivery"],
     "text": "The delivery guy knows your name, doesn't he."
+  },
+  {
+    "id": "ne_delivery_classic_2",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "categories": ["delivery"],
+    "text": "Delivery fees are the tax on not putting pants on."
   },
   {
     "id": "ne_shopping_1",
@@ -532,9 +689,30 @@
   {
     "id": "ne_shopping_2",
     "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["shopping"],
+    "text": "New stuff, huh? Keep the receipt. Give it to me, actually."
+  },
+  {
+    "id": "ne_shopping_3",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["shopping"],
+    "text": "Shopping happens. Return policies exist. Just saying."
+  },
+  {
+    "id": "ne_shopping_classic_1",
+    "tier": "neutral",
     "minHeat": "classic",
     "categories": ["shopping"],
     "text": "If it's another hoodie, I don't wanna hear about it."
+  },
+  {
+    "id": "ne_shopping_classic_2",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "categories": ["shopping"],
+    "text": "If it was on sale, did you need it? Think about it. Don't answer."
   },
   {
     "id": "ne_fun_1",
@@ -548,165 +726,7 @@
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["fun"],
-    "text": "Fun's allowed. Fun's in the budget. Within reason."
-  },
-  {
-    "id": "ne_games_2",
-    "tier": "neutral",
-    "minHeat": "classic",
-    "categories": ["games"],
-    "text": "You know what a game costs per hour of fun? Me neither. Let's hope it's good."
-  },
-  {
-    "id": "ne_subs_2",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["subscriptions"],
-    "text": "Subscriptions add up quiet. Like termites."
-  },
-  {
-    "id": "ne_other_2",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["other"],
-    "text": "'Other.' I'll pretend I know what that means."
-  },
-  {
-    "id": "ne_games_3",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["games"],
-    "text": "A game. As long as it's not a loot box. Tell me it's not a loot box."
-  },
-  {
-    "id": "ne_generic_7",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "text": "Okay. It's in the ledger."
-  },
-  { "id": "ne_generic_8", "tier": "neutral", "minHeat": "gentle", "text": "Noted. Carry on." },
-  {
-    "id": "ne_generic_9",
-    "tier": "neutral",
-    "minHeat": "classic",
-    "text": "Hmm. Fine. I'm not saying anything. I'm thinking it."
-  },
-  {
-    "id": "ne_generic_10",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "text": "Moderation. I'll take it."
-  },
-  {
-    "id": "ne_generic_11",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "text": "A normal amount of money for a normal thing. Boring. Good."
-  },
-  {
-    "id": "ne_coffee_5",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["coffee"],
-    "text": "Coffee. The bean water of champions."
-  },
-  {
-    "id": "ne_coffee_6",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["coffee"],
-    "text": "I hope the barista spelled your name right for that price."
-  },
-  {
-    "id": "ne_coffee_7",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["coffee"],
-    "text": "A coffee a day keeps the budget... somewhat okay."
-  },
-  {
-    "id": "ne_coffee_8",
-    "tier": "neutral",
-    "minHeat": "classic",
-    "categories": ["coffee"],
-    "text": "One cup. Savor it. Slowly. Like it costs money. Because it does."
-  },
-  {
-    "id": "ne_dining_4",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["dining"],
-    "text": "Eating out. Did you at least get dessert? No? Good."
-  },
-  {
-    "id": "ne_dining_5",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["dining"],
-    "text": "A meal with friends is worth something. Not everything. Something."
-  },
-  {
-    "id": "ne_dining_6",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["dining"],
-    "text": "Restaurant. Tip well. Spend less on the appetizers."
-  },
-  {
-    "id": "ne_dining_7",
-    "tier": "neutral",
-    "minHeat": "classic",
-    "categories": ["dining"],
-    "text": "Nice dinner? Next time cook for me. I'll bring wine. From the discount bin."
-  },
-  {
-    "id": "ne_delivery_3",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["delivery"],
-    "text": "Somebody biked across town for your noodles. Tip that kid."
-  },
-  {
-    "id": "ne_delivery_4",
-    "tier": "neutral",
-    "minHeat": "classic",
-    "categories": ["delivery"],
-    "text": "Delivery fees are the tax on not putting pants on."
-  },
-  {
-    "id": "ne_delivery_5",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["delivery"],
-    "text": "Once is fine. Once."
-  },
-  {
-    "id": "ne_shopping_3",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["shopping"],
-    "text": "New stuff, huh? Keep the receipt. I mean it. Give it to me."
-  },
-  {
-    "id": "ne_shopping_4",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["shopping"],
-    "text": "Clothes are fine. As long as you wear them more than once."
-  },
-  {
-    "id": "ne_shopping_5",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["shopping"],
-    "text": "Shopping happens. Return policies exist. Just saying."
-  },
-  {
-    "id": "ne_shopping_6",
-    "tier": "neutral",
-    "minHeat": "classic",
-    "categories": ["shopping"],
-    "text": "If it was on sale, did you need it? Think about it. Don't answer."
+    "text": "Fun's allowed. La dolce vita. Within reason."
   },
   {
     "id": "ne_fun_3",
@@ -716,116 +736,523 @@
     "text": "A night out? Live a little. A little."
   },
   {
-    "id": "ne_fun_4",
+    "id": "ne_fun_classic_1",
     "tier": "neutral",
     "minHeat": "classic",
     "categories": ["fun"],
-    "text": "Movies? Popcorn's the real crime. Was there popcorn?"
+    "text": "Movies? The popcorn's the real crime, and I know crime."
   },
   {
-    "id": "ne_fun_5",
-    "tier": "neutral",
-    "minHeat": "gentle",
-    "categories": ["fun"],
-    "text": "Fun money is still money. But fun. Fine."
-  },
-  {
-    "id": "ne_games_4",
+    "id": "ne_games_1",
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["games"],
-    "text": "A game. I played checkers in 1979. Still free."
+    "text": "A game. Okay. Does it pay rent? It does not."
   },
   {
-    "id": "ne_games_5",
+    "id": "ne_games_2",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["games"],
+    "text": "A game. Just not a loot box. That racket I respect, and that's the problem."
+  },
+  {
+    "id": "ne_games_3",
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["games"],
     "text": "New game? Finish it before you buy the next one. Deal?"
   },
   {
-    "id": "ne_games_6",
+    "id": "ne_games_4",
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["games"],
-    "text": "Gaming. Hours of fun per dollar. Allegedly."
+    "text": "When I was young we played cards for money. Games used to pay."
   },
   {
-    "id": "ne_subs_3",
+    "id": "ne_games_classic_1",
+    "tier": "neutral",
+    "minHeat": "classic",
+    "categories": ["games"],
+    "text": "You know what a game costs per hour of fun? Me neither. Let's hope it's good."
+  },
+  {
+    "id": "ne_subscriptions_1",
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["subscriptions"],
-    "text": "Another monthly thing. I'm writing it on the calendar so you don't forget it exists."
+    "text": "Another subscription. You collecting 'em?"
   },
   {
-    "id": "ne_subs_4",
+    "id": "ne_subscriptions_2",
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["subscriptions"],
-    "text": "Subscriptions: the gift that keeps on taking."
+    "text": "Subscriptions add up quiet. Like termites."
+  },
+  {
+    "id": "ne_subscriptions_3",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["subscriptions"],
+    "text": "A little off the top, every month, forever. I know that business model. I kept its books."
+  },
+  {
+    "id": "ne_subscriptions_4",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["subscriptions"],
+    "text": "Another monthly thing. I'm writing it down so one of us remembers it exists."
+  },
+  {
+    "id": "ne_other_1",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["other"],
+    "text": "'Other.' Very mysterious. I'll allow it. This time."
+  },
+  {
+    "id": "ne_other_2",
+    "tier": "neutral",
+    "minHeat": "gentle",
+    "categories": ["other"],
+    "text": "'Other.' We used to call that 'consulting.'"
   },
   {
     "id": "ne_other_3",
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["other"],
-    "text": "'Other' again. You're a mystery. I don't love mysteries."
+    "text": "'Other' again. I don't love mysteries. I made a living not loving them."
   },
   {
     "id": "ne_other_4",
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["other"],
-    "text": "Miscellaneous. My least favorite category. It hides things."
+    "text": "Miscellaneous. My least favorite category. It hides things. I should know."
   },
   {
-    "id": "ju_generic_1",
+    "id": "ju_1",
     "tier": "judge",
     "minHeat": "gentle",
     "text": "Hmm. I'm holding this one up to the light."
   },
   {
-    "id": "ju_generic_2",
+    "id": "ju_2",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "text": "I'm writing this in red ink. I don't own red ink. I bought some for you."
+  },
+  {
+    "id": "ju_3",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "text": "I'm squinting. You see me squinting?"
+  },
+  {
+    "id": "ju_4",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "text": "Was it on sale? Tell me it was on sale."
+  },
+  {
+    "id": "ju_5",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "text": "Interesting choice. And by interesting I mean expensive."
+  },
+  {
+    "id": "ju_6",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "text": "I checked the numbers twice. I was hoping the first time was wrong."
+  },
+  {
+    "id": "ju_7",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "text": "Ma che fai? What are you doing, kid?"
+  },
+  {
+    "id": "ju_classic_1",
     "tier": "judge",
     "minHeat": "classic",
     "text": "Listen to me. I'm not mad. I'm disappointed. It's worse."
   },
   {
-    "id": "ju_coffee_repeat",
+    "id": "ju_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "text": "You know I can see these, right? All of them?"
+  },
+  {
+    "id": "ju_classic_3",
+    "tier": "judge",
+    "minHeat": "classic",
+    "text": "My calculator watch just beeped. It's never done that."
+  },
+  {
+    "id": "ju_classic_4",
+    "tier": "judge",
+    "minHeat": "classic",
+    "text": "You've got champagne taste and a tap-water budget."
+  },
+  {
+    "id": "ju_classic_5",
+    "tier": "judge",
+    "minHeat": "classic",
+    "text": "We talked about this. Apparently, I was the only one listening."
+  },
+  {
+    "id": "ju_classic_6",
+    "tier": "judge",
+    "minHeat": "classic",
+    "text": "I've read shorter rap sheets than your bank statement."
+  },
+  {
+    "id": "ju_classic_7",
+    "tier": "judge",
+    "minHeat": "classic",
+    "text": "Mannaggia. Explain this one to me like I'm the IRS."
+  },
+  {
+    "id": "ju_coffee_repeat_1",
     "tier": "judge",
     "minHeat": "gentle",
     "categories": ["coffee"],
     "conditions": ["repeat"],
-    "text": "Another latte? At this point the coffee shop should give you stock options."
+    "text": "Another latte? The coffee shop should give you stock options."
   },
   {
-    "id": "ju_coffee_month",
+    "id": "ju_coffee_repeat_2",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["coffee"],
+    "conditions": ["repeat"],
+    "text": "Fancy coffee two days running? The beans aren't going anywhere."
+  },
+  {
+    "id": "ju_coffee_repeat_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "conditions": ["repeat"],
+    "text": "Two coffees in two days. I'm not counting. I'm counting."
+  },
+  {
+    "id": "ju_coffee_repeat_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "conditions": ["repeat"],
+    "text": "Coffee again? Your blood is half latte now."
+  },
+  {
+    "id": "ju_coffee_classic_1",
     "tier": "judge",
     "minHeat": "classic",
     "categories": ["coffee"],
     "text": "That's {count} coffees this month, pal. {monthTotal}. I could buy a machine with that."
   },
   {
-    "id": "ju_delivery_1",
+    "id": "ju_coffee_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "text": "{amount} for coffee. The beans better have been hand-picked by monks."
+  },
+  {
+    "id": "ju_coffee_classic_3",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "text": "{monthTotal} on coffee this month. I own a machine. It's RIGHT THERE."
+  },
+  {
+    "id": "ju_coffee_classic_4",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "text": "{amount}? For that? In Naples they'd call the cops. In NAPLES."
+  },
+  {
+    "id": "ju_dining_big_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["dining"],
+    "conditions": ["big"],
+    "text": "{amount} for one dinner? What'd they serve, the whole cow?"
+  },
+  {
+    "id": "ju_dining_big_2",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["dining"],
+    "conditions": ["big"],
+    "text": "{amount} for food you didn't cook. Was it as good as my mother's? It wasn't."
+  },
+  {
+    "id": "ju_dining_repeat_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["dining"],
+    "conditions": ["repeat"],
+    "text": "Eating out again? Your kitchen called. It misses you."
+  },
+  {
+    "id": "ju_dining_repeat_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["dining"],
+    "conditions": ["repeat"],
+    "text": "Your stove's gonna file a missing-person report. And I know how those go."
+  },
+  {
+    "id": "ju_dining_lateMonth_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["dining"],
+    "conditions": ["lateMonth"],
+    "text": "Dinner out with {daysLeft} days to go? Brave."
+  },
+  {
+    "id": "ju_delivery_classic_1",
     "tier": "judge",
     "minHeat": "classic",
     "categories": ["delivery"],
     "text": "Delivery again? You got legs. You got a kitchen. I've seen it."
   },
   {
-    "id": "ju_shopping_1",
+    "id": "ju_delivery_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["delivery"],
+    "text": "Another delivery fee? What, the sandwich needed a chauffeur?"
+  },
+  {
+    "id": "ju_delivery_classic_3",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["delivery"],
+    "text": "Delivery {count} times this month. I'm on a first-name basis with your driver."
+  },
+  {
+    "id": "ju_delivery_repeat_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["delivery"],
+    "conditions": ["repeat"],
+    "text": "Delivery twice? The app should send YOU a thank-you card."
+  },
+  {
+    "id": "ju_delivery_unhinged_1",
+    "tier": "judge",
+    "minHeat": "unhinged",
+    "categories": ["delivery"],
+    "text": "Delivery AGAIN? Your fridge is a goddamn museum."
+  },
+  {
+    "id": "ju_delivery_lateMonth_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["delivery"],
+    "conditions": ["lateMonth"],
+    "text": "Delivery this late in the month. Bold."
+  },
+  {
+    "id": "ju_delivery_big_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["delivery"],
+    "conditions": ["big"],
+    "text": "{amount} of delivery. For that money, I know guys who'd carry YOU to the restaurant."
+  },
+  {
+    "id": "ju_shopping_big_classic_1",
     "tier": "judge",
     "minHeat": "classic",
     "categories": ["shopping"],
     "conditions": ["big"],
-    "text": "{amount}?! What is it, made of gold? Is it a car? It better be a car."
+    "text": "{amount}?! What is it, made of gold? It better have fallen off a very nice truck."
   },
   {
-    "id": "ju_subs_1",
+    "id": "ju_shopping_big_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["shopping"],
+    "conditions": ["big"],
+    "text": "{amount} on stuff. Let me guess. You'll 'definitely use it.'"
+  },
+  {
+    "id": "ju_shopping_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["shopping"],
+    "text": "New stuff. Where are you gonna put it? On the other new stuff?"
+  },
+  {
+    "id": "ju_shopping_repeat_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["shopping"],
+    "conditions": ["repeat"],
+    "text": "Shopping again? The mall's not a gym, pal."
+  },
+  {
+    "id": "ju_shopping_repeat_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["shopping"],
+    "conditions": ["repeat"],
+    "text": "Another bag? Your closet's filing a complaint."
+  },
+  {
+    "id": "ju_shopping_nearLimit_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["shopping"],
+    "conditions": ["nearLimit"],
+    "text": "Shopping this close to the limit? Put it back. In your mind. Put it back."
+  },
+  {
+    "id": "ju_fun_big_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["fun"],
+    "conditions": ["big"],
+    "text": "{amount} on fun. Was it {amount} fun? Honestly."
+  },
+  {
+    "id": "ju_fun_big_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["fun"],
+    "conditions": ["big"],
+    "text": "Fun's fun until it's {amount}."
+  },
+  {
+    "id": "ju_fun_lateMonth_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["fun"],
+    "conditions": ["lateMonth"],
+    "text": "Fun this late in the month. Bold strategy."
+  },
+  {
+    "id": "ju_fun_repeat_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["fun"],
+    "conditions": ["repeat"],
+    "text": "Out again? Your couch misses you."
+  },
+  {
+    "id": "ju_fun_lateMonth_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["fun"],
+    "conditions": ["lateMonth"],
+    "text": "Big night out, late in the month. I'm sweating."
+  },
+  {
+    "id": "ju_games_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["games"],
+    "text": "Another game. You haven't finished the last ones. I know you."
+  },
+  {
+    "id": "ju_games_repeat_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["games"],
+    "conditions": ["repeat"],
+    "text": "Games two days in a row? Your backlog is a monument."
+  },
+  {
+    "id": "ju_games_big_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["games"],
+    "conditions": ["big"],
+    "text": "{amount} on a game? Does it come with a free accountant?"
+  },
+  {
+    "id": "ju_games_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["games"],
+    "text": "Another game. Your wallet's on hard mode."
+  },
+  {
+    "id": "ju_subscriptions_classic_1",
     "tier": "judge",
     "minHeat": "classic",
     "categories": ["subscriptions"],
     "text": "How many subscriptions you got? Name 'em. Go ahead. I'll wait."
+  },
+  {
+    "id": "ju_subscriptions_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["subscriptions"],
+    "text": "What the hell is a 'premium water subscription'?"
+  },
+  {
+    "id": "ju_subscriptions_classic_3",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["subscriptions"],
+    "text": "Another subscription? That's a monthly charge forever. FOREVER, kid."
+  },
+  {
+    "id": "ju_subscriptions_classic_4",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["subscriptions"],
+    "text": "Monthly payments, no way out, and they know where you live. I've seen this movie. I was IN this movie."
+  },
+  {
+    "id": "ju_subscriptions_repeat_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["subscriptions"],
+    "conditions": ["repeat"],
+    "text": "Another subscription this week? It's a subscription to subscriptions now."
+  },
+  {
+    "id": "ju_subscriptions_big_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["subscriptions"],
+    "conditions": ["big"],
+    "text": "Big subscription. Read the cancel policy. Now."
+  },
+  {
+    "id": "ju_other_big_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["other"],
+    "conditions": ["big"],
+    "text": "{amount} on 'other.' What is 'other'? WHO is 'other'?"
+  },
+  {
+    "id": "ju_other_nearLimit_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["other"],
+    "conditions": ["nearLimit"],
+    "text": "'Other,' this close to the limit. I'm nervous."
+  },
+  {
+    "id": "ju_other_big_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["other"],
+    "conditions": ["big"],
+    "text": "{amount} on 'other.' I've filed things like that. In a shredder."
   },
   {
     "id": "ju_big_1",
@@ -835,575 +1262,253 @@
     "text": "{amount}. That's a big one, kid. Was it a want or a need? Don't answer that."
   },
   {
-    "id": "ju_late_1",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "conditions": ["lateMonth"],
-    "text": "We got {daysLeft} days left and {remaining}. Walk with me here."
-  },
-  {
-    "id": "ju_near_1",
-    "tier": "judge",
-    "minHeat": "classic",
-    "conditions": ["nearLimit"],
-    "text": "We're scraping the bottom of the budget and you're buying {category}?"
-  },
-  {
-    "id": "ju_generic_3",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "text": "I'm writing this one in red ink. I don't even own red ink. I bought some for you."
-  },
-  {
-    "id": "ju_generic_4",
-    "tier": "judge",
-    "minHeat": "classic",
-    "text": "You know I can see these, right? All of them?"
-  },
-  {
-    "id": "ju_coffee_2",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["coffee"],
-    "text": "{amount} for coffee. The beans better have been hand-picked by monks."
-  },
-  {
-    "id": "ju_coffee_repeat_2",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["coffee"],
-    "conditions": ["repeat"],
-    "text": "Two coffees in two days. I'm not counting. I'm counting."
-  },
-  {
-    "id": "ju_dining_1",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["dining"],
-    "conditions": ["big"],
-    "text": "{amount} for one dinner? What'd they serve, the whole cow?"
-  },
-  {
-    "id": "ju_dining_2",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["dining"],
-    "conditions": ["repeat"],
-    "text": "Eating out again? Your kitchen called. It misses you."
-  },
-  {
-    "id": "ju_delivery_2",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["delivery"],
-    "conditions": ["repeat"],
-    "text": "Delivery twice? The app should send YOU a thank-you card."
-  },
-  {
-    "id": "ju_delivery_3",
-    "tier": "judge",
-    "minHeat": "unhinged",
-    "categories": ["delivery"],
-    "text": "Delivery AGAIN? Your fridge is a damn museum."
-  },
-  {
-    "id": "ju_shopping_2",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["shopping"],
-    "text": "New stuff. Where are you gonna put it? On the other new stuff?"
-  },
-  {
-    "id": "ju_shopping_3",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["shopping"],
-    "conditions": ["repeat"],
-    "text": "Shopping again? The mall's not a gym, pal."
-  },
-  {
-    "id": "ju_fun_1",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["fun"],
-    "conditions": ["big"],
-    "text": "{amount} on fun. Was it {amount} fun? Honestly."
-  },
-  {
-    "id": "ju_fun_2",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["fun"],
-    "conditions": ["lateMonth"],
-    "text": "Fun this late in the month. Bold strategy."
-  },
-  {
-    "id": "ju_games_1",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["games"],
-    "text": "Another game. You haven't finished the last three. I checked."
-  },
-  {
-    "id": "ju_subs_2",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["subscriptions"],
-    "conditions": ["repeat"],
-    "text": "Another subscription this week? It's a subscription to subscriptions now."
-  },
-  {
     "id": "ju_big_2",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "conditions": ["big"],
+    "text": "{amount}. I need a second. Mamma mia. I'm taking the second."
+  },
+  {
+    "id": "ju_big_classic_1",
     "tier": "judge",
     "minHeat": "classic",
     "conditions": ["big"],
     "text": "That's a big number, pal. Sit with it a minute."
   },
   {
-    "id": "ju_late_2",
+    "id": "ju_big_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "conditions": ["big"],
+    "text": "I've seen numbers like that before. Mostly read out loud, in court."
+  },
+  {
+    "id": "ju_lateMonth_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "conditions": ["lateMonth"],
+    "text": "We got {daysLeft} days left and {remaining}. Walk with me here."
+  },
+  {
+    "id": "ju_lateMonth_classic_1",
     "tier": "judge",
     "minHeat": "classic",
     "conditions": ["lateMonth"],
     "text": "Late in the month and you're still spending like it's payday."
   },
   {
-    "id": "ju_near_2",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "conditions": ["nearLimit"],
-    "text": "We're close to the line, kid. Real close."
-  },
-  {
-    "id": "ju_investment_1",
-    "tier": "judge",
-    "minHeat": "classic",
-    "conditions": ["investmentAgain"],
-    "text": "Let me guess. Another 'investment'?"
-  },
-  {
-    "id": "ju_investment_2",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "conditions": ["investmentAgain"],
-    "text": "Is this one an investment too? Asking for my blood pressure."
-  },
-  {
-    "id": "ju_generic_5",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "text": "I'm squinting. You see me squinting?"
-  },
-  {
-    "id": "ju_generic_6",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "text": "Was it on sale? Tell me it was on sale."
-  },
-  {
-    "id": "ju_generic_7",
-    "tier": "judge",
-    "minHeat": "classic",
-    "text": "My calculator watch just beeped. It's never done that."
-  },
-  {
-    "id": "ju_generic_8",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "text": "Interesting choice. And by interesting I mean expensive."
-  },
-  {
-    "id": "ju_coffee_3",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["coffee"],
-    "conditions": ["repeat"],
-    "text": "Coffee again? Your blood is half latte now."
-  },
-  {
-    "id": "ju_coffee_4",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["coffee"],
-    "text": "{monthTotal} on coffee this month. I own a machine. It's RIGHT THERE."
-  },
-  {
-    "id": "ju_coffee_5",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["coffee"],
-    "conditions": ["repeat"],
-    "text": "Fancy coffee two days running? The beans aren't going anywhere."
-  },
-  {
-    "id": "ju_dining_3",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["dining"],
-    "conditions": ["lateMonth"],
-    "text": "Dinner out with {daysLeft} days to go? Brave."
-  },
-  {
-    "id": "ju_dining_4",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["dining"],
-    "conditions": ["big"],
-    "text": "{amount} for food you didn't cook. Was it at least good?"
-  },
-  {
-    "id": "ju_dining_5",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["dining"],
-    "conditions": ["repeat"],
-    "text": "Eating out a lot lately. Your stove's gonna file a missing-person report."
-  },
-  {
-    "id": "ju_delivery_4",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["delivery"],
-    "text": "Delivery {count} times this month. I'm on a first-name basis with your driver."
-  },
-  {
-    "id": "ju_delivery_5",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["delivery"],
-    "conditions": ["lateMonth"],
-    "text": "Delivery this late in the month. Bold."
-  },
-  {
-    "id": "ju_delivery_6",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["delivery"],
-    "conditions": ["big"],
-    "text": "{amount} of delivery. Did the tip cost more than the food? Don't tell me."
-  },
-  {
-    "id": "ju_shopping_4",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["shopping"],
-    "conditions": ["repeat"],
-    "text": "Another bag? Your closet's filing a complaint."
-  },
-  {
-    "id": "ju_shopping_5",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["shopping"],
-    "conditions": ["big"],
-    "text": "{amount} on stuff. Let me guess. You'll 'definitely use it.'"
-  },
-  {
-    "id": "ju_shopping_6",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["shopping"],
-    "conditions": ["nearLimit"],
-    "text": "Shopping this close to the limit? Put it back. In your mind. Put it back."
-  },
-  {
-    "id": "ju_fun_3",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["fun"],
-    "conditions": ["big"],
-    "text": "Fun's fun until it's {amount}."
-  },
-  {
-    "id": "ju_fun_4",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["fun"],
-    "conditions": ["repeat"],
-    "text": "Out again? Your couch misses you."
-  },
-  {
-    "id": "ju_fun_5",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["fun"],
-    "conditions": ["lateMonth"],
-    "text": "Big night out, late in the month. I'm sweating."
-  },
-  {
-    "id": "ju_games_2",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["games"],
-    "conditions": ["repeat"],
-    "text": "Games two days in a row? Your backlog is a monument."
-  },
-  {
-    "id": "ju_games_3",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["games"],
-    "conditions": ["big"],
-    "text": "{amount} on a game? Does it come with a free accountant?"
-  },
-  {
-    "id": "ju_games_4",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["games"],
-    "text": "Another game. Your wallet's on hard mode."
-  },
-  {
-    "id": "ju_subs_3",
-    "tier": "judge",
-    "minHeat": "classic",
-    "categories": ["subscriptions"],
-    "text": "Another subscription? That's a monthly charge forever. FOREVER, kid."
-  },
-  {
-    "id": "ju_subs_4",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["subscriptions"],
-    "conditions": ["big"],
-    "text": "Big subscription. Read the cancel policy. Now."
-  },
-  {
-    "id": "ju_other_1",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["other"],
-    "conditions": ["big"],
-    "text": "{amount} on 'other.' What is 'other'? Who is 'other'?"
-  },
-  {
-    "id": "ju_other_2",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "categories": ["other"],
-    "conditions": ["nearLimit"],
-    "text": "'Other,' this close to the limit. I'm nervous."
-  },
-  {
-    "id": "ju_big_3",
-    "tier": "judge",
-    "minHeat": "gentle",
-    "conditions": ["big"],
-    "text": "{amount}. I need a second. I'm taking the second."
-  },
-  {
-    "id": "ju_big_4",
-    "tier": "judge",
-    "minHeat": "classic",
-    "conditions": ["big"],
-    "text": "That number's got a comma vibe. I don't love comma vibes."
-  },
-  {
-    "id": "ju_late_3",
+    "id": "ju_lateMonth_classic_2",
     "tier": "judge",
     "minHeat": "classic",
     "conditions": ["lateMonth"],
     "text": "{daysLeft} days left and we're spending like it's the first. Explain."
   },
   {
-    "id": "ju_near_3",
+    "id": "ju_nearLimit_classic_1",
+    "tier": "judge",
+    "minHeat": "classic",
+    "conditions": ["nearLimit"],
+    "text": "We're scraping the bottom of the budget and you're buying {category}?"
+  },
+  {
+    "id": "ju_nearLimit_1",
     "tier": "judge",
     "minHeat": "gentle",
     "conditions": ["nearLimit"],
-    "text": "We're at the edge, kid. The very edge. Step back."
+    "text": "We're close to the line, kid. Real close."
   },
   {
-    "id": "an_generic_1",
-    "tier": "angry",
-    "minHeat": "classic",
-    "text": "We had a NUMBER. We had an AGREEMENT. What happened?"
-  },
-  {
-    "id": "an_generic_gentle",
-    "tier": "angry",
+    "id": "ju_nearLimit_2",
+    "tier": "judge",
     "minHeat": "gentle",
-    "text": "Okay. Okay. I'm breathing. Let's slow down a little, alright?"
+    "conditions": ["nearLimit"],
+    "text": "We're at the edge, kid. Piano, piano. Step back."
   },
   {
-    "id": "an_85_1",
-    "tier": "angry",
+    "id": "ju_investmentAgain_classic_1",
+    "tier": "judge",
     "minHeat": "classic",
-    "conditions": ["crossed85"],
-    "text": "Eighty-five percent! It's raining in here now, you see that? That's on you!"
+    "conditions": ["investmentAgain"],
+    "text": "Let me guess. Another 'investment'?"
   },
   {
-    "id": "an_85_gentle",
-    "tier": "angry",
+    "id": "ju_investmentAgain_classic_2",
+    "tier": "judge",
+    "minHeat": "classic",
+    "conditions": ["investmentAgain"],
+    "text": "I've moved money through some creative 'investments.' This isn't even creative."
+  },
+  {
+    "id": "ju_investmentAgain_1",
+    "tier": "judge",
     "minHeat": "gentle",
-    "conditions": ["crossed85"],
-    "text": "That's most of the budget gone, kid. Let's be careful from here."
+    "conditions": ["investmentAgain"],
+    "text": "Is this one an investment too? Asking for my blood pressure."
   },
   {
-    "id": "an_repeat_1",
+    "id": "an_classic_1",
     "tier": "angry",
     "minHeat": "classic",
-    "conditions": ["repeatAgain"],
-    "text": "THREE times in two days?! You're not buying {category}, you're SUBSCRIBING to it!"
+    "text": "We had a NUMBER. We had an AGREEMENT. Where I come from, that means something."
   },
   {
-    "id": "an_repeat_unhinged",
-    "tier": "angry",
-    "minHeat": "unhinged",
-    "conditions": ["repeatAgain"],
-    "text": "Three times. THREE. What the hell is wrong with you? Lovingly. What the hell."
-  },
-  {
-    "id": "an_over_1",
+    "id": "an_classic_2",
     "tier": "angry",
     "minHeat": "classic",
-    "conditions": ["alreadyOverBudget"],
-    "text": "We're already over, and you keep going?! Who raised you? Don't say me."
+    "text": "Basta. BASTA!"
   },
   {
-    "id": "an_over_gentle",
-    "tier": "angry",
-    "minHeat": "gentle",
-    "conditions": ["alreadyOverBudget"],
-    "text": "We're past the limit, pal. Every little one counts now."
-  },
-  {
-    "id": "an_generic_2",
+    "id": "an_classic_3",
     "tier": "angry",
     "minHeat": "classic",
-    "text": "What are we DOING here? What is HAPPENING?"
+    "text": "What are we DOING here? Che succede? What is HAPPENING?"
   },
   {
-    "id": "an_generic_3",
+    "id": "an_classic_4",
     "tier": "angry",
     "minHeat": "classic",
     "text": "I need you to look me in the eyes. Through the glass. Look at me."
   },
   {
-    "id": "an_generic_gentle_2",
+    "id": "an_classic_5",
+    "tier": "angry",
+    "minHeat": "classic",
+    "text": "I'm not yelling! This is my indoor voice! IT'S BROKEN!"
+  },
+  {
+    "id": "an_classic_6",
+    "tier": "angry",
+    "minHeat": "classic",
+    "text": "Deductible, leave the room. Papà's gotta yell."
+  },
+  {
+    "id": "an_classic_7",
+    "tier": "angry",
+    "minHeat": "classic",
+    "text": "Mamma mia. MAMMA MIA. My mother's photo just turned around."
+  },
+  {
+    "id": "an_classic_8",
+    "tier": "angry",
+    "minHeat": "classic",
+    "text": "I've sat across from men who owed a lot more and looked a lot more worried. Be more worried."
+  },
+  {
+    "id": "an_1",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "text": "Okay. Okay. I'm breathing. Piano, piano. Let's slow down."
+  },
+  {
+    "id": "an_2",
     "tier": "angry",
     "minHeat": "gentle",
     "text": "I'm not mad. I'm... okay, I'm a little mad. Let's breathe."
   },
   {
-    "id": "an_coffee_1",
-    "tier": "angry",
-    "minHeat": "classic",
-    "categories": ["coffee"],
-    "conditions": ["repeatAgain"],
-    "text": "THREE coffees! I HAVE a machine! Come use mine!"
-  },
-  {
-    "id": "an_delivery_1",
-    "tier": "angry",
-    "minHeat": "classic",
-    "categories": ["delivery"],
-    "conditions": ["repeatAgain"],
-    "text": "The delivery guy's gonna invite you to his wedding at this point!"
-  },
-  {
-    "id": "an_shopping_1",
-    "tier": "angry",
-    "minHeat": "classic",
-    "categories": ["shopping"],
-    "conditions": ["repeatAgain"],
-    "text": "Three shopping trips in two days?! Are you furnishing a yacht?"
-  },
-  {
-    "id": "an_subs_1",
+    "id": "an_3",
     "tier": "angry",
     "minHeat": "gentle",
-    "categories": ["subscriptions"],
-    "conditions": ["repeatAgain"],
-    "text": "Three new subscriptions?! I'm canceling Christmas."
+    "text": "Do you hear that? That's my blood pressure."
   },
   {
-    "id": "an_85_2",
+    "id": "an_4",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "text": "Hey. Hey. Let's not do that again, okay? Capiche?"
+  },
+  {
+    "id": "an_unhinged_1",
+    "tier": "angry",
+    "minHeat": "unhinged",
+    "text": "What the hell was that? No. Seriously. What the fuck."
+  },
+  {
+    "id": "an_unhinged_2",
+    "tier": "angry",
+    "minHeat": "unhinged",
+    "text": "Che cazzo stai facendo? What the fuck are you doing to my budget?"
+  },
+  {
+    "id": "an_unhinged_3",
+    "tier": "angry",
+    "minHeat": "unhinged",
+    "text": "Porca puttana. Another one."
+  },
+  {
+    "id": "an_crossed85_classic_1",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["crossed85"],
+    "text": "Eighty-five percent! It's raining in here now, you see that? Mannaggia!"
+  },
+  {
+    "id": "an_crossed85_classic_2",
     "tier": "angry",
     "minHeat": "classic",
     "conditions": ["crossed85"],
     "text": "We just crossed eighty-five percent. Hear that? That's the plant dying."
   },
   {
-    "id": "an_over_2",
+    "id": "an_crossed85_classic_3",
     "tier": "angry",
     "minHeat": "classic",
-    "conditions": ["alreadyOverBudget"],
-    "text": "Over budget and still swiping. You're a raccoon in a dumpster, but with a credit card."
+    "conditions": ["crossed85"],
+    "text": "That one tipped us past eighty-five. The rain's starting. Hear it?"
   },
   {
-    "id": "an_over_unhinged",
+    "id": "an_crossed85_1",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "conditions": ["crossed85"],
+    "text": "That's most of the budget gone, kid. Let's be careful from here."
+  },
+  {
+    "id": "an_crossed85_2",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "conditions": ["crossed85"],
+    "text": "We're past eighty-five percent now. Let's hold the line."
+  },
+  {
+    "id": "an_crossed85_unhinged_1",
     "tier": "angry",
     "minHeat": "unhinged",
-    "conditions": ["alreadyOverBudget"],
-    "text": "We're over the damn budget and you're still at it?! Hell no."
+    "conditions": ["crossed85"],
+    "text": "Eighty-five percent. Minchia. We're in the danger zone."
   },
   {
-    "id": "an_broken_1",
+    "id": "an_repeatAgain_classic_1",
     "tier": "angry",
     "minHeat": "classic",
-    "conditions": ["brokenPromise"],
-    "text": "{promiseDay} you told me 'never again.' It's {today}, pal."
+    "conditions": ["repeatAgain"],
+    "text": "AGAIN?! You're not buying {category}, you're SUBSCRIBING to it!"
   },
   {
-    "id": "an_broken_2",
-    "tier": "angry",
-    "minHeat": "gentle",
-    "conditions": ["brokenPromise"],
-    "text": "You promised me, kid. {promiseDay}. I wrote it down."
-  },
-  {
-    "id": "an_broken_3",
-    "tier": "angry",
-    "minHeat": "classic",
-    "conditions": ["brokenPromise"],
-    "text": "'Won't happen again,' you said. It happened again."
-  },
-  {
-    "id": "an_investment_1",
-    "tier": "angry",
-    "minHeat": "classic",
-    "conditions": ["investmentAgain"],
-    "text": "Another investment? Your portfolio is pizza."
-  },
-  {
-    "id": "an_generic_4",
-    "tier": "angry",
-    "minHeat": "classic",
-    "text": "I'm not yelling! This is my indoor voice! IT'S BROKEN!"
-  },
-  {
-    "id": "an_generic_5",
-    "tier": "angry",
-    "minHeat": "gentle",
-    "text": "Do you hear that? That's my blood pressure."
-  },
-  {
-    "id": "an_generic_6",
-    "tier": "angry",
-    "minHeat": "classic",
-    "text": "Deductible, leave the room. Daddy's gotta yell."
-  },
-  {
-    "id": "an_generic_gentle_3",
-    "tier": "angry",
-    "minHeat": "gentle",
-    "text": "Hey. Hey. Let's not do that again, okay?"
-  },
-  {
-    "id": "an_generic_unhinged_1",
+    "id": "an_repeatAgain_unhinged_1",
     "tier": "angry",
     "minHeat": "unhinged",
-    "text": "What the hell was that? No. Seriously. What the hell."
+    "conditions": ["repeatAgain"],
+    "text": "Again. AGAIN. What the fuck is wrong with you? Lovingly. What the fuck."
   },
   {
-    "id": "an_coffee_2",
+    "id": "an_coffee_repeatAgain_classic_1",
     "tier": "angry",
     "minHeat": "classic",
     "categories": ["coffee"],
     "conditions": ["repeatAgain"],
-    "text": "Three coffees in two days. You're vibrating. I can see it from here."
+    "text": "All this coffee! I HAVE a machine! Come use mine!"
   },
   {
-    "id": "an_coffee_gentle",
+    "id": "an_coffee_repeatAgain_classic_2",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "conditions": ["repeatAgain"],
+    "text": "So much coffee you're vibrating. I can see it from here."
+  },
+  {
+    "id": "an_coffee_repeatAgain_1",
     "tier": "angry",
     "minHeat": "gentle",
     "categories": ["coffee"],
@@ -1411,23 +1516,39 @@
     "text": "That's a lot of coffee, kid. Your heart and your wallet both want a break."
   },
   {
-    "id": "an_delivery_2",
+    "id": "an_delivery_repeatAgain_classic_1",
     "tier": "angry",
     "minHeat": "classic",
     "categories": ["delivery"],
     "conditions": ["repeatAgain"],
-    "text": "Three deliveries! You're keeping a whole restaurant in business!"
+    "text": "The delivery guy's gonna invite you to his wedding at this point!"
   },
   {
-    "id": "an_delivery_unhinged",
+    "id": "an_delivery_repeatAgain_classic_2",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["delivery"],
+    "conditions": ["repeatAgain"],
+    "text": "You're keeping a whole restaurant in business! I used to know restaurants like that. Cash only."
+  },
+  {
+    "id": "an_delivery_repeatAgain_unhinged_1",
     "tier": "angry",
     "minHeat": "unhinged",
     "categories": ["delivery"],
     "conditions": ["repeatAgain"],
-    "text": "Three deliveries? Damn it, kid, you have a STOVE."
+    "text": "More delivery? Vaffanculo, you have a STOVE."
   },
   {
-    "id": "an_shopping_gentle",
+    "id": "an_shopping_repeatAgain_classic_1",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["shopping"],
+    "conditions": ["repeatAgain"],
+    "text": "Shopping AGAIN?! Are you furnishing a yacht?"
+  },
+  {
+    "id": "an_shopping_repeatAgain_1",
     "tier": "angry",
     "minHeat": "gentle",
     "categories": ["shopping"],
@@ -1435,298 +1556,359 @@
     "text": "Lots of shopping lately. Let's give it a rest for a few days, alright?"
   },
   {
-    "id": "an_dining_1",
+    "id": "an_subscriptions_repeatAgain_1",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "categories": ["subscriptions"],
+    "conditions": ["repeatAgain"],
+    "text": "More subscriptions?! I'm canceling Christmas."
+  },
+  {
+    "id": "an_dining_repeatAgain_classic_1",
     "tier": "angry",
     "minHeat": "classic",
     "categories": ["dining"],
     "conditions": ["repeatAgain"],
-    "text": "Eating out three times in two days?! Are you a restaurant critic? Are you getting PAID?"
+    "text": "Eating out again?! Are you a critic? Are you getting PAID?"
   },
   {
-    "id": "an_dining_gentle",
+    "id": "an_dining_repeatAgain_1",
     "tier": "angry",
     "minHeat": "gentle",
     "categories": ["dining"],
     "conditions": ["repeatAgain"],
-    "text": "Three meals out. I get it. But let's cook something, yeah?"
+    "text": "All these meals out. I get it. But let's cook something, yeah?"
   },
   {
-    "id": "an_games_1",
+    "id": "an_games_repeatAgain_classic_1",
     "tier": "angry",
     "minHeat": "classic",
     "categories": ["games"],
     "conditions": ["repeatAgain"],
-    "text": "Three games in two days! You don't play games, you COLLECT them!"
+    "text": "Another game! You don't play games, you COLLECT them!"
   },
   {
-    "id": "an_fun_1",
+    "id": "an_fun_repeatAgain_classic_1",
     "tier": "angry",
     "minHeat": "classic",
     "categories": ["fun"],
     "conditions": ["repeatAgain"],
-    "text": "Out three nights running?! Who's paying for this? Oh right. YOU."
+    "text": "Out again?! Who's paying for this? Oh right. YOU."
   },
   {
-    "id": "an_85_3",
+    "id": "an_alreadyOverBudget_classic_1",
     "tier": "angry",
     "minHeat": "classic",
-    "conditions": ["crossed85"],
-    "text": "That one tipped us past eighty-five. The rain's starting. Hear it?"
+    "conditions": ["alreadyOverBudget"],
+    "text": "We're already over, and you keep going?! Ma sei pazzo?"
   },
   {
-    "id": "an_85_gentle_2",
+    "id": "an_alreadyOverBudget_classic_2",
     "tier": "angry",
-    "minHeat": "gentle",
-    "conditions": ["crossed85"],
-    "text": "We're past eighty-five percent now. Let's hold the line."
+    "minHeat": "classic",
+    "conditions": ["alreadyOverBudget"],
+    "text": "Over budget and still swiping. You're a raccoon in a dumpster, but with a credit card."
   },
   {
-    "id": "an_85_unhinged",
-    "tier": "angry",
-    "minHeat": "unhinged",
-    "conditions": ["crossed85"],
-    "text": "Eighty-five percent. Hell. We're in the danger zone."
-  },
-  {
-    "id": "an_over_3",
+    "id": "an_alreadyOverBudget_classic_3",
     "tier": "angry",
     "minHeat": "classic",
     "conditions": ["alreadyOverBudget"],
     "text": "We're OVER. Why are we still SHOPPING?"
   },
   {
-    "id": "an_over_gentle_2",
-    "tier": "angry",
-    "minHeat": "gentle",
-    "conditions": ["alreadyOverBudget"],
-    "text": "We're already over, kid. Every purchase now is borrowed from next month."
-  },
-  {
-    "id": "an_over_4",
+    "id": "an_alreadyOverBudget_classic_4",
     "tier": "angry",
     "minHeat": "classic",
     "conditions": ["alreadyOverBudget"],
     "text": "Over budget is a place. We LIVE there now, apparently."
   },
   {
-    "id": "an_broken_4",
+    "id": "an_alreadyOverBudget_classic_5",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["alreadyOverBudget"],
+    "text": "I've seen guys leave the country over smaller problems. Stay. Fix it."
+  },
+  {
+    "id": "an_alreadyOverBudget_1",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "conditions": ["alreadyOverBudget"],
+    "text": "We're past the limit, pal. Every little one counts now."
+  },
+  {
+    "id": "an_alreadyOverBudget_2",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "conditions": ["alreadyOverBudget"],
+    "text": "We're already over, kid. Every purchase now is borrowed from next month."
+  },
+  {
+    "id": "an_alreadyOverBudget_unhinged_1",
+    "tier": "angry",
+    "minHeat": "unhinged",
+    "conditions": ["alreadyOverBudget"],
+    "text": "We're over the fucking budget and you're still at it? Basta!"
+  },
+  {
+    "id": "an_brokenPromise_classic_1",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["brokenPromise"],
+    "text": "{promiseDay} you told me 'never again.' It's {today}, pal."
+  },
+  {
+    "id": "an_brokenPromise_classic_2",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["brokenPromise"],
+    "text": "'Won't happen again,' you said. It happened again. In my old line of work, that was a whole conversation."
+  },
+  {
+    "id": "an_brokenPromise_classic_3",
     "tier": "angry",
     "minHeat": "classic",
     "conditions": ["brokenPromise"],
     "text": "You looked me in the eye and said never again. Through the glass, but still."
   },
   {
-    "id": "an_broken_gentle",
+    "id": "an_brokenPromise_1",
     "tier": "angry",
     "minHeat": "gentle",
     "conditions": ["brokenPromise"],
-    "text": "We had a deal about this, kid. Remember?"
+    "text": "You promised me, kid. {promiseDay}. I wrote it down."
   },
   {
-    "id": "an_investment_2",
+    "id": "an_brokenPromise_2",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "conditions": ["brokenPromise"],
+    "text": "We had a deal about this, kid. Capiche means you understood."
+  },
+  {
+    "id": "an_investmentAgain_classic_1",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["investmentAgain"],
+    "text": "Another investment? Your portfolio is pizza."
+  },
+  {
+    "id": "an_investmentAgain_classic_2",
     "tier": "angry",
     "minHeat": "classic",
     "conditions": ["investmentAgain"],
     "text": "Oh, ANOTHER investment! Warren Buffett, everybody!"
   },
   {
-    "id": "an_investment_gentle",
+    "id": "an_investmentAgain_1",
     "tier": "angry",
     "minHeat": "gentle",
     "conditions": ["investmentAgain"],
     "text": "Not every purchase is an investment, kid. Some are just purchases."
   },
   {
-    "id": "me_over_1",
+    "id": "me_pushedOverBudget_classic_1",
     "tier": "meltdown",
     "minHeat": "classic",
     "conditions": ["pushedOverBudget"],
-    "text": "OVER. We are OVER the budget. Hold on. HOLD ON."
+    "text": "OVER. We are OVER the budget. Mannaggia. Hold on. HOLD ON."
   },
   {
-    "id": "me_over_gentle",
-    "tier": "meltdown",
-    "minHeat": "gentle",
-    "conditions": ["pushedOverBudget"],
-    "text": "That's... that's over the budget. I need a minute."
-  },
-  {
-    "id": "me_already_1",
-    "tier": "meltdown",
-    "minHeat": "classic",
-    "conditions": ["alreadyOverBudget"],
-    "text": "Over budget AND {amount}?! That's it. That's IT."
-  },
-  {
-    "id": "me_generic_1",
-    "tier": "meltdown",
-    "minHeat": "classic",
-    "text": "Nope. No. Come here. Come closer to the glass."
-  },
-  {
-    "id": "me_generic_gentle",
-    "tier": "meltdown",
-    "minHeat": "gentle",
-    "text": "Knock knock. We need to talk."
-  },
-  {
-    "id": "me_unhinged_1",
-    "tier": "meltdown",
-    "minHeat": "unhinged",
-    "text": "Oh, you son of a— come here. COME HERE."
-  },
-  {
-    "id": "me_over_2",
+    "id": "me_pushedOverBudget_classic_2",
     "tier": "meltdown",
     "minHeat": "classic",
     "conditions": ["pushedOverBudget"],
     "text": "That's it. That's the one that did it. Stay right there."
   },
   {
-    "id": "me_over_unhinged",
-    "tier": "meltdown",
-    "minHeat": "unhinged",
-    "conditions": ["pushedOverBudget"],
-    "text": "Over. OVER. Son of a— nobody move."
-  },
-  {
-    "id": "me_broken_1",
-    "tier": "meltdown",
-    "minHeat": "classic",
-    "conditions": ["brokenPromise"],
-    "text": "You PROMISED me. {promiseDay}! Hold on, I'm coming over there."
-  },
-  {
-    "id": "me_broken_gentle",
-    "tier": "meltdown",
-    "minHeat": "gentle",
-    "conditions": ["brokenPromise"],
-    "text": "You promised, kid. We need to talk. Right now."
-  },
-  {
-    "id": "me_already_2",
-    "tier": "meltdown",
-    "minHeat": "classic",
-    "conditions": ["alreadyOverBudget"],
-    "text": "We're past the limit and you go big? No. No, no, no."
-  },
-  { "id": "me_generic_2", "tier": "meltdown", "minHeat": "classic", "text": "Don't. Move." },
-  {
-    "id": "me_generic_gentle_2",
-    "tier": "meltdown",
-    "minHeat": "gentle",
-    "text": "Hang on. I'm gonna give you a call."
-  },
-  {
-    "id": "me_generic_unhinged_2",
-    "tier": "meltdown",
-    "minHeat": "unhinged",
-    "text": "Hell no. Hell NO. Get over here."
-  },
-  {
-    "id": "me_over_3",
+    "id": "me_pushedOverBudget_classic_3",
     "tier": "meltdown",
     "minHeat": "classic",
     "conditions": ["pushedOverBudget"],
     "text": "Over the line. OVER THE LINE. Don't move."
   },
   {
-    "id": "me_over_gentle_2",
-    "tier": "meltdown",
-    "minHeat": "gentle",
-    "conditions": ["pushedOverBudget"],
-    "text": "We just went over, kid. I'm gonna need to call you."
-  },
-  {
-    "id": "me_over_4",
+    "id": "me_pushedOverBudget_classic_4",
     "tier": "meltdown",
     "minHeat": "classic",
     "conditions": ["pushedOverBudget"],
     "text": "There it is. The one that broke the budget. Come here."
   },
   {
-    "id": "me_over_unhinged_2",
+    "id": "me_pushedOverBudget_1",
+    "tier": "meltdown",
+    "minHeat": "gentle",
+    "conditions": ["pushedOverBudget"],
+    "text": "That's... that's over the budget. Mamma mia. I need a minute."
+  },
+  {
+    "id": "me_pushedOverBudget_2",
+    "tier": "meltdown",
+    "minHeat": "gentle",
+    "conditions": ["pushedOverBudget"],
+    "text": "We just went over, kid. I'm gonna need to call you."
+  },
+  {
+    "id": "me_pushedOverBudget_unhinged_1",
     "tier": "meltdown",
     "minHeat": "unhinged",
     "conditions": ["pushedOverBudget"],
-    "text": "Over budget. Son of a— okay. Okay. COME HERE."
+    "text": "Over. OVER. Figlio di— nobody move."
   },
   {
-    "id": "me_already_3",
+    "id": "me_pushedOverBudget_unhinged_2",
+    "tier": "meltdown",
+    "minHeat": "unhinged",
+    "conditions": ["pushedOverBudget"],
+    "text": "Over budget. Porca puttana. Okay. Okay. COME HERE."
+  },
+  {
+    "id": "me_alreadyOverBudget_classic_1",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "conditions": ["alreadyOverBudget"],
+    "text": "Over budget AND {amount}?! BASTA! That's IT."
+  },
+  {
+    "id": "me_alreadyOverBudget_classic_2",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "conditions": ["alreadyOverBudget"],
+    "text": "We're past the limit and you go big? No. No, no, no. Madonn'!"
+  },
+  {
+    "id": "me_alreadyOverBudget_classic_3",
     "tier": "meltdown",
     "minHeat": "classic",
     "conditions": ["alreadyOverBudget"],
     "text": "We're already over and you go and do THAT? Stay right there."
   },
   {
-    "id": "me_already_gentle",
+    "id": "me_alreadyOverBudget_1",
     "tier": "meltdown",
     "minHeat": "gentle",
     "conditions": ["alreadyOverBudget"],
     "text": "We're over, and that was a big one. Let's talk."
   },
   {
-    "id": "me_already_unhinged",
+    "id": "me_alreadyOverBudget_unhinged_1",
     "tier": "meltdown",
     "minHeat": "unhinged",
     "conditions": ["alreadyOverBudget"],
-    "text": "Over budget and THIS? Hell no. HELL no."
+    "text": "Over budget and THIS? Vaffanculo. VAFFANCULO."
   },
   {
-    "id": "me_broken_2",
+    "id": "me_brokenPromise_classic_1",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "conditions": ["brokenPromise"],
+    "text": "You PROMISED me. {promiseDay}! Hold on, I'm coming over there."
+  },
+  {
+    "id": "me_brokenPromise_classic_2",
     "tier": "meltdown",
     "minHeat": "classic",
     "conditions": ["brokenPromise"],
     "text": "You promised me! I'm putting my fist through this glass. Metaphorically. Mostly."
   },
   {
-    "id": "me_broken_gentle_2",
+    "id": "me_brokenPromise_1",
+    "tier": "meltdown",
+    "minHeat": "gentle",
+    "conditions": ["brokenPromise"],
+    "text": "You promised, kid. We need to talk. Right now."
+  },
+  {
+    "id": "me_brokenPromise_2",
     "tier": "meltdown",
     "minHeat": "gentle",
     "conditions": ["brokenPromise"],
     "text": "You promised, kid. I'm calling you right now."
   },
   {
-    "id": "me_broken_unhinged",
+    "id": "me_brokenPromise_unhinged_1",
     "tier": "meltdown",
     "minHeat": "unhinged",
     "conditions": ["brokenPromise"],
-    "text": "You promised. You damn well promised."
+    "text": "You promised. You fucking promised."
   },
   {
-    "id": "me_generic_3",
+    "id": "me_classic_1",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "text": "Nope. No. Come here. Come closer to the glass."
+  },
+  {
+    "id": "me_classic_2",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "text": "Don't. Move."
+  },
+  {
+    "id": "me_classic_3",
     "tier": "meltdown",
     "minHeat": "classic",
     "text": "That's it. I'm coming over there."
   },
   {
-    "id": "me_generic_4",
+    "id": "me_classic_4",
     "tier": "meltdown",
     "minHeat": "classic",
     "text": "Nope. NOPE. Window. Now."
   },
   {
-    "id": "me_generic_gentle_3",
+    "id": "me_classic_5",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "text": "Stand back from the glass."
+  },
+  {
+    "id": "me_classic_6",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "text": "Madonna santa. Somebody hold my espresso."
+  },
+  {
+    "id": "me_1",
+    "tier": "meltdown",
+    "minHeat": "gentle",
+    "text": "Knock knock. We need to talk."
+  },
+  {
+    "id": "me_2",
+    "tier": "meltdown",
+    "minHeat": "gentle",
+    "text": "Hang on. I'm gonna give you a call."
+  },
+  {
+    "id": "me_3",
     "tier": "meltdown",
     "minHeat": "gentle",
     "text": "Hold on. Phone's ringing. It's me. I'm calling you."
   },
   {
-    "id": "me_generic_gentle_4",
+    "id": "me_4",
     "tier": "meltdown",
     "minHeat": "gentle",
     "text": "Let's have a talk, kid. Pick up."
   },
   {
-    "id": "me_generic_unhinged_3",
+    "id": "me_unhinged_1",
     "tier": "meltdown",
     "minHeat": "unhinged",
-    "text": "Oh, for the love of— come HERE."
+    "text": "Oh, figlio di— come here. COME HERE."
   },
   {
-    "id": "me_generic_5",
+    "id": "me_unhinged_2",
     "tier": "meltdown",
-    "minHeat": "classic",
-    "text": "Stand back from the glass."
+    "minHeat": "unhinged",
+    "text": "Che cazzo! Get over here."
+  },
+  {
+    "id": "me_unhinged_3",
+    "tier": "meltdown",
+    "minHeat": "unhinged",
+    "text": "Oh, for the love of— Madonna santa, come HERE."
   }
 ]

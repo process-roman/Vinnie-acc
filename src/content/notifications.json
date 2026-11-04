@@ -1,17 +1,23 @@
 {
   "quiet_nudge": [
-    { "title": "Vinnie", "body": "You've been quiet. Too quiet. What'd you buy?" },
     {
       "title": "Vinnie",
-      "body": "Two days, no receipts. Either you're a saint or you're hiding something."
+      "body": "You've been quiet. Too quiet. In my experience, that's never good. What'd you buy?"
     },
-    { "title": "Vinnie", "body": "Deductible thinks you forgot about us. I told her you'd never." }
+    {
+      "title": "Vinnie",
+      "body": "Two days, no receipts. Either you're a saint or you're hiding something. I've met zero saints."
+    },
+    {
+      "title": "Vinnie",
+      "body": "Deductible thinks you forgot about us. I told her you'd never. Capiche?"
+    }
   ],
   "late_month": [
     { "title": "Vinnie", "body": "We got {daysLeft} days and {remaining}. Walk with me." },
     {
       "title": "Vinnie",
-      "body": "{daysLeft} days left, {remaining} in the budget. Easy does it, kid."
+      "body": "{daysLeft} days left, {remaining} in the budget. Piano, piano, kid."
     }
   ],
   "sitdown": [
@@ -21,11 +27,11 @@
     },
     {
       "title": "The weekly sit-down",
-      "body": "Coffee's on. Bring your receipts. Five minutes, I promise."
+      "body": "Espresso's on. Bring your receipts. Come alone. Kidding. Five minutes."
     }
   ],
   "proactive_call": [
     { "title": "📞 Vinnie is calling…", "body": "Pick up. It's me. Just checking in." },
-    { "title": "📞 Vinnie is calling…", "body": "You gonna answer or what?" }
+    { "title": "📞 Vinnie is calling…", "body": "You gonna answer or what? Mamma mia." }
   ]
 }

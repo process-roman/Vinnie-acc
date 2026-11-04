@@ -143,7 +143,8 @@ describe('selectCallScript', () => {
 });
 
 describe('tone rules (blueprint §7.6)', () => {
-  const BANNED = /\b(fuck|shit|bitch|asshole|bastard|crap)\w*/i;
+  const BANNED =
+    /\b(fuck|shit|bitch|asshole|bastard|crap|vaffanculo|cazzo|stronz|minchia|puttana)\w*/i;
   it('keeps real profanity out of everything below Unhinged', () => {
     for (const l of LINES.filter((x) => x.minHeat !== 'unhinged')) {
       expect(l.text).not.toMatch(BANNED);

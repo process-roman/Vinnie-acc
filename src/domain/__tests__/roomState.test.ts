@@ -1,7 +1,16 @@
 import { describe, expect, it } from '@jest/globals';
 
 import { Entry, toDateKey } from '../entries';
-import { pickPropLine, PropTarget, propLinePool } from '../propLines';
+import {
+  FED_UP_TAPS,
+  nextTapStreak,
+  NO_TAPS,
+  pickFedUpLine,
+  pickPropLine,
+  PropTarget,
+  propLinePool,
+  TAP_GAP_MS,
+} from '../propLines';
 import { rng } from '../random';
 import { Tier } from '../reaction/tier';
 import { plantFor, roomState, trackingStreak, weatherFor } from '../roomState';
@@ -120,6 +129,34 @@ describe('prop lines', () => {
         expect(line).not.toMatch(/[{}]/);
         last = line;
       }
+    }
+  });
+});
+
+describe('poking Vinnie', () => {
+  const tap = (times: number[]) => times.reduce(nextTapStreak, NO_TAPS).count;
+
+  it('counts quick taps and starts over after a pause', () => {
+    const t = 1_000_000;
+    expect(tap([t, t + 300, t + 600])).toBe(FED_UP_TAPS);
+    expect(tap([t, t + 300, t + 300 + TAP_GAP_MS + 1])).toBe(1);
+  });
+
+  it('keeps the real swearing to Unhinged', () => {
+    const rand = rng(3);
+    for (let i = 0; i < 40; i++) {
+      expect(pickFedUpLine('gentle', undefined, rand)).not.toMatch(/vaffanculo|fuck/i);
+      expect(pickFedUpLine('classic', undefined, rand)).toMatch(/vaffanapoli/i);
+    }
+  });
+
+  it('never repeats itself twice running', () => {
+    const rand = rng(9);
+    let last: string | undefined;
+    for (let i = 0; i < 30; i++) {
+      const line = pickFedUpLine('unhinged', last, rand);
+      expect(line).not.toBe(last);
+      last = line;
     }
   });
 });

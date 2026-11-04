@@ -1,5 +1,5 @@
 {
-  "declineRetry": "Real mature.",
+  "declineRetry": "You hung up on me? People don't hang up on me. Real mature.",
   "scripts": [
     {
       "id": "call_broken_promise",
@@ -8,7 +8,7 @@
       "lines": [
         "It's Vinnie. Sit down.",
         "{promiseDay} you said 'won't happen again.' I wrote it down. In pen.",
-        "And now: {amount} on {category}. Same thing. Same week."
+        "And now: {amount} on {category}. Where I worked, a man's word was the whole contract."
       ],
       "replies": [
         {
@@ -19,15 +19,15 @@
         {
           "text": "This time I mean it.",
           "tag": "promise_never_again",
-          "response": "Okay. New page. Same pen. I'm watching."
+          "response": "Okay. New page. Same pen. I'm watching. Capiche?"
         },
         {
           "text": "Yeah… my bad.",
           "tag": "admit",
-          "response": "...Thank you. That's the first step. The second step is not doing it."
+          "response": "...Grazie. That's the first step. The second step is not doing it."
         }
       ],
-      "closer": "One more week. Show me. I'll be here. I'm always here."
+      "closer": "One more week. Show me. I'll be here. I'm always here. It's kind of a condition of my arrangement."
     },
     {
       "id": "call_over_budget",
@@ -35,14 +35,14 @@
       "minHeat": "gentle",
       "lines": [
         "Yeah, it's me. Don't hang up.",
-        "{Category}. {amount}. And that put us over the budget. OVER, kid.",
-        "I gave you one number. One. My mother kept a family of six under budget with a coupon book and spite."
+        "{Category}. {amount}. And that put us over the budget. Mamma mia. OVER, kid.",
+        "I gave you one number. One. My mother kept a family under budget with a coupon book and spite."
       ],
       "replies": [
         {
           "text": "I needed it.",
           "tag": "excuse_needed",
-          "response": "Needed. Uh huh. You needed {category} like I need another receipt in this pile."
+          "response": "Needed. Uh huh. You needed {category} like I need another subpoena."
         },
         {
           "text": "Won't happen again.",
@@ -52,10 +52,10 @@
         {
           "text": "Yeah… my bad.",
           "tag": "admit",
-          "response": "...Alright. That's all I wanted. Honesty. It's free, you know. The only free thing."
+          "response": "...Alright. That's all I wanted. Honesty. It's free, you know. Rarest thing I ever audited."
         }
       ],
-      "closer": "Now go drink some water and don't buy anything. I'm hanging up. I'm hanging up."
+      "closer": "Now go drink some water and don't buy anything. I'm hanging up. I'm hanging up. Ciao."
     },
     {
       "id": "call_already_over",
@@ -63,14 +63,14 @@
       "minHeat": "gentle",
       "lines": [
         "It's Vinnie. You know why I'm calling.",
-        "We're already over. And now {amount} on {category}?",
+        "We're already over. And now {amount} on {category}? Ma perché?",
         "Do you see my window? It's thunderstorming in here. Indoors. Because of you."
       ],
       "replies": [
         {
           "text": "It's an investment.",
           "tag": "excuse_investment",
-          "response": "An INVESTMENT? In what? Your portfolio is {category}!"
+          "response": "An INVESTMENT? I've cooked books better than that. Your portfolio is {category}!"
         },
         {
           "text": "Won't happen again.",
@@ -80,10 +80,10 @@
         {
           "text": "Yeah… my bad.",
           "tag": "admit",
-          "response": "Okay. Okay. We fix it together. Starting now. Starting right now."
+          "response": "Okay. Okay. Piano, piano. We fix it together. Starting right now."
         }
       ],
-      "closer": "Rest of the month, we're eating rice. Both of us. Solidarity. Bye."
+      "closer": "Rest of the month, we're eating pasta e fagioli. Both of us. Solidarity. Ciao."
     },
     {
       "id": "call_generic",
@@ -102,7 +102,7 @@
         {
           "text": "It's an investment.",
           "tag": "excuse_investment",
-          "response": "Don't. Don't say investment to an accountant. I'll have a stroke."
+          "response": "Don't. Don't say investment to an accountant. I testified about those."
         },
         {
           "text": "Yeah… my bad.",
@@ -110,7 +110,7 @@
           "response": "See? Was that hard? That wasn't hard."
         }
       ],
-      "closer": "Alright. I gotta go. Deductible's eating a receipt. Bye."
+      "closer": "Alright. I gotta go. Deductible's eating a receipt. Ciao."
     },
     {
       "id": "call_over_budget_2",
@@ -119,7 +119,7 @@
       "lines": [
         "Kid. It's Vinnie. You know what happened.",
         "{amount} on {category}, and now we're past the budget.",
-        "I'm not mad. I'm... okay, I'm a little mad."
+        "I'm not mad. I'm... okay, I'm a little mad. Capiche?"
       ],
       "replies": [
         {
@@ -130,15 +130,15 @@
         {
           "text": "Won't happen again.",
           "tag": "promise_never_again",
-          "response": "I'm holding you to that. I keep receipts, remember."
+          "response": "I'm holding you to that. I keep receipts, remember. Some people wish I didn't."
         },
         {
           "text": "Yeah… my bad.",
           "tag": "admit",
-          "response": "Thank you. That's how we fix it. Out loud."
+          "response": "Grazie. That's how we fix it. Out loud."
         }
       ],
-      "closer": "Rest of the month, we're careful. Together. Bye, kid."
+      "closer": "Rest of the month, we're careful. Together. Ciao, kid."
     },
     {
       "id": "call_already_over_2",
@@ -147,13 +147,13 @@
       "lines": [
         "Pick up, pick up. Oh. You picked up.",
         "We're past the budget and {amount} more just went out the door.",
-        "The plant died, kid. I watered it and it still died."
+        "The plant died, kid. I watered it and it still died. Madonna."
       ],
       "replies": [
         {
           "text": "It's an investment.",
           "tag": "excuse_investment",
-          "response": "The only investment here is my therapist."
+          "response": "The only investment here is my cardiologist."
         },
         {
           "text": "Won't happen again.",
@@ -163,10 +163,10 @@
         {
           "text": "Yeah… my bad.",
           "tag": "admit",
-          "response": "Alright. Nothing more till the first. Deal? Deal."
+          "response": "Alright. Nothing more till the first. Deal? Deal. We shook on it. Spiritually."
         }
       ],
-      "closer": "I'm gonna go lie down on the floor of my office now. Bye."
+      "closer": "I'm gonna go lie down on the floor of my office now. Ciao."
     },
     {
       "id": "call_broken_promise_2",
@@ -174,13 +174,13 @@
       "minHeat": "gentle",
       "lines": [
         "It's me. Remember {promiseDay}? 'Won't happen again'?",
-        "Well. It happened again. {Category}. {amount}."
+        "Well. It happened again. {Category}. {amount}. I know a lot of liars, kid. They're better at it."
       ],
       "replies": [
         {
           "text": "It was different this time.",
           "tag": "excuse_needed",
-          "response": "It's always different this time. That's how it gets you."
+          "response": "It's always different this time. I heard that in three languages. Never was."
         },
         {
           "text": "Okay, really never again.",
@@ -193,14 +193,14 @@
           "response": "...Okay. You owned it. That's worth something to me."
         }
       ],
-      "closer": "I believe in you. I'm annoyed, but I believe in you."
+      "closer": "I believe in you. I'm annoyed, but I believe in you. Capiche?"
     },
     {
       "id": "call_generic_2",
       "trigger": "any",
       "minHeat": "gentle",
       "lines": [
-        "Hey. Vinnie here. Got a second?",
+        "Hey. Vinnie here. Got a second? This line's clean.",
         "{amount} on {category}. I saw it. I had feelings about it."
       ],
       "replies": [
@@ -212,7 +212,7 @@
         {
           "text": "It's an investment.",
           "tag": "excuse_investment",
-          "response": "In what? Happiness? ...Fine. A little happiness is allowed."
+          "response": "In what? Happiness? ...Fine. A little la dolce vita is allowed."
         },
         {
           "text": "Yeah… my bad.",
@@ -220,7 +220,7 @@
           "response": "Good. That's all I wanted to hear. Go drink some water."
         }
       ],
-      "closer": "Alright, I'll let you go. Log your receipts. Bye."
+      "closer": "Alright, I'll let you go. Log your receipts. Ciao."
     }
   ],
   "checkIn": {
@@ -235,7 +235,7 @@
       {
         "text": "I'm doing good.",
         "tag": "admit",
-        "response": "Good. Good. Keep it that way. Log your stuff."
+        "response": "Bene. Good. Keep it that way. Log your stuff."
       },
       {
         "text": "Is this about money?",
@@ -248,6 +248,6 @@
         "response": "I know you are. That's all I ask. Trying, and receipts."
       }
     ],
-    "closer": "Alright. Go. Deductible says hi. She doesn't. But she would."
+    "closer": "Alright. Go. Deductible says ciao. She doesn't. But she would."
   }
 }

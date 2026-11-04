@@ -20,7 +20,14 @@ import { getCategory } from '@/domain/categories';
 import { balance } from '@/domain/coins';
 import { Entry, monthSpentMinor, toDateKey } from '@/domain/entries';
 import { formatMoney } from '@/domain/money';
-import { pickPropLine, PropTarget } from '@/domain/propLines';
+import {
+  FED_UP_TAPS,
+  nextTapStreak,
+  NO_TAPS,
+  pickFedUpLine,
+  pickPropLine,
+  PropTarget,
+} from '@/domain/propLines';
 import { QuickChip, quickChips } from '@/domain/quickChips';
 import { MOOD_LABEL, moodState } from '@/domain/mood';
 import { fillPlaceholders, Heat } from '@/domain/reaction/dialogue';
@@ -96,6 +103,9 @@ const pick = <T,>(list: readonly T[]): T => list[Math.floor(Math.random() * list
 
 const UNDO_MS = 5000;
 const SHARE_PROMPT_MS = 10000;
+
+// Outside the component: reading the clock is only allowed in an event, not a render.
+const tapped = (s: typeof NO_TAPS) => nextTapStreak(s, Date.now());
 
 type Bubble = { id: number; text: string; anchor: Point; done: () => void };
 type OpenSheet =
@@ -327,9 +337,26 @@ function Office() {
 
   // Taps in the office: props get a line from Vinnie, the floor gets a walk.
   const lastLines = useRef<Partial<Record<PropTarget, string>>>({});
+  const tapStreak = useRef(NO_TAPS);
+  const lastFedUp = useRef<string | undefined>(undefined);
   const onSceneTap = async (t: TapTarget) => {
     const canvas = office.current;
-    if (!canvas || busy || bubble) return;
+    if (!canvas || busy) return;
+    // Counted before the bubble check: poking him mid-sentence is the whole point.
+    if (t.kind === 'vinnie') {
+      tapStreak.current = tapped(tapStreak.current);
+      if (tapStreak.current.count >= FED_UP_TAPS) {
+        tapStreak.current = NO_TAPS;
+        const line = pickFedUpLine(heat, lastFedUp.current, Math.random);
+        lastFedUp.current = line;
+        bubble?.done();
+        canvas.play('shout');
+        await say(line);
+        office.current?.play('idle');
+        return;
+      }
+    }
+    if (bubble) return;
     if (t.kind === 'floor') {
       setStatus(ANIM_STATUS.walk);
       await canvas.walkTo(t.at);

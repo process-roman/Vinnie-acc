@@ -2,7 +2,7 @@
 
 import props from '@/content/props.json';
 
-import { fillPlaceholders } from './reaction/dialogue';
+import { fillPlaceholders, Heat } from './reaction/dialogue';
 import { RoomState } from './roomState';
 
 export type PropTarget =
@@ -43,5 +43,23 @@ export function pickPropLine(
     .filter((l) => room.receipts >= 2 || !l.includes('{count}'))
     .map(fill);
   const fresh = pool.length > 1 ? pool.filter((l) => l !== last) : pool;
+  return fresh[Math.floor(rand() * fresh.length)];
+}
+
+/** Taps on Vinnie in a row, each within TAP_GAP_MS of the last, before he snaps. */
+export const FED_UP_TAPS = 3;
+export const TAP_GAP_MS = 1500;
+
+export type TapStreak = { count: number; at: number };
+export const NO_TAPS: TapStreak = { count: 0, at: 0 };
+
+export function nextTapStreak(streak: TapStreak, now: number): TapStreak {
+  return { count: now - streak.at <= TAP_GAP_MS ? streak.count + 1 : 1, at: now };
+}
+
+/** What he says when you won't stop poking him. Only lines written for this heat. */
+export function pickFedUpLine(heat: Heat, last: string | undefined, rand: () => number): string {
+  const pool = props.vinnieFedUp.filter((l) => l.minHeat === heat).map((l) => l.text);
+  const fresh = pool.filter((l) => l !== last);
   return fresh[Math.floor(rand() * fresh.length)];
 }

@@ -81,9 +81,9 @@ Vinnie must feel like a specific person, not a stock "Italian-American wiseguy."
 - An office cat named **Deductible**.
 - A framed photo of his mother, whom he quotes as a financial authority.
 - He keeps every receipt you've ever given him, and the pile grows.
-- He says "pal," "kid" and "listen to me" a lot. He says "capisce" rarely, so it lands.
+- He says "pal," "kid" and "listen to me" a lot. He drops Italian all the time (capiche, mamma mia, basta, madonn', vaffanapoli).
 
-Avoid mob jokes, accent spelling on every word, and gold-chain-as-personality. The humour comes from his opinions, not his ethnicity.
+He's fully Italian and once kept the books for the mob. He only ever hints at it and never threatens the player. Avoid accent spelling on every word and gold-chain-as-personality.
 
 ### Visual Identity
 

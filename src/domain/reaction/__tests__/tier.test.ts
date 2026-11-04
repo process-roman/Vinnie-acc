@@ -136,3 +136,23 @@ describe('evaluateTier', () => {
     expect(evaluateTier({ ...base, limitMinor: null }).reasons).toEqual(['noBudget']);
   });
 });
+
+describe('underBudget', () => {
+  const base = {
+    amountMinor: 1000,
+    kind: 'essential' as const,
+    limitMinor: 10000,
+    daysLeft: 20,
+    stats: { avgMinor: null, countThisMonth: 0, countLast48h: 0, monthTotalMinor: 0 },
+  };
+  const reasons = (over: Partial<Parameters<typeof evaluateTier>[0]>) =>
+    evaluateTier({ type: 'expense', spentBeforeMinor: 0, ...base, ...over }).reasons;
+
+  it('is only given when the month is really within the limit', () => {
+    expect(reasons({ spentBeforeMinor: 1000 })).toContain('underBudget');
+    expect(reasons({ type: 'saved', spentBeforeMinor: 1000 })).toContain('underBudget');
+    expect(reasons({ spentBeforeMinor: 9500 })).not.toContain('underBudget');
+    expect(reasons({ type: 'skipped', spentBeforeMinor: 20000 })).not.toContain('underBudget');
+    expect(reasons({ limitMinor: null })).not.toContain('underBudget');
+  });
+});

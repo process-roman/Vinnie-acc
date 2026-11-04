@@ -22,6 +22,8 @@ export type Reason =
   | 'big'
   | 'lateMonth'
   | 'noBudget'
+  /** Good news that's true: spending this month is still within the limit. */
+  | 'underBudget'
   /** Bought something in a category you promised to quit (promise ledger). */
   | 'brokenPromise'
   /** Called something an investment again within 30 days. */
@@ -46,8 +48,10 @@ const max = (a: Tier, b: Tier): Tier => (TIER_ORDER.indexOf(a) >= TIER_ORDER.ind
 export function evaluateTier(input: TierInput): TierResult {
   const { type, amountMinor: amt, kind, limitMinor: limit, spentBeforeMinor: before } = input;
 
-  if (type === 'saved') return { tier: 'approve', reasons: ['saved'] };
-  if (type === 'skipped') return { tier: 'approve', reasons: ['skipped'] };
+  const within = (spent: number): Reason[] =>
+    limit !== null && spent <= limit ? ['underBudget'] : [];
+  if (type === 'saved') return { tier: 'approve', reasons: ['saved', ...within(before)] };
+  if (type === 'skipped') return { tier: 'approve', reasons: ['skipped', ...within(before)] };
 
   const reasons: Reason[] = [];
   const after = before + amt;
@@ -60,7 +64,7 @@ export function evaluateTier(input: TierInput): TierResult {
       reasons.push('big');
       return { tier: 'neutral', reasons };
     }
-    return { tier: 'approve', reasons };
+    return { tier: 'approve', reasons: [...reasons, ...within(after)] };
   }
 
   let tier: Tier = 'neutral';

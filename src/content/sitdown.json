@@ -1,29 +1,31 @@
 {
   "open": [
-    "Sit down. Coffee? No? Suit yourself. Let's look at your week.",
-    "Alright. The weekly sit-down. Phones down. Mine's down. Okay, mine's a rotary."
+    "Sit down. Espresso? No? Suit yourself. Let's look at your week.",
+    "Alright. The weekly sit-down. Phones down. Mine's down. Nobody's listening. I checked."
   ],
   "spent": [
     "This week you spent {spent} across {count} receipts.",
     "{spent} out the door this week. {count} receipts. I read every one."
   ],
-  "spentNone": ["Nothing spent this week? Either you're a monk or you forgot to tell me."],
+  "spentNone": [
+    "Nothing spent this week? Either you're a monk or you're keeping two sets of books. I'd know."
+  ],
   "top": [
     "Most of it went to {topCategory}: {topTotal}.",
     "Biggest bucket: {topCategory}. {topTotal}. Just so you know."
   ],
   "best": [
-    "Best move: {bestWhat}. {bestAmount}. That's the stuff.",
-    "I liked {bestWhat}. {bestAmount}. More of that."
+    "Best move: {bestWhat}. {bestAmount}. Bravo. More of that.",
+    "I liked {bestWhat}. {bestAmount}. That's the stuff."
   ],
   "worst": [
     "Worst one: {worstWhat}. {worstAmount}. We don't have to talk about it. We're talking about it.",
-    "The one that hurt: {worstWhat}, {worstAmount}."
+    "The one that hurt: {worstWhat}, {worstAmount}. Mamma mia."
   ],
-  "promisesKept": ["You kept {kept} promise{keptS} this week. I noticed."],
-  "promisesBroken": ["And {broken} promise{brokenS} broke. We'll get there."],
+  "promisesKept": ["You kept {kept} promise{keptS} this week. Around here, that means something."],
+  "promisesBroken": ["And {broken} promise{brokenS} broke. We'll get there. Capiche?"],
   "close": [
     "That's the week. You did alright. Don't make it weird. Here, take some coins.",
-    "Good talk. Same time next week. Here's a little something for showing up."
+    "Good talk. Same time next week. Here's a little something. Don't ask where it's from."
   ]
 }
