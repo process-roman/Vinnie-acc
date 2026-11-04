@@ -138,11 +138,20 @@ describe('category limits in a reaction', () => {
     description: '',
   });
 
-  it('gets mad about $1000 of groceries', () => {
+  it('comes through the glass and calls over $1000 of groceries', () => {
     const r = planReaction(buy('groceries', 100000), ctx());
+    expect(r.tier).toBe('meltdown');
+    expect(r.reasons).toContain('absurdOverLimit');
+    expect(r.escalation).toBe('punch');
+    expect(r.call).not.toBeNull();
+  });
+
+  it('gets angry a bit over the line, without the glass', () => {
+    const r = planReaction(buy('groceries', 40000), ctx());
     expect(r.tier).toBe('angry');
     expect(r.reasons).toContain('wayOverLimit');
-    expect(r.line).toMatch(/\$1,000/);
+    expect(r.escalation).toBe('none');
+    expect(r.line).toContain('$400');
   });
 
   it('leaves a normal grocery run alone', () => {
