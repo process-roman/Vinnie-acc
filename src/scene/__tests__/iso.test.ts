@@ -7,8 +7,8 @@ describe('iso', () => {
 
   it('places grid axes on the 2:1 diagonals', () => {
     expect(gridToScreen({ gx: 0, gy: 0 }, origin)).toEqual({ x: 64, y: 48 });
-    expect(gridToScreen({ gx: 1, gy: 0 }, origin)).toEqual({ x: 72, y: 52 });
-    expect(gridToScreen({ gx: 0, gy: 1 }, origin)).toEqual({ x: 56, y: 52 });
+    expect(gridToScreen({ gx: 1, gy: 0 }, origin)).toEqual({ x: 80, y: 56 });
+    expect(gridToScreen({ gx: 0, gy: 1 }, origin)).toEqual({ x: 48, y: 56 });
   });
 
   it('screenToGrid inverts gridToScreen', () => {

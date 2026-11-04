@@ -8,7 +8,7 @@ import { PIXEL_SAMPLING, toSkImage } from './skiaImage';
 import { buildVinnieSheet, VINNIE_W } from './sprites/vinnie';
 
 /** Rows from the top of the sprite: hair down to the collar. */
-const CROP_H = 11;
+const CROP_H = 21;
 
 export function VinnieAvatar({ size, outfit }: { size: number; outfit?: string }) {
   const image = useMemo(() => toSkImage(buildVinnieSheet(outfit)), [outfit]);

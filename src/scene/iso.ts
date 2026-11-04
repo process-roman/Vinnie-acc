@@ -1,8 +1,8 @@
 // Isometric (2:1) grid math, in art pixels (before display scaling).
 // Grid point (0, 0) is the room's back corner; +gx runs down-right, +gy down-left.
 
-export const TILE_W = 16;
-export const TILE_H = 8;
+export const TILE_W = 32;
+export const TILE_H = 16;
 
 export type Point = { x: number; y: number };
 export type GridPoint = { gx: number; gy: number };

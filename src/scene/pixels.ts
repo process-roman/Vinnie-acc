@@ -57,13 +57,14 @@ export function spriteFromRows(
   return buf;
 }
 
-/** Copies src onto dst at (dx, dy), skipping fully transparent pixels. */
+/** Draws src onto dst at (dx, dy): opaque pixels replace, translucent ones blend. */
 export function blit(dst: PixelBuffer, src: PixelBuffer, dx: number, dy: number): void {
   for (let y = 0; y < src.height; y++) {
     for (let x = 0; x < src.width; x++) {
       const c = getPixel(src, x, y);
       if (c[3] === 0) continue;
-      setPixel(dst, dx + x, dy + y, c);
+      if (c[3] === 255) setPixel(dst, dx + x, dy + y, c);
+      else blendPixel(dst, dx + x, dy + y, c);
     }
   }
 }
@@ -107,4 +108,72 @@ export function drawLine(
       y0 += sy;
     }
   }
+}
+
+/** Draws `c` over what's already there, honouring its alpha. */
+export function blendPixel(buf: PixelBuffer, x: number, y: number, c: Rgba): void {
+  if (x < 0 || y < 0 || x >= buf.width || y >= buf.height) return;
+  const i = (y * buf.width + x) * 4;
+  const d = buf.data;
+  const a = c[3] / 255;
+  const under = (d[i + 3] / 255) * (1 - a);
+  const out = a + under;
+  if (out === 0) return;
+  d[i] = Math.round((c[0] * a + d[i] * under) / out);
+  d[i + 1] = Math.round((c[1] * a + d[i + 1] * under) / out);
+  d[i + 2] = Math.round((c[2] * a + d[i + 2] * under) / out);
+  d[i + 3] = Math.round(out * 255);
+}
+
+export function fillRect(
+  buf: PixelBuffer,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  c: Rgba,
+): void {
+  for (let py = y; py < y + h; py++) for (let px = x; px < x + w; px++) setPixel(buf, px, py, c);
+}
+
+/** Lighter above 1, darker below 1. */
+export function shade(c: Rgba, k: number): Rgba {
+  const f = (n: number) => Math.max(0, Math.min(255, Math.round(n * k)));
+  return [f(c[0]), f(c[1]), f(c[2]), c[3]];
+}
+
+export function mix(a: Rgba, b: Rgba, t: number): Rgba {
+  const f = (i: number) => Math.round(a[i] + (b[i] - a[i]) * t);
+  return [f(0), f(1), f(2), f(3)];
+}
+
+/** A repeatable 0..1 value for a pair of integers: texture without a stored random stream. */
+export function noise(x: number, y: number): number {
+  let h = Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263);
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+
+/** The smallest piece of `src` holding every visible pixel, and where it was. */
+export function cropToContent(src: PixelBuffer): { buffer: PixelBuffer; x: number; y: number } {
+  let x0 = src.width;
+  let y0 = src.height;
+  let x1 = -1;
+  let y1 = -1;
+  for (let y = 0; y < src.height; y++) {
+    for (let x = 0; x < src.width; x++) {
+      if (src.data[(y * src.width + x) * 4 + 3] === 0) continue;
+      if (x < x0) x0 = x;
+      if (x > x1) x1 = x;
+      if (y < y0) y0 = y;
+      if (y > y1) y1 = y;
+    }
+  }
+  if (x1 < 0) return { buffer: createBuffer(1, 1), x: 0, y: 0 };
+  const buffer = createBuffer(x1 - x0 + 1, y1 - y0 + 1);
+  for (let y = y0; y <= y1; y++) {
+    const from = (y * src.width + x0) * 4;
+    buffer.data.set(src.data.subarray(from, from + buffer.width * 4), (y - y0) * buffer.width * 4);
+  }
+  return { buffer, x: x0, y: y0 };
 }

@@ -6,6 +6,7 @@ import {
   rasterizeLightning,
   rasterizePoster,
   rasterizeRoom,
+  rasterizeSunPatch,
   rasterizeWindow,
   RAIN_FRAMES,
   ROOM_H,
@@ -68,6 +69,14 @@ describe('wall layers', () => {
 
   it('shows the crack on the poster only when over budget', () => {
     expect(rasterizePoster('intact').data).not.toEqual(rasterizePoster('cracked').data);
+  });
+
+  it('shows the Brooklyn Bridge in every weather, and only sun lights the floor', () => {
+    const weathers = ['sunny', 'cloudy', 'rain', 'storm'] as const;
+    const views = weathers.map((w) => rasterizeWindow(w).data.join());
+    expect(new Set(views).size).toBe(weathers.length);
+    expect(opaque(rasterizeSunPatch('sunny'))).toBeGreaterThan(1000);
+    expect(opaque(rasterizeSunPatch('storm'))).toBe(0);
   });
 
   it('leaves the base room without a window', () => {

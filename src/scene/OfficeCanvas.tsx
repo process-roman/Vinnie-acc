@@ -35,6 +35,7 @@ import {
   rasterizeNeonSign,
   rasterizePoster,
   rasterizeRug,
+  rasterizeSunPatch,
   rasterizeWindow,
   RAIN_FRAMES,
   ROOM_H,
@@ -44,7 +45,7 @@ import {
   WAYPOINTS,
 } from './room';
 import { PIXEL_SAMPLING, toSkImage } from './skiaImage';
-import { buildAlertBubble } from './sprites/bubble';
+import { ALERT_H, ALERT_W, buildAlertBubble } from './sprites/bubble';
 import { AnimName, ANIM_NAMES, ANIMS, VINNIE_ANCHOR, VINNIE_H, VINNIE_W } from './sprites/vinnie';
 
 const MS_PER_TILE = 260;
@@ -59,6 +60,8 @@ const IDLE = ANIM_NAMES.indexOf('idle');
 const WALK = ANIM_NAMES.indexOf('walk');
 
 const LIGHTNING_EVERY_MS = 4200;
+/** Where the top of his head is inside a frame. */
+const HEAD_TOP = 4;
 
 export type TapTarget =
   { kind: 'vinnie' } | { kind: 'prop'; target: PropTarget } | { kind: 'floor'; at: GridPoint };
@@ -128,6 +131,7 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
     );
   }, [room.weather]);
   const poster = buf(`poster:${room.poster}`, () => rasterizePoster(room.poster));
+  const sunPatch = buf(`sun:${room.weather}`, () => rasterizeSunPatch(room.weather));
   const sprites = useMemo(() => buildSprites(room, cosmetics), [room, cosmetics]);
 
   const clock = useSharedValue(0);
@@ -167,8 +171,8 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
     const cx = vx.value + VINNIE_W / 2;
     return [{ translateX: cx }, { scaleX: facing.value }, { translateX: -cx }];
   });
-  const bubbleX = useDerivedValue(() => vx.value + 2);
-  const bubbleY = useDerivedValue(() => vy.value - 11);
+  const bubbleX = useDerivedValue(() => vx.value + 6);
+  const bubbleY = useDerivedValue(() => vy.value - 18);
   // Cheap neon: lit most of the time, with the odd flicker.
   const neon = useDerivedValue(() => {
     const t = clock.value % 5300;
@@ -228,13 +232,13 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
     play,
     headPosition: () => ({
       x: offsetX + (vx.value + VINNIE_W / 2) * scale,
-      y: offsetY + (vy.value + 4) * scale,
+      y: offsetY + (vy.value + HEAD_TOP) * scale,
     }),
     headPositionAt: (p) => {
       const feet = gridToScreen(p, ROOM_ORIGIN);
       return {
         x: offsetX + feet.x * scale,
-        y: offsetY + (Math.round(feet.y) - VINNIE_ANCHOR.y + 4) * scale,
+        y: offsetY + (Math.round(feet.y) - VINNIE_ANCHOR.y + HEAD_TOP) * scale,
       };
     },
     position: () => ({ gx: gx.value, gy: gy.value }),
@@ -307,6 +311,14 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
           <Group transform={[{ scale }]}>
             <Image
               image={roomImage}
+              x={0}
+              y={0}
+              width={ROOM_W}
+              height={ROOM_H}
+              sampling={PIXEL_SAMPLING}
+            />
+            <Image
+              image={img(sunPatch)}
               x={0}
               y={0}
               width={ROOM_W}
@@ -392,8 +404,8 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
                 image={statics.bubble}
                 x={bubbleX}
                 y={bubbleY}
-                width={9}
-                height={10}
+                width={ALERT_W}
+                height={ALERT_H}
                 sampling={PIXEL_SAMPLING}
               />
             )}

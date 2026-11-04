@@ -8,14 +8,14 @@ import type { ItemSlot } from '@/domain/shop';
 import { generateCrack } from './crack';
 import { depth, GridPoint, gridToScreen } from './iso';
 import { SceneSprite, slotDepth, slotPosition, SLOTS } from './layout';
-import { blit, createBuffer, drawLine, hex, PixelBuffer } from './pixels';
+import { rasterizeFurniture, rasterizeOffice } from './furniture';
+import { blit, createBuffer, cropToContent, drawLine, hex, PixelBuffer } from './pixels';
 import {
   PROPS,
-  rasterizeBox,
   rasterizeNeonSign,
   rasterizePoster,
-  rasterizeRoom,
   rasterizeRug,
+  rasterizeSunPatch,
   rasterizeWindow,
   ROOM_H,
   ROOM_ORIGIN,
@@ -52,22 +52,37 @@ export const wallStyle = (c: Cosmetics) =>
   c.walls === 'green_wallpaper' ? ('green_wallpaper' as const) : ('brick' as const);
 
 export const roomBuffer = (c: Cosmetics) =>
-  buf(`room:${wallStyle(c)}`, () => rasterizeRoom(wallStyle(c)));
+  buf(`room:${wallStyle(c)}`, () => rasterizeOffice(wallStyle(c)));
 
 export const vinnieSheet = (c: Cosmetics) =>
   buf(`vinnie:${c.outfit ?? ''}`, () => buildVinnieSheet(c.outfit));
 
+const pieces = new Map<string, ReturnType<typeof cropToContent>>();
+const furniturePiece = (id: (typeof PROPS)[number]['id']) => {
+  let piece = pieces.get(id);
+  if (!piece) {
+    piece = cropToContent(rasterizeFurniture(id));
+    pieces.set(id, piece);
+  }
+  return piece;
+};
+
 export function buildSprites(room: RoomState, cosmetics: Cosmetics): SceneSprite[] {
-  const sprites: SceneSprite[] = PROPS.map((p) => ({
-    key: p.id,
-    frames: [buf(`box:${p.id}`, () => rasterizeBox(p.footprint, p.heightPx, p.colors))],
-    x: 0,
-    y: 0,
-    depth: depth({
-      gx: p.footprint.gx + p.footprint.w / 2,
-      gy: p.footprint.gy + p.footprint.d / 2,
-    }),
-  }));
+  // The credenza's baked into the room: the safe stands in front of it.
+  const sprites: SceneSprite[] = PROPS.filter((p) => p.id !== 'cabinet').map((p) => {
+    // Cropped, so the GPU isn't drawing a room-sized image for each chair.
+    const piece = furniturePiece(p.id);
+    return {
+      key: p.id,
+      frames: [piece.buffer],
+      x: piece.x,
+      y: piece.y,
+      depth: depth({
+        gx: p.footprint.gx + p.footprint.w / 2,
+        gy: p.footprint.gy + p.footprint.d / 2,
+      }),
+    };
+  });
   const place = (
     key: string,
     slot: (typeof SLOTS)[keyof typeof SLOTS],
@@ -120,6 +135,12 @@ const CRACK_SHADOW = hex('#1b1410');
 export function composeSnapshot(s: SnapshotInput): PixelBuffer {
   const out = createBuffer(ROOM_W, ROOM_H);
   blit(out, roomBuffer(s.cosmetics), 0, 0);
+  blit(
+    out,
+    buf(`sun:${s.room.weather}`, () => rasterizeSunPatch(s.room.weather)),
+    0,
+    0,
+  );
   if (s.cosmetics.floor === 'rug') blit(out, buf('rug', rasterizeRug), 0, 0);
   if (s.cosmetics.sign === 'neon_sign') {
     blit(

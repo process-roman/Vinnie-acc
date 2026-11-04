@@ -9,7 +9,7 @@ under `src/` (`domain`, `data`, `content`, `scene`, `ui`, `store`, `services`).
 **Renderer: Skia, not PixiJS.** The spike draws the office with
 `@shopify/react-native-skia` and animates with Reanimated shared values. Pixel art stays
 crisp by drawing low-resolution images with nearest-neighbour sampling, scaled by a whole
-number of *device* pixels (`PixelRatio`), so every art pixel is the same size on screen.
+number of _device_ pixels (`PixelRatio`), so every art pixel is the same size on screen.
 Not yet measured on a mid-range Android device: the 60 fps acceptance check is still open.
 
 **Placeholder art is generated in code.** Sprites are palette-character grids and the room
@@ -280,3 +280,24 @@ even while he's talking.
 
 **`underBudget` reason.** Lines that say you're under budget require this condition, so he never says
 it when it isn't true.
+
+## Art pass: finer pixels, a real office (after M7)
+
+**Twice the resolution.** Tiles went from 16x8 to 32x16 art pixels and the room is now 268x260, so
+each art pixel is about 1.3pt on a typical phone instead of about 3pt. Still whole device pixels and
+nearest-neighbour. The trade-off: 375pt @2x phones fall to a 2x scale and show the room at about 70%
+of the screen width; the zoom buttons cover that.
+
+**Depth.** The floor has a slab, the walls have thickness, and the room casts a soft stepped-alpha
+shadow on the ground. Furniture gets contact shadows, and daylight from the window lies on the floor
+in sun and cloud.
+
+**Baked vs live furniture.** Anything against a wall is baked into the room image (`scene/furniture.ts`),
+which keeps the live sprite count about where it was. Only the desk, the two chairs and small props
+are sprites, cropped to their content. Vinnie is never meant to walk behind baked furniture.
+
+**The window is the Brooklyn Bridge.** Sky, weather and lighting still show the budget; the bridge and
+Manhattan are drawn in every state. Nothing is copied from the original app: only its pixel density
+and ground shadow were used as a reference.
+
+**Not measured yet.** Frame rate on a real phone with the larger images.
