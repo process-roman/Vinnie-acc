@@ -374,3 +374,14 @@ mixes with other audio, and asks for no microphone permission. Failures are logg
 
 **Vinnie's voice** is one looping babble that plays while his text types, not a sound per letter, which
 would mean restarting a player dozens of times a second.
+
+## Spending pie, and sound on Android
+
+**Pie.** History has a "Where it went" tab: a pixel-art ring for a month or all time, with a percent for each
+slice. Past six slices the smallest fold into one, percents always add up to 100, and the rows under it give
+the name, amount and percent so nothing depends on colour. The 12 category colours aren't fully distinct
+(a palette check flags delivery/dining and bills/transport), which is why the gaps and rows matter.
+
+**Sound on Android ignores the ringer.** expo-audio's `playsInSilentMode: false` silently refuses to play on
+Android whenever the ringer's on vibrate or silent. Media volume is the convention there, so that setting is
+now iPhone-only. Turning the Sounds switch on plays a coin so you can tell right away.

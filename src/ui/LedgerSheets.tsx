@@ -12,6 +12,7 @@ import { StoredEntry, useGame } from '@/store/game';
 
 import { CategoryLimits } from './CategoryLimits';
 import { Sheet } from './Sheet';
+import { SpendingChart } from './SpendingChart';
 import { colors, radius, space } from './tokens';
 
 const TAG: Record<Tier, string> = {
@@ -33,6 +34,7 @@ export function HistorySheet({
   const removeExamples = useGame((s) => s.removeExamples);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string | null>(null);
+  const [view, setView] = useState<'list' | 'chart'>('list');
   const now = new Date();
 
   const groups = useMemo(
@@ -52,47 +54,68 @@ export function HistorySheet({
           </Pressable>
         )}
       </View>
-      <TextInput
-        value={query}
-        onChangeText={setQuery}
-        placeholder="Search receipts"
-        placeholderTextColor={colors.inkSoft}
-        style={styles.search}
-        clearButtonMode="while-editing"
-      />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filters}>
-        <FilterChip label="All" on={category === null} onPress={() => setCategory(null)} />
-        {activeCategories()
-          .filter((c) => used.has(c.id))
-          .map((c) => (
-            <FilterChip
-              key={c.id}
-              label={c.label}
-              color={c.color}
-              on={category === c.id}
-              onPress={() => setCategory(category === c.id ? null : c.id)}
-            />
-          ))}
-      </ScrollView>
-
-      <ScrollView style={styles.list} keyboardShouldPersistTaps="handled">
-        {groups.length === 0 && (
-          <Text style={styles.empty}>
-            {entries.length ? 'Nothing matches.' : 'No receipts yet. Vinnie is bored.'}
-          </Text>
-        )}
-        {groups.map((g) => (
-          <View key={g.month}>
-            <View style={styles.monthRow}>
-              <Text style={styles.month}>{g.label}</Text>
-              <Text style={styles.monthTotal}>{formatMoney(g.spentMinor)} spent</Text>
-            </View>
-            {g.entries.map((e) => (
-              <HistoryRow key={e.id} entry={e} now={now} onPress={() => onEdit(e)} />
-            ))}
-          </View>
+      <View style={styles.viewTabs}>
+        {(['list', 'chart'] as const).map((v) => (
+          <Pressable
+            key={v}
+            onPress={() => setView(v)}
+            style={[styles.viewTab, view === v && styles.viewTabOn]}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: view === v }}
+          >
+            <Text style={[styles.viewTabLabel, view === v && styles.viewTabLabelOn]}>
+              {v === 'list' ? 'Receipts' : 'Where it went'}
+            </Text>
+          </Pressable>
         ))}
-      </ScrollView>
+      </View>
+      {view === 'chart' ? (
+        <SpendingChart entries={entries} />
+      ) : (
+        <>
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Search receipts"
+            placeholderTextColor={colors.inkSoft}
+            style={styles.search}
+            clearButtonMode="while-editing"
+          />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filters}>
+            <FilterChip label="All" on={category === null} onPress={() => setCategory(null)} />
+            {activeCategories()
+              .filter((c) => used.has(c.id))
+              .map((c) => (
+                <FilterChip
+                  key={c.id}
+                  label={c.label}
+                  color={c.color}
+                  on={category === c.id}
+                  onPress={() => setCategory(category === c.id ? null : c.id)}
+                />
+              ))}
+          </ScrollView>
+
+          <ScrollView style={styles.list} keyboardShouldPersistTaps="handled">
+            {groups.length === 0 && (
+              <Text style={styles.empty}>
+                {entries.length ? 'Nothing matches.' : 'No receipts yet. Vinnie is bored.'}
+              </Text>
+            )}
+            {groups.map((g) => (
+              <View key={g.month}>
+                <View style={styles.monthRow}>
+                  <Text style={styles.month}>{g.label}</Text>
+                  <Text style={styles.monthTotal}>{formatMoney(g.spentMinor)} spent</Text>
+                </View>
+                {g.entries.map((e) => (
+                  <HistoryRow key={e.id} entry={e} now={now} onPress={() => onEdit(e)} />
+                ))}
+              </View>
+            ))}
+          </ScrollView>
+        </>
+      )}
     </Sheet>
   );
 }
@@ -287,6 +310,17 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
+  viewTabs: {
+    flexDirection: 'row',
+    backgroundColor: colors.paper,
+    borderRadius: radius.md,
+    padding: 4,
+    marginBottom: space.sm,
+  },
+  viewTab: { flex: 1, paddingVertical: space.sm, borderRadius: radius.sm, alignItems: 'center' },
+  viewTabOn: { backgroundColor: colors.card },
+  viewTabLabel: { color: colors.inkSoft, fontWeight: '600' },
+  viewTabLabelOn: { color: colors.ink },
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -16,6 +16,7 @@ import {
 import { Heat } from '@/domain/reaction/dialogue';
 import { entriesToCsv, fullExport } from '@/domain/exportData';
 import { exportFile } from '@/services/exporter';
+import { playSound } from '@/services/sound';
 import { useGame } from '@/store/game';
 
 import { Sheet } from './Sheet';
@@ -172,7 +173,13 @@ export function SettingsSheet({ visible, onClose, onDeleted }: Props & { onDelet
         <Text style={styles.section}>Sound and feel</Text>
         <View style={styles.row}>
           <Text style={[styles.rowTitle, styles.rowMain]}>Sounds</Text>
-          <Switch value={sound} onValueChange={(v) => useGame.getState().setSound(v)} />
+          <Switch
+            value={sound}
+            onValueChange={(v) => {
+              useGame.getState().setSound(v);
+              playSound('coin');
+            }}
+          />
         </View>
         <View style={styles.row}>
           <Text style={[styles.rowTitle, styles.rowMain]}>Vibration</Text>

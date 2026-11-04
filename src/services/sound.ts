@@ -1,9 +1,10 @@
-// The game's sound effects (see scripts/generate-sounds.js). They follow the Sound switch
-// and the phone's silent mode. A sound that fails to play never gets in the game's way.
+// The game's sound effects (see scripts/generate-sounds.js). They follow the Sound switch,
+// the media volume, and on iPhone the silent switch. A sound that fails to play never
+// gets in the game's way.
 
 import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import { useEffect } from 'react';
-import { AppState } from 'react-native';
+import { AppState, Platform } from 'react-native';
 
 import click from '../../assets/sounds/click.wav';
 import coin from '../../assets/sounds/coin.wav';
@@ -95,9 +96,10 @@ function halt(name: LoopName): void {
 /** Sets up audio and loads the sounds, so the first punch isn't late. */
 export function prepareSounds(): void {
   attempt('setup', () => {
-    // A real phone's silent switch means silent. No playing over someone's music either.
+    // iPhone's silent switch means silent. Android is different: games follow the media
+    // volume there, and this setting would mute everything whenever the ringer's on vibrate.
     setAudioModeAsync({
-      playsInSilentMode: false,
+      playsInSilentMode: Platform.OS !== 'ios',
       interruptionMode: 'mixWithOthers',
       shouldPlayInBackground: false,
     }).catch((e) => console.warn('[vinnie] could not set audio mode', e));
