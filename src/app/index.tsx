@@ -92,7 +92,7 @@ const STATUS: Record<Tier, string> = {
   meltdown: 'Vinnie needs a minute.',
 };
 
-const HEATS: Heat[] = ['gentle', 'classic', 'unhinged'];
+const HEATS: Heat[] = ['classic', 'unhinged'];
 const HEAT_LABEL: Record<Heat, string> = {
   gentle: 'Gentle',
   classic: 'Classic',
@@ -510,6 +510,7 @@ function Office() {
             ...onboarding.call,
             scriptId: onboarding.call.id,
             declineRetry: calls.declineRetry,
+            declineFinal: calls.declineFinal,
           },
         });
         if (game().character.crackLevel > 0) {
@@ -550,7 +551,12 @@ function Office() {
         setStatus('Vinnie is calling you…');
         game().callPlaced();
         await ring(
-          { ...calls.checkIn, scriptId: calls.checkIn.id, declineRetry: calls.declineRetry },
+          {
+            ...calls.checkIn,
+            scriptId: calls.checkIn.id,
+            declineRetry: calls.declineRetry,
+            declineFinal: calls.declineFinal,
+          },
           null,
         );
         canvas.play('idle');

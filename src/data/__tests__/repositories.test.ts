@@ -52,7 +52,7 @@ describe('migrations', () => {
   it('are idempotent', async () => {
     await migrate(db);
     const row = await db.get<{ user_version: number }>('PRAGMA user_version');
-    expect(row?.user_version).toBe(5);
+    expect(row?.user_version).toBe(6);
   });
 });
 
@@ -149,6 +149,7 @@ describe('settings', () => {
     expect(first).toEqual({
       currency: 'USD',
       heat: 'classic',
+      userName: '',
       lastCategory: 'coffee',
       notificationsEnabled: false,
       quietStart: 22,

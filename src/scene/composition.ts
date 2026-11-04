@@ -5,11 +5,11 @@ import type { CrackLevel } from '@/domain/repair';
 import type { RoomState } from '@/domain/roomState';
 import type { ItemSlot } from '@/domain/shop';
 
-import { generateCrack } from './crack';
+import { rasterizeCrack } from './crack';
 import { depth, GridPoint, gridToScreen } from './iso';
 import { SceneSprite, slotDepth, slotPosition, SLOTS } from './layout';
 import { rasterizeFurniture, rasterizeOffice } from './furniture';
-import { blit, createBuffer, cropToContent, drawLine, hex, PixelBuffer } from './pixels';
+import { blit, createBuffer, cropToContent, PixelBuffer } from './pixels';
 import {
   PROPS,
   rasterizeNeonSign,
@@ -128,9 +128,6 @@ export type SnapshotInput = {
   crackSeed: number;
 };
 
-const CRACK_LINE = hex('#ffffff');
-const CRACK_SHADOW = hex('#1b1410');
-
 /** The whole office as one still pixel buffer (for share cards). */
 export function composeSnapshot(s: SnapshotInput): PixelBuffer {
   const out = createBuffer(ROOM_W, ROOM_H);
@@ -184,13 +181,15 @@ export function composeSnapshot(s: SnapshotInput): PixelBuffer {
   if (!drawn) drawVinnie();
 
   // The crack, drawn across the whole picture.
-  for (const seg of generateCrack(s.crackLevel, ROOM_W, ROOM_H, s.crackSeed, {
-    x: Math.round(feet.x),
-    y: Math.round(feet.y) - VINNIE_H + 4,
-  })) {
-    drawLine(out, seg.x0 + 1, seg.y0 + 1, seg.x1 + 1, seg.y1 + 1, CRACK_SHADOW);
-    drawLine(out, seg.x0, seg.y0, seg.x1, seg.y1, CRACK_LINE);
-  }
+  blit(
+    out,
+    rasterizeCrack(s.crackLevel, ROOM_W, ROOM_H, s.crackSeed, {
+      x: Math.round(feet.x),
+      y: Math.round(feet.y) - VINNIE_H + 4,
+    }),
+    0,
+    0,
+  );
   return out;
 }
 

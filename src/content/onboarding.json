@@ -1,8 +1,12 @@
 {
-  "meet": "Name's Vinnie. Vinnie Ledger. I look after the numbers now. Just numbers. You stop doin' stupid things with 'em. Capiche?",
-  "heat": "How loud do you want me? Pick one. You can change it later. I'll still be me.",
-  "budget": "What are we workin' with this month? Your spending budget. Ballpark's fine. I've worked with worse.",
-  "receipt": "Give me your first receipt. Something real, or I can show you what I do with a bad one.",
+  "intro": [
+    "Buongiorno. Your mama said you have problems with finances, and you need to better understand how things work.",
+    "I'm Vinnie. And I've been doing things with money you don't even imagine, kid."
+  ],
+  "name": "Remind me your name? I've got a lot of names in my head. Some of them are even real.",
+  "heat": "Now, {name}: how loud do you want me? Pick one. You can change it later. I'll still be me.",
+  "budget": "Alright, {name}. What's the budget limit this month? Ballpark's fine. I've worked with worse.",
+  "receipt": "Give me your first receipt, {name}. Something real, or I can show you what I do with a bad one.",
   "example": {
     "amountMinor": 1400,
     "category": "coffee",

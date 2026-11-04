@@ -2,7 +2,16 @@
 // iPhone quick-add guide (7.4). Export and delete-all come in M7.
 
 import { useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { Heat } from '@/domain/reaction/dialogue';
 import { entriesToCsv, fullExport } from '@/domain/exportData';
@@ -13,7 +22,6 @@ import { Sheet } from './Sheet';
 import { colors, radius, space } from './tokens';
 
 const HEATS: { id: Heat; name: string; sample: string }[] = [
-  { id: 'gentle', name: 'Gentle', sample: '"Let\'s slow down a little, alright?"' },
   { id: 'classic', name: 'Classic', sample: '"We had a NUMBER. We had an AGREEMENT."' },
   { id: 'unhinged', name: 'Unhinged', sample: 'Classic, plus the words his mother hates. 17+.' },
 ];
@@ -56,7 +64,7 @@ export function SettingsSheet({ visible, onClose, onDeleted }: Props & { onDelet
       {
         entries: s.entries,
         budget: { limitMinor: s.limitMinor },
-        settings: { heat: s.heat, currency: s.currency },
+        settings: { name: s.userName, heat: s.heat, currency: s.currency },
         vinnie: s.character,
         promises: s.ledger,
         coins: s.coinTx,
@@ -84,6 +92,19 @@ export function SettingsSheet({ visible, onClose, onDeleted }: Props & { onDelet
     <Sheet visible={visible} onClose={onClose}>
       <ScrollView style={styles.scroll}>
         <Text style={styles.title}>Settings</Text>
+
+        <Text style={styles.section}>What he calls you</Text>
+        <TextInput
+          defaultValue={useGame.getState().userName}
+          onEndEditing={(e) => useGame.getState().setUserName(e.nativeEvent.text.trim())}
+          style={styles.nameInput}
+          placeholder="Your name"
+          placeholderTextColor={colors.inkSoft}
+          autoCapitalize="words"
+          autoCorrect={false}
+          maxLength={24}
+          accessibilityLabel="Your name"
+        />
 
         <Text style={styles.section}>How loud is Vinnie?</Text>
         {HEATS.map((h) => (
@@ -184,6 +205,13 @@ export function SettingsSheet({ visible, onClose, onDeleted }: Props & { onDelet
 }
 
 const styles = StyleSheet.create({
+  nameInput: {
+    backgroundColor: colors.card,
+    borderRadius: radius.md,
+    padding: space.md,
+    fontSize: 16,
+    color: colors.ink,
+  },
   scroll: { maxHeight: 560 },
   title: { fontSize: 20, fontWeight: '800', color: colors.ink, marginBottom: space.sm },
   section: { fontWeight: '800', color: colors.ink, marginTop: space.lg, marginBottom: space.sm },

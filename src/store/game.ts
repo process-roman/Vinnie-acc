@@ -71,7 +71,7 @@ import {
 import {
   CAT_TEASE_MOOD,
   clampMood,
-  DECLINE_MOOD,
+  declineMood,
   driftMood,
   MOOD_START,
   REPLY_MOOD,
@@ -108,6 +108,8 @@ type GameState = {
   entries: StoredEntry[];
   limitMinor: number | null;
   heat: Heat;
+  /** What he calls you. Stays on the device. */
+  userName: string;
   currency: Currency;
   lastCategory: string;
   recentLineIds: string[];
@@ -174,8 +176,8 @@ type GameState = {
   removeExamples(): void;
   /** A reply on a call: goes in the promise ledger and moves his mood. */
   recordReply(tag: string, entry: Entry | null): void;
-  /** You declined his call. */
-  declined(): void;
+  /** You declined his call, for the nth time on this call. */
+  declined(nth: number): void;
   /** The glass cracked (or got worse). `impact` is a fraction of the window. */
   crackGlass(impact: { x: number; y: number }): void;
   callPlaced(): void;
@@ -186,6 +188,7 @@ type GameState = {
   /** Promises kept for a week, resolved as kept; Vinnie should say something. */
   collectKeptPromises(now?: Date): LedgerEntry[];
   setHeat(heat: Heat): void;
+  setUserName(name: string): void;
   setLimit(limitMinor: number): void;
   setPrefill(q: QuickAdd | null): Promise<void>;
   /**
@@ -270,6 +273,7 @@ export const useGame = create<GameState>()((set, get) => {
     entries: [],
     limitMinor: null,
     heat: 'classic',
+    userName: '',
     currency: 'USD',
     lastCategory: 'coffee',
     recentLineIds: [],
@@ -320,6 +324,7 @@ export const useGame = create<GameState>()((set, get) => {
           entries: await listEntries(db),
           limitMinor: limit,
           heat: settings.heat,
+          userName: settings.userName,
           currency: settings.currency,
           lastCategory: settings.lastCategory,
           notificationsEnabled: settings.notificationsEnabled,
@@ -445,8 +450,8 @@ export const useGame = create<GameState>()((set, get) => {
       track('reply_chosen', { tag });
     },
 
-    declined() {
-      setCharacter({ mood: clampMood(get().character.mood + DECLINE_MOOD) });
+    declined(nth) {
+      setCharacter({ mood: clampMood(get().character.mood + declineMood(nth)) });
     },
 
     crackGlass(impact) {
@@ -548,6 +553,11 @@ export const useGame = create<GameState>()((set, get) => {
       );
       setCharacter({ mood: clampMood(get().character.mood + KEPT_PROMISE_MOOD * kept.length) });
       return kept;
+    },
+
+    setUserName(userName) {
+      set({ userName });
+      write((d) => updateSettings(d, { userName }));
     },
 
     setHeat(heat) {
@@ -715,6 +725,7 @@ export const useGame = create<GameState>()((set, get) => {
       await cancelAll();
       set({
         heat: 'classic',
+        userName: '',
         lastCategory: 'coffee',
         notificationsEnabled: false,
         quietStart: DEFAULT_PREFS.quietStart,

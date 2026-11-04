@@ -6,6 +6,8 @@ import { Db, SqlValue } from '../db';
 export type Settings = {
   currency: Currency;
   heat: Heat;
+  /** What Vinnie calls you. */
+  userName: string;
   lastCategory: string;
   notificationsEnabled: boolean;
   /** Hour quiet time starts (0–23). */
@@ -23,6 +25,7 @@ export type Settings = {
 type Row = {
   currency: Currency;
   heat: Heat;
+  user_name: string;
   last_category: string;
   notifications_enabled: number;
   quiet_start: number;
@@ -41,6 +44,7 @@ export async function getSettings(db: Db, now: number): Promise<Settings> {
   return {
     currency: r.currency,
     heat: r.heat,
+    userName: r.user_name,
     lastCategory: r.last_category,
     notificationsEnabled: r.notifications_enabled === 1,
     quietStart: r.quiet_start,
@@ -58,6 +62,7 @@ type Editable = Omit<Settings, 'createdAt'>;
 const COLUMNS: Record<keyof Editable, string> = {
   currency: 'currency',
   heat: 'heat',
+  userName: 'user_name',
   lastCategory: 'last_category',
   notificationsEnabled: 'notifications_enabled',
   quietStart: 'quiet_start',

@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 
 import { toDateKey } from '../entries';
-import { clampMood, driftMood, moodState } from '../mood';
+import { clampMood, DECLINE_MOOD, declineMood, driftMood, moodState } from '../mood';
 import {
   CALL_COOLDOWN_MS,
   CRACK_COOLDOWN_MS,
@@ -198,5 +198,13 @@ describe('repair (blueprint §4.4)', () => {
       expect(repairDue(c, log, date)).toBe(false);
     }
     expect(c.level).toBe(0);
+  });
+});
+
+describe('declining his calls', () => {
+  it('costs half as much again the second time', () => {
+    expect(declineMood(1)).toBe(DECLINE_MOOD);
+    expect(declineMood(2)).toBeLessThanOrEqual(DECLINE_MOOD * 1.5);
+    expect(declineMood(2)).toBeGreaterThan(DECLINE_MOOD * 2);
   });
 });

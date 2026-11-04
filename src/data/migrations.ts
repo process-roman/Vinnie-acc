@@ -104,6 +104,10 @@ export const MIGRATIONS: readonly string[] = [
   ALTER TABLE settings ADD COLUMN haptics INTEGER NOT NULL DEFAULT 1;
   ALTER TABLE settings ADD COLUMN analytics_id TEXT;
   `,
+  `
+  ALTER TABLE settings ADD COLUMN user_name TEXT NOT NULL DEFAULT '';
+  UPDATE settings SET heat = 'classic' WHERE heat = 'gentle';
+  `,
 ];
 
 export async function migrate(db: Db): Promise<void> {

@@ -4,7 +4,8 @@
 export const EVENTS = {
   onboarding_step: {
     step: [
-      'meet',
+      'intro',
+      'name',
       'heat',
       'budget',
       'receipt',

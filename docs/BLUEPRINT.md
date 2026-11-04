@@ -12,7 +12,7 @@
 > 2. **The office shows the budget.** The plant, the window weather, the espresso poster and the receipt pile show where your budget stands without a chart.
 > 3. **Damage persists, and good habits repair it.** Cracks stay until earned away. Coins can't buy repairs.
 > 4. **You can answer back.** Dialogue choices, plus a "promise ledger" so Vinnie remembers what you said.
-> 5. **Heat levels:** Gentle, Classic, and an opt-in Unhinged mode.
+> 5. **Heat levels:** Classic and an opt-in Unhinged mode.
 > 6. **Logging takes almost no effort.** Quick chips, a deep-link quick-add (iOS Shortcuts and Wallet automation), a widget, and voice entry later.
 > 7. **Good news is loggable.** "I saved" and "I skipped it" entries give Vinnie reasons to be happy.
 > 8. **Vinnie reaches out.** In-character notifications, a weekly sit-down, and occasional calls.
@@ -115,7 +115,6 @@ These are reaction states, not permanent punishments. Mood drifts back toward 50
 
 | Level | Description | Default |
 |---|---|---|
-| **Gentle** | Warm teasing, no shouting, no screen punches (he knocks on the glass instead) | — |
 | **Classic** | Shouting, sarcasm, screen cracks, calls. Mild language ("hell," "damn," "what the—") plus "vaffanculo," his one Italian swear | ✅ |
 | **Unhinged** | Everything in Classic plus profanity. Opt-in only, with an age confirmation | — |
 

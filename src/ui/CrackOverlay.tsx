@@ -15,8 +15,8 @@ import { rasterizeCrack } from '@/scene/crack';
 import { PIXEL_SAMPLING, toSkImage } from '@/scene/skiaImage';
 import { useGame } from '@/store/game';
 
-/** Screen points per crack pixel. Matches the office's chunky pixel scale. */
-const PIXEL = 3;
+/** Screen points per crack pixel. Fine enough for hairlines, still pixel art. */
+const PIXEL = 2;
 
 export function CrackOverlay() {
   const crackLevel = useGame((s) => s.character.crackLevel);
@@ -54,7 +54,6 @@ export function CrackOverlay() {
           width={w * PIXEL}
           height={h * PIXEL}
           sampling={PIXEL_SAMPLING}
-          opacity={0.85}
         />
       </Canvas>
     </Animated.View>

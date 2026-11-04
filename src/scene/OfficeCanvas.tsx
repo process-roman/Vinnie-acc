@@ -12,7 +12,15 @@ import {
   useRef,
   useState,
 } from 'react';
-import { GestureResponderEvent, PixelRatio, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  GestureResponderEvent,
+  PixelRatio,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   Easing,
   SharedValue,
@@ -27,6 +35,7 @@ import type { PropTarget } from '@/domain/propLines';
 import type { RoomState } from '@/domain/roomState';
 
 import { buf, buildSprites, Cosmetics, roomBuffer, vinnieSheet as sheetFor } from './composition';
+import { CharacterBox, characterAt, TAP_SLOP } from './hitTest';
 import { gridToScreen, GridPoint, Point, pointOnPath, screenToGrid } from './iso';
 import { CAT_PATHS, SceneSprite } from './layout';
 import { getPixel, PixelBuffer } from './pixels';
@@ -291,11 +300,18 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
     runCat,
   }));
 
-  // locationX/Y is undefined on web when the target is the canvas, so work from
-  // page coordinates and the press area's measured box (which includes any zoom).
   const pressArea = useRef<ComponentRef<typeof View>>(null);
   const onPress = (e: GestureResponderEvent) => {
-    const { pageX, pageY } = e.nativeEvent;
+    const { locationX, locationY, pageX, pageY } = e.nativeEvent;
+    // Phones report the tap relative to the canvas. Page coordinates won't do there: on
+    // Android, measureInWindow leaves out the status bar, which pushed every tap down
+    // past small targets like Vinnie and the cat.
+    if (Platform.OS !== 'web') {
+      hitTest(locationX / scale, locationY / scale);
+      return;
+    }
+    // locationX/Y is undefined on web when the target is the canvas, so work from
+    // page coordinates and the press area's measured box (which includes any zoom).
     pressArea.current?.measureInWindow((x, y, w) => {
       const k = w / ROOM_W;
       if (k > 0) hitTest((pageX - x) / k, (pageY - y) / k);
@@ -315,17 +331,34 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
       const ly = py - s.y;
       return lx >= 0 && ly >= 0 && lx < f.width && ly < f.height && getPixel(f, lx, ly)[3] > 0;
     };
-    const onVinnie =
-      ax >= vx.value && ax < vx.value + VINNIE_W && ay >= vy.value && ay < vy.value + VINNIE_H;
+    const cat = sprites.find((s) => s.key === 'cat');
+    const characters: CharacterBox<'vinnie' | 'cat'>[] = [
+      { id: 'vinnie', x: vx.value, y: vy.value, w: VINNIE_W, h: VINNIE_H },
+    ];
+    if (cat) {
+      const f = cat.frames[0];
+      characters.push({ id: 'cat', x: cat.x, y: cat.y, w: f.width, h: f.height });
+    }
+    const tapCharacter = (id: 'vinnie' | 'cat') =>
+      onTap(id === 'vinnie' ? { kind: 'vinnie' } : { kind: 'prop', target: 'cat' });
+
+    const exact = characterAt(ax, ay, characters);
+    if (exact === 'cat') return tapCharacter('cat');
+    let onFurniture = false;
     for (const s of [...sprites].reverse()) {
       // Anything behind Vinnie loses to him.
-      if (onVinnie && s.depth < vDepth) break;
+      if (exact === 'vinnie' && s.depth < vDepth) break;
       if (hits(s)) {
-        if (s.tap) onTap({ kind: 'prop', target: s.tap });
-        return;
+        if (s.tap) return onTap({ kind: 'prop', target: s.tap });
+        onFurniture = true;
+        break;
       }
     }
-    if (onVinnie) return onTap({ kind: 'vinnie' });
+    if (exact === 'vinnie') return tapCharacter('vinnie');
+    // Nothing tappable right under the finger: a near miss on a character still counts.
+    const near = characterAt(ax, ay, characters, TAP_SLOP);
+    if (near) return tapCharacter(near);
+    if (onFurniture) return;
     if (getPixel(windowFrames[0], px, py)[3] > 0) return onTap({ kind: 'prop', target: 'window' });
     if (getPixel(poster, px, py)[3] > 0) return onTap({ kind: 'prop', target: 'poster' });
     const g = screenToGrid({ x: ax, y: ay }, ROOM_ORIGIN);

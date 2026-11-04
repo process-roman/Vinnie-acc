@@ -22,14 +22,15 @@ import { useGame } from '@/store/game';
 
 import { colors, radius, space } from './tokens';
 
-const RETRY_MS = 10_000;
+/** Long enough to read his warning before it rings again. */
+const RETRY_MS = 5_000;
 const ENDED_MS = 1800;
 const CHAR_MS = 24;
 
 type Phase =
   | { kind: 'ringing' }
   | { kind: 'waitingToRetry' }
-  | { kind: 'realMature' }
+  | { kind: 'gaveUp' }
   | { kind: 'talking'; step: number }
   | { kind: 'choosing' }
   | { kind: 'after'; reply: Reply; step: 0 | 1 }
@@ -63,18 +64,18 @@ function Call() {
       const id = setTimeout(() => setPhase({ kind: 'ringing' }), RETRY_MS);
       return () => clearTimeout(id);
     }
-    if (phase.kind === 'realMature' || phase.kind === 'ended') {
+    if (phase.kind === 'gaveUp' || phase.kind === 'ended') {
       const id = setTimeout(hangUp, phase.kind === 'ended' ? ENDED_MS : 2600);
       return () => clearTimeout(id);
     }
   }, [phase.kind, hangUp]);
 
   const decline = () => {
-    // Hanging up on him costs a little mood every time.
-    useGame.getState().declined();
+    // Hanging up on him costs mood every time, and more the second time.
+    useGame.getState().declined(declines + 1);
     track('call_declined');
     setDeclines(declines + 1);
-    setPhase({ kind: declines === 0 ? 'waitingToRetry' : 'realMature' });
+    setPhase({ kind: declines === 0 ? 'waitingToRetry' : 'gaveUp' });
   };
   const answer = () => {
     useGame.getState().achievementEvent('answered');
@@ -98,9 +99,7 @@ function Call() {
     });
   };
 
-  if (phase.kind === 'waitingToRetry') return null;
-
-  if (phase.kind === 'realMature') {
+  if (phase.kind === 'waitingToRetry' || phase.kind === 'gaveUp') {
     return (
       <Animated.View
         entering={FadeIn}
@@ -111,7 +110,9 @@ function Call() {
         <SafeAreaView edges={['top']}>
           <View style={styles.toast}>
             <Text style={styles.toastFrom}>Vinnie</Text>
-            <Text style={styles.toastText}>{call.declineRetry}</Text>
+            <Text style={styles.toastText}>
+              {phase.kind === 'gaveUp' ? call.declineFinal : call.declineRetry}
+            </Text>
           </View>
         </SafeAreaView>
       </Animated.View>

@@ -317,3 +317,25 @@ are real trademarks and copyrighted work, which is a store-rejection and legal r
 
 **Contrast.** Paler oak floor, redder brick with light mortar, deep green panelling and door, cream
 moulding, a dark desk, and a charcoal slab, so things stop blending into one brown.
+
+## Opening scene, taps, declines and the crack
+
+**Android taps.** `measureInWindow` on Android leaves out the status bar while `pageY` doesn't, so every
+tap landed about a status bar too low. Big targets still worked; Vinnie and the cat mostly missed. Phones
+now use `locationX/Y` relative to the canvas. Vinnie and the cat also accept near misses (`TAP_SLOP`).
+
+**Two heat levels.** Gentle is gone from every screen, and a migration moves anyone on it to Classic. The
+`gentle` tag stays in the content and the types: it now just means "fine at every level", which saved
+retagging every line. The knock-on-the-glass path in the escalation code can't be reached any more.
+
+**Your name** is stored in settings, on the device, and never goes in analytics.
+
+**Opening scene.** A big head (`VinniePortrait`) over a still body and wall: three mouths, two brows and a
+blink, bobbing a whole art pixel at a time while the line types out. Text uses the system monospace, not a
+bundled pixel font. There's no voice or typing sound yet.
+
+**Declined calls.** First decline: the warning, the usual mood drop, and it rings again after 5s. Second: 1.5x
+the mood drop (rounded up, so -5) and "Kids these days...".
+
+**Crack.** Redrawn as a web: crushed impact, jagged tapering rays with a shadow and a glint, chords between
+them, and tinted panes. Drawn at 2pt per pixel instead of 3pt.

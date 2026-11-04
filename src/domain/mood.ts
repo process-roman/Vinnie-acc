@@ -50,6 +50,10 @@ export const REPLY_MOOD: Record<string, number> = {
   excuse_investment: -4,
 };
 export const DECLINE_MOOD = -3;
+/** Hanging up on him twice in one call hurts half as much again. */
+export function declineMood(nth: number): number {
+  return nth <= 1 ? DECLINE_MOOD : Math.floor(DECLINE_MOOD * 1.5);
+}
 /** Nobody bothers Luc. */
 export const CAT_TEASE_MOOD = -6;
 

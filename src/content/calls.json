@@ -1,5 +1,6 @@
 {
-  "declineRetry": "You hung up on me? People don't hang up on me. Real mature.",
+  "declineRetry": "It's in your interest to pick it up.",
+  "declineFinal": "Kids these days...",
   "scripts": [
     {
       "id": "call_broken_promise",
