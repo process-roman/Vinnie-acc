@@ -1,6 +1,6 @@
 // Month summary for the Budget sheet and header (blueprint 1.3, Screen 4).
 
-import { CATEGORIES } from './categories';
+import { activeCategories } from './categories';
 import { daysLeft, Entry, toMonthKey } from './entries';
 
 export type CategoryTotal = { category: string; totalMinor: number; share: number };
@@ -36,7 +36,7 @@ export function summarizeMonth(
   for (const e of inMonth) {
     if (e.type === 'expense') totals.set(e.category, (totals.get(e.category) ?? 0) + e.amountMinor);
   }
-  const order = new Map(CATEGORIES.map((c, i) => [c.id, i]));
+  const order = new Map(activeCategories().map((c, i) => [c.id, i]));
   const byCategory = [...totals]
     .map(([category, totalMinor]) => ({
       category,

@@ -1910,5 +1910,402 @@
     "tier": "meltdown",
     "minHeat": "unhinged",
     "text": "Oh, for the love of— Madonna santa, come HERE."
+  },
+  {
+    "id": "lim_judge_1",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "conditions": ["overLimit"],
+    "text": "{amount} on {category}? My line for that is {limit}. You're past my line."
+  },
+  {
+    "id": "lim_judge_2",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "conditions": ["overLimit"],
+    "text": "For {category}, I had you down for {limit}. You came in at {amount}. Explain."
+  },
+  {
+    "id": "lim_judge_3",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "conditions": ["overLimit"],
+    "text": "{limit} is what {category} costs. {amount} is what it costs when somebody's robbing you."
+  },
+  {
+    "id": "lim_judge_4",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "conditions": ["overLimit"],
+    "text": "Ehi. {amount}. For {category}. I've seen guys pay less to make problems go away."
+  },
+  {
+    "id": "lim_judge_5",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "conditions": ["overLimit"],
+    "text": "{amount} at the grocery store? What'd you buy, the store?"
+  },
+  {
+    "id": "lim_judge_6",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["groceries"],
+    "conditions": ["overLimit"],
+    "text": "That's not groceries, that's a catering job. Who's getting married?"
+  },
+  {
+    "id": "lim_judge_7",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["bills"],
+    "conditions": ["overLimit"],
+    "text": "{amount} in bills? Read me that one again. Slowly. Somebody's padding it."
+  },
+  {
+    "id": "lim_judge_8",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["bills"],
+    "conditions": ["overLimit"],
+    "text": "A bill like that, you call them. Or I call them. You want me to call them?"
+  },
+  {
+    "id": "lim_judge_9",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["transport"],
+    "conditions": ["overLimit"],
+    "text": "{amount} to get around? For that I want a driver, and a hat on him."
+  },
+  {
+    "id": "lim_judge_10",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["transport"],
+    "conditions": ["overLimit"],
+    "text": "{amount}? Was the car included? Tell me the car was included."
+  },
+  {
+    "id": "lim_judge_11",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "conditions": ["overLimit"],
+    "text": "{amount} at the doctor? You okay, kid? Tell me you're okay."
+  },
+  {
+    "id": "lim_judge_12",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "conditions": ["overLimit"],
+    "text": "That's a big one. First: are you alright? Second: get it itemized. They pad those."
+  },
+  {
+    "id": "lim_judge_13",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "conditions": ["overLimit"],
+    "text": "{amount}. I'm not yelling, it's your health. Just ask for the itemized bill. For me."
+  },
+  {
+    "id": "lim_judge_14",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "conditions": ["overLimit"],
+    "text": "I don't argue about your health. I argue with whoever sent you a bill for {amount}."
+  },
+  {
+    "id": "lim_judge_15",
+    "tier": "judge",
+    "minHeat": "gentle",
+    "categories": ["health"],
+    "conditions": ["overLimit"],
+    "text": "Madonna. {amount}. Are you alright? Call me if you need a guy who reads the fine print."
+  },
+  {
+    "id": "lim_judge_16",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "conditions": ["overLimit"],
+    "text": "My line for coffee is {limit}. You went {amount}. Did it come with a chair?"
+  },
+  {
+    "id": "lim_judge_17",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "conditions": ["overLimit"],
+    "text": "{amount} for one coffee. Is the barista putting your kids through college?"
+  },
+  {
+    "id": "lim_judge_18",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["dining"],
+    "conditions": ["overLimit"],
+    "text": "{amount} for dinner. Was there a violinist?"
+  },
+  {
+    "id": "lim_judge_19",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["dining"],
+    "conditions": ["overLimit"],
+    "text": "{amount}. For that, I'd better hear you bought the table."
+  },
+  {
+    "id": "lim_judge_20",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["delivery"],
+    "conditions": ["overLimit"],
+    "text": "{amount} delivered. Did they carry it up the stairs on a throne?"
+  },
+  {
+    "id": "lim_judge_21",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["shopping"],
+    "conditions": ["overLimit"],
+    "text": "{amount}. It better have fallen off a very nice truck, and it didn't, because you paid."
+  },
+  {
+    "id": "lim_judge_22",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["fun"],
+    "conditions": ["overLimit"],
+    "text": "{amount} on fun. Fun has a price, kid. That was over it."
+  },
+  {
+    "id": "lim_judge_23",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["games"],
+    "conditions": ["overLimit"],
+    "text": "{amount} for a game. Does it do your taxes? I do your taxes."
+  },
+  {
+    "id": "lim_judge_24",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["subscriptions"],
+    "conditions": ["overLimit"],
+    "text": "{amount} a month? What is it, a subscription to a yacht?"
+  },
+  {
+    "id": "lim_judge_25",
+    "tier": "judge",
+    "minHeat": "classic",
+    "categories": ["other"],
+    "conditions": ["overLimit"],
+    "text": "{amount} on 'other.' I've filed things like that. In a shredder."
+  },
+  {
+    "id": "lim_angry_26",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["wayOverLimit"],
+    "text": "{amount}?! On {category}?! My line's {limit}! Ma sei pazzo?"
+  },
+  {
+    "id": "lim_angry_27",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["wayOverLimit"],
+    "text": "That's way past {limit}. WAY past. Mamma mia, who sold you this?"
+  },
+  {
+    "id": "lim_angry_28",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["wayOverLimit"],
+    "text": "{amount}! I knew guys who did time for less than that! And they didn't get {category}!"
+  },
+  {
+    "id": "lim_angry_29",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["wayOverLimit"],
+    "text": "Basta! {amount}! For {category}! I had you at {limit}! What is WRONG here?"
+  },
+  {
+    "id": "lim_angry_30",
+    "tier": "angry",
+    "minHeat": "gentle",
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} on {category}. My line was {limit}. We need to talk about this, kid."
+  },
+  {
+    "id": "lim_angry_31",
+    "tier": "angry",
+    "minHeat": "unhinged",
+    "conditions": ["wayOverLimit"],
+    "text": "What the fuck is {amount} of {category}?! Who does that?!"
+  },
+  {
+    "id": "lim_angry_32",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["groceries"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} in groceries?! WHAT are you feeding, all of Brooklyn?!"
+  },
+  {
+    "id": "lim_angry_33",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["groceries"],
+    "conditions": ["wayOverLimit"],
+    "text": "Nobody eats {amount}. NOBODY. Are you running a restaurant out of your kitchen?!"
+  },
+  {
+    "id": "lim_angry_34",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["bills"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} in bills?! Who's billing you, the Pope?!"
+  },
+  {
+    "id": "lim_angry_35",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["transport"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount}?! To get WHERE? Did you buy the bus?!"
+  },
+  {
+    "id": "lim_angry_36",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["coffee"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} on COFFEE?! Did you buy the farm? Did you buy the FARMER?!"
+  },
+  {
+    "id": "lim_angry_37",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["dining"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} on one meal?! Mamma mia! My mother's rising from her chair!"
+  },
+  {
+    "id": "lim_angry_38",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["delivery"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} of DELIVERY?! Did they fly it in? From ITALY?!"
+  },
+  {
+    "id": "lim_angry_39",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["shopping"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount}?! What'd you buy, the mall?! Take it back! TAKE IT BACK!"
+  },
+  {
+    "id": "lim_angry_40",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["fun"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} on fun?! I hope you had the time of your LIFE!"
+  },
+  {
+    "id": "lim_angry_41",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["games"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} on GAMES?! Mannaggia! You could buy the company!"
+  },
+  {
+    "id": "lim_angry_42",
+    "tier": "angry",
+    "minHeat": "classic",
+    "categories": ["subscriptions"],
+    "conditions": ["wayOverLimit"],
+    "text": "{amount} for a subscription?! What are they sending you, GOLD?!"
+  },
+  {
+    "id": "lim_meltdown_43",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "conditions": ["absurdOverLimit"],
+    "text": "{amount}. On {category}. No. NO. Stay right there."
+  },
+  {
+    "id": "lim_meltdown_44",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "conditions": ["absurdOverLimit"],
+    "text": "My line is {limit}! That's not over the line, that's in another COUNTRY! Don't move."
+  },
+  {
+    "id": "lim_meltdown_45",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "conditions": ["absurdOverLimit"],
+    "text": "Madonna santa. {amount}. I'm coming over there."
+  },
+  {
+    "id": "lim_meltdown_46",
+    "tier": "meltdown",
+    "minHeat": "gentle",
+    "conditions": ["absurdOverLimit"],
+    "text": "{amount}. On {category}. I need to call you. Right now."
+  },
+  {
+    "id": "lim_meltdown_47",
+    "tier": "meltdown",
+    "minHeat": "unhinged",
+    "conditions": ["absurdOverLimit"],
+    "text": "{amount} on {category}?! Vaffanculo! Come HERE."
+  },
+  {
+    "id": "lim_meltdown_48",
+    "tier": "meltdown",
+    "minHeat": "unhinged",
+    "conditions": ["absurdOverLimit"],
+    "text": "What the FUCK. {amount}. Come here."
+  },
+  {
+    "id": "lim_meltdown_49",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "categories": ["groceries"],
+    "conditions": ["absurdOverLimit"],
+    "text": "{amount} in GROCERIES?! Nobody's that hungry! Nobody! Hold on."
+  },
+  {
+    "id": "lim_judge_50",
+    "tier": "judge",
+    "minHeat": "classic",
+    "conditions": ["heavyMonth"],
+    "text": "{monthTotal} on {category} this month. {count} receipts. You want to tell me something?"
+  },
+  {
+    "id": "lim_judge_51",
+    "tier": "judge",
+    "minHeat": "classic",
+    "conditions": ["heavyMonth"],
+    "text": "Each one looks small. Together: {monthTotal}. That's how they get you. I should know."
+  },
+  {
+    "id": "lim_judge_52",
+    "tier": "judge",
+    "minHeat": "classic",
+    "conditions": ["heavyMonth"],
+    "text": "{count} times this month, {monthTotal}. That's not {category}, that's a lifestyle."
   }
 ]

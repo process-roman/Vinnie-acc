@@ -7,6 +7,14 @@ import { Db } from '@/data/db';
 import { openDb } from '@/data/open';
 import { clearBudgets, getLimit, setLimit as saveLimit } from '@/data/repositories/budgets';
 import {
+  archiveCustomCategory,
+  clearCategories,
+  insertCustomCategory,
+  listCategoryLimits,
+  listCustomCategories,
+  saveCategoryLimit,
+} from '@/data/repositories/categories';
+import {
   CharacterState,
   getCharacter,
   resetCharacter,
@@ -79,6 +87,12 @@ import {
 import { QuickAdd } from '@/domain/quickAdd';
 import { HONEYMOON_MS } from '@/domain/reaction/escalation';
 import { keptPromises, LedgerEntry, LedgerEvent } from '@/domain/reaction/ledger';
+import {
+  Category,
+  CategoryKind,
+  customCategoryColor,
+  registerCustomCategories,
+} from '@/domain/categories';
 import { NewEntry, planReaction, Reaction } from '@/domain/reaction/react';
 import { crackWorse, repairDue, repairOnce } from '@/domain/repair';
 import { canBuy, equip, GIFTS, itemById, Owned } from '@/domain/shop';
@@ -107,6 +121,10 @@ type GameState = {
   ready: boolean;
   entries: StoredEntry[];
   limitMinor: number | null;
+  /** Categories the user added. */
+  customCategories: Category[];
+  /** The user's own limits, by category. */
+  categoryLimits: Record<string, number>;
   heat: Heat;
   /** What he calls you. Stays on the device. */
   userName: string;
@@ -189,6 +207,12 @@ type GameState = {
   collectKeptPromises(now?: Date): LedgerEntry[];
   setHeat(heat: Heat): void;
   setUserName(name: string): void;
+  /** Adds a category and returns its id. With no limit given, Vinnie picks one. */
+  addCategory(label: string, kind: CategoryKind, limitMinor: number | null): string;
+  /** Sets your own limit for a category, or hands it back to Vinnie with null. */
+  setCategoryLimit(category: string, limitMinor: number | null): void;
+  /** Takes a category you added off the pickers. Its old receipts keep their name. */
+  removeCategory(category: string): void;
   setLimit(limitMinor: number): void;
   setPrefill(q: QuickAdd | null): Promise<void>;
   /**
@@ -272,6 +296,8 @@ export const useGame = create<GameState>()((set, get) => {
     ready: false,
     entries: [],
     limitMinor: null,
+    customCategories: [],
+    categoryLimits: {},
     heat: 'classic',
     userName: '',
     currency: 'USD',
@@ -302,6 +328,9 @@ export const useGame = create<GameState>()((set, get) => {
         db = await openDb();
         const now = new Date();
         const settings = await getSettings(db, now.getTime());
+        const customCategories = await listCustomCategories(db);
+        // Before anything looks an entry's category up.
+        registerCustomCategories(customCategories);
         let limit = await getLimit(db, toMonthKey(now));
         if (limit === null) {
           limit = DEFAULT_LIMIT;
@@ -321,6 +350,8 @@ export const useGame = create<GameState>()((set, get) => {
         await saveCharacter(db, character);
         set({
           ready: true,
+          customCategories,
+          categoryLimits: await listCategoryLimits(db),
           entries: await listEntries(db),
           limitMinor: limit,
           heat: settings.heat,
@@ -355,6 +386,7 @@ export const useGame = create<GameState>()((set, get) => {
       const reaction = planReaction(input, {
         entries: s.entries,
         limitMinor: s.limitMinor,
+        categoryLimits: s.categoryLimits,
         heat: s.heat,
         currency: s.currency,
         recentLineIds: s.recentLineIds,
@@ -555,6 +587,43 @@ export const useGame = create<GameState>()((set, get) => {
       return kept;
     },
 
+    addCategory(label, kind, limitMinor) {
+      const category: Category = {
+        id: `c-${newId()}`,
+        label,
+        kind,
+        color: customCategoryColor(get().customCategories.length),
+        custom: true,
+        archived: false,
+      };
+      const customCategories = [...get().customCategories, category];
+      registerCustomCategories(customCategories);
+      set({ customCategories });
+      const now = Date.now();
+      write((d) => insertCustomCategory(d, category, now));
+      if (limitMinor) get().setCategoryLimit(category.id, limitMinor);
+      return category.id;
+    },
+
+    setCategoryLimit(category, limitMinor) {
+      const { [category]: _old, ...rest } = get().categoryLimits;
+      set({ categoryLimits: limitMinor ? { ...rest, [category]: limitMinor } : rest });
+      write((d) => saveCategoryLimit(d, category, limitMinor));
+    },
+
+    removeCategory(category) {
+      const customCategories = get().customCategories.map((c) =>
+        c.id === category ? { ...c, archived: true } : c,
+      );
+      registerCustomCategories(customCategories);
+      set({
+        customCategories,
+        // Don't open the next receipt on a category that's gone.
+        lastCategory: get().lastCategory === category ? 'other' : get().lastCategory,
+      });
+      write((d) => archiveCustomCategory(d, category));
+    },
+
     setUserName(userName) {
       set({ userName });
       write((d) => updateSettings(d, { userName }));
@@ -723,7 +792,10 @@ export const useGame = create<GameState>()((set, get) => {
       await get().reset();
       const now = Date.now();
       await cancelAll();
+      registerCustomCategories([]);
       set({
+        customCategories: [],
+        categoryLimits: {},
         heat: 'classic',
         userName: '',
         lastCategory: 'coffee',
@@ -742,6 +814,7 @@ export const useGame = create<GameState>()((set, get) => {
       write(async (d) => {
         await clearNotificationLog(d);
         await clearMerchants(d);
+        await clearCategories(d);
         await resetSettings(d, now);
       });
       await queue;

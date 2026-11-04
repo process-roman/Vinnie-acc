@@ -129,3 +129,35 @@ describe('planReaction', () => {
     expect(planReaction(latte, ctx()).moodDelta).toBe(0);
   });
 });
+
+describe('category limits in a reaction', () => {
+  const buy = (category: string, amountMinor: number): NewEntry => ({
+    type: 'expense',
+    amountMinor,
+    category,
+    description: '',
+  });
+
+  it('gets mad about $1000 of groceries', () => {
+    const r = planReaction(buy('groceries', 100000), ctx());
+    expect(r.tier).toBe('angry');
+    expect(r.reasons).toContain('wayOverLimit');
+    expect(r.line).toMatch(/\$1,000/);
+  });
+
+  it('leaves a normal grocery run alone', () => {
+    expect(planReaction(buy('groceries', 8000), ctx()).tier).toBe('approve');
+  });
+
+  it('shows concern, not anger, about health', () => {
+    const r = planReaction(buy('health', 900000), ctx());
+    expect(r.tier).toBe('judge');
+    expect(r.escalation).toBe('none');
+    expect(r.line).not.toMatch(/\?!/);
+  });
+
+  it('uses your own number', () => {
+    const r = planReaction(buy('coffee', 400), ctx({ categoryLimits: { coffee: 100 } }));
+    expect(r.reasons).toContain('wayOverLimit');
+  });
+});

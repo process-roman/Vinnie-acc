@@ -24,6 +24,14 @@ export type Reason =
   | 'noBudget'
   /** Good news that's true: spending this month is still within the limit. */
   | 'underBudget'
+  /** One purchase over this category's limit. */
+  | 'overLimit'
+  /** Far over it. */
+  | 'wayOverLimit'
+  /** So far over it that he comes through the glass. */
+  | 'absurdOverLimit'
+  /** Small purchases that have added up to a lot in this category this month. */
+  | 'heavyMonth'
   /** Bought something in a category you promised to quit (promise ledger). */
   | 'brokenPromise'
   /** Called something an investment again within 30 days. */
@@ -39,11 +47,50 @@ export type TierInput = {
   spentBeforeMinor: number;
   daysLeft: number;
   stats: CategoryStats;
+  /** How much is too much for one purchase in this category. */
+  categoryLimitMinor?: number;
+  /** The angriest he can get about this category. */
+  maxTier?: Tier;
 };
 
 export type TierResult = { tier: Tier; reasons: Reason[] };
 
 const max = (a: Tier, b: Tier): Tier => (TIER_ORDER.indexOf(a) >= TIER_ORDER.indexOf(b) ? a : b);
+
+/** How many times over a category's limit starts to make him angry, then lose it. */
+export const WAY_OVER_LIMIT = 2.5;
+export const ABSURD_OVER_LIMIT = 6;
+/** A month's total in a category is too much at this many times its one-purchase limit. */
+export const HEAVY_MONTH_LIMITS = 6;
+
+function limitFloor(input: TierInput): { floor: Tier | null; reasons: Reason[] } {
+  const limit = input.categoryLimitMinor;
+  if (!limit) return { floor: null, reasons: [] };
+  const reasons: Reason[] = [];
+  let floor: Tier | null = null;
+  const times = input.amountMinor / limit;
+  if (times > 1) {
+    reasons.push('overLimit');
+    floor = 'judge';
+  }
+  if (times > WAY_OVER_LIMIT) {
+    reasons.push('wayOverLimit');
+    floor = 'angry';
+  }
+  if (times > ABSURD_OVER_LIMIT) {
+    reasons.push('absurdOverLimit');
+    floor = 'meltdown';
+  }
+  // Medical costs add up through no fault of yours: the monthly nag isn't for those.
+  const heavy = input.stats.monthTotalMinor + input.amountMinor > limit * HEAVY_MONTH_LIMITS;
+  if (heavy && !input.maxTier) {
+    reasons.push('heavyMonth');
+    floor = floor ?? 'judge';
+  }
+  return { floor, reasons };
+}
+
+const min = (a: Tier, b: Tier): Tier => (TIER_ORDER.indexOf(a) <= TIER_ORDER.indexOf(b) ? a : b);
 
 export function evaluateTier(input: TierInput): TierResult {
   const { type, amountMinor: amt, kind, limitMinor: limit, spentBeforeMinor: before } = input;
@@ -55,11 +102,17 @@ export function evaluateTier(input: TierInput): TierResult {
 
   const reasons: Reason[] = [];
   const after = before + amt;
+  const over = limitFloor(input);
   const avg = input.stats.avgMinor;
 
-  // Essentials are never judged. Only a spend far above the user's own average gets a comment.
+  // Essentials aren't judged for being essentials: going over the budget on them is fine.
+  // Only an amount past the category's own limit gets him going.
   if (kind === 'essential') {
     reasons.push('essential');
+    if (over.floor) {
+      const tier = input.maxTier ? min(over.floor, input.maxTier) : over.floor;
+      return { tier, reasons: [...reasons, ...over.reasons] };
+    }
     if (avg !== null && amt > avg * 3) {
       reasons.push('big');
       return { tier: 'neutral', reasons };
@@ -109,5 +162,10 @@ export function evaluateTier(input: TierInput): TierResult {
   if (kind === 'mixed' && TIER_ORDER.indexOf(tier) > TIER_ORDER.indexOf('judge')) {
     tier = 'judge';
   }
-  return { tier, reasons };
+  // A single purchase far past the limit is about the purchase, whatever the category.
+  if (over.floor) {
+    tier = max(tier, kind === 'mixed' ? min(over.floor, 'angry') : over.floor);
+    reasons.push(...over.reasons);
+  }
+  return { tier: input.maxTier ? min(tier, input.maxTier) : tier, reasons };
 }

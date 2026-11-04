@@ -1,14 +1,87 @@
 [
-  { "id": "groceries", "label": "Groceries", "kind": "essential", "color": "#4E9F5A" },
-  { "id": "bills", "label": "Bills & Rent", "kind": "essential", "color": "#5B7DB1" },
-  { "id": "transport", "label": "Transport", "kind": "essential", "color": "#3F8E9B" },
-  { "id": "health", "label": "Health", "kind": "essential", "color": "#C0567A" },
-  { "id": "coffee", "label": "Coffee", "kind": "discretionary", "color": "#8A5A3B" },
-  { "id": "dining", "label": "Dining Out", "kind": "discretionary", "color": "#D9822B" },
-  { "id": "delivery", "label": "Delivery", "kind": "discretionary", "color": "#E05B3A" },
-  { "id": "shopping", "label": "Shopping", "kind": "discretionary", "color": "#9B59B6" },
-  { "id": "fun", "label": "Fun", "kind": "discretionary", "color": "#E2A93B" },
-  { "id": "games", "label": "Games", "kind": "discretionary", "color": "#6C5CE7" },
-  { "id": "subscriptions", "label": "Subscriptions", "kind": "discretionary", "color": "#B33A3A" },
-  { "id": "other", "label": "Other", "kind": "mixed", "color": "#8E8478" }
+  {
+    "id": "groceries",
+    "label": "Groceries",
+    "kind": "essential",
+    "color": "#4E9F5A",
+    "share": 0.1
+  },
+  {
+    "id": "bills",
+    "label": "Bills & Rent",
+    "kind": "essential",
+    "color": "#5B7DB1",
+    "share": 1
+  },
+  {
+    "id": "transport",
+    "label": "Transport",
+    "kind": "essential",
+    "color": "#3F8E9B",
+    "share": 0.05
+  },
+  {
+    "id": "health",
+    "label": "Health",
+    "kind": "essential",
+    "color": "#C0567A",
+    "share": 0.25,
+    "maxTier": "judge"
+  },
+  {
+    "id": "coffee",
+    "label": "Coffee",
+    "kind": "discretionary",
+    "color": "#8A5A3B",
+    "share": 0.004
+  },
+  {
+    "id": "dining",
+    "label": "Dining Out",
+    "kind": "discretionary",
+    "color": "#D9822B",
+    "share": 0.03
+  },
+  {
+    "id": "delivery",
+    "label": "Delivery",
+    "kind": "discretionary",
+    "color": "#E05B3A",
+    "share": 0.02
+  },
+  {
+    "id": "shopping",
+    "label": "Shopping",
+    "kind": "discretionary",
+    "color": "#9B59B6",
+    "share": 0.06
+  },
+  {
+    "id": "fun",
+    "label": "Fun",
+    "kind": "discretionary",
+    "color": "#E2A93B",
+    "share": 0.04
+  },
+  {
+    "id": "games",
+    "label": "Games",
+    "kind": "discretionary",
+    "color": "#6C5CE7",
+    "share": 0.035
+  },
+  {
+    "id": "subscriptions",
+    "label": "Subscriptions",
+    "kind": "discretionary",
+    "color": "#B33A3A",
+    "share": 0.015
+  },
+  {
+    "id": "other",
+    "label": "Other",
+    "kind": "mixed",
+    "color": "#8E8478",
+    "share": 0.08
+  }
 ]

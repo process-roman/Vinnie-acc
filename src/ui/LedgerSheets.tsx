@@ -3,13 +3,14 @@
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { CATEGORIES, getCategory } from '@/domain/categories';
+import { activeCategories, getCategory } from '@/domain/categories';
 import { summarizeMonth } from '@/domain/budget';
 import { dayLabel, filterEntries, groupByMonth } from '@/domain/history';
 import { formatMoney, parseDecimalToMinor } from '@/domain/money';
 import { Tier } from '@/domain/reaction/tier';
 import { StoredEntry, useGame } from '@/store/game';
 
+import { CategoryLimits } from './CategoryLimits';
 import { Sheet } from './Sheet';
 import { colors, radius, space } from './tokens';
 
@@ -61,15 +62,17 @@ export function HistorySheet({
       />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filters}>
         <FilterChip label="All" on={category === null} onPress={() => setCategory(null)} />
-        {CATEGORIES.filter((c) => used.has(c.id)).map((c) => (
-          <FilterChip
-            key={c.id}
-            label={c.label}
-            color={c.color}
-            on={category === c.id}
-            onPress={() => setCategory(category === c.id ? null : c.id)}
-          />
-        ))}
+        {activeCategories()
+          .filter((c) => used.has(c.id))
+          .map((c) => (
+            <FilterChip
+              key={c.id}
+              label={c.label}
+              color={c.color}
+              on={category === c.id}
+              onPress={() => setCategory(category === c.id ? null : c.id)}
+            />
+          ))}
       </ScrollView>
 
       <ScrollView style={styles.list} keyboardShouldPersistTaps="handled">
@@ -245,6 +248,8 @@ export function BudgetSheet({ visible, onClose }: SheetProps) {
             Saved {formatMoney(s.savedMinor)} · Didn&apos;t spend {formatMoney(s.skippedMinor)}
           </Text>
         )}
+
+        <CategoryLimits />
 
         <Text style={styles.section}>How to read the office</Text>
         {LEGEND.map(([icon, text]) => (

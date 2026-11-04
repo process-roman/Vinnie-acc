@@ -19,6 +19,7 @@ const LINES = lines as Line[];
 const SCRIPTS = calls.scripts as CallScript[];
 const ALL_VALUES = {
   amount: '$6.50',
+  limit: '$8',
   category: 'coffee',
   Category: 'Coffee',
   count: 3,

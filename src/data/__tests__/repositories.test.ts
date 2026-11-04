@@ -2,6 +2,14 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import { Db } from '../db';
 import { migrate } from '../migrations';
+import {
+  archiveCustomCategory,
+  clearCategories,
+  insertCustomCategory,
+  listCategoryLimits,
+  listCustomCategories,
+  saveCategoryLimit,
+} from '../repositories/categories';
 import { getLimit, setLimit } from '../repositories/budgets';
 import {
   clearEntries,
@@ -52,7 +60,7 @@ describe('migrations', () => {
   it('are idempotent', async () => {
     await migrate(db);
     const row = await db.get<{ user_version: number }>('PRAGMA user_version');
-    expect(row?.user_version).toBe(6);
+    expect(row?.user_version).toBe(7);
   });
 });
 
@@ -310,5 +318,38 @@ describe('notification log', () => {
       { id: 'a', kind: 'quiet_nudge', at: 100, opened: true },
       { id: 'c', kind: 'proactive_call', at: 400, opened: false },
     ]);
+  });
+});
+
+describe('categories', () => {
+  const coins = {
+    id: 'c1',
+    label: 'Coins',
+    kind: 'discretionary' as const,
+    color: '#123456',
+  };
+
+  it('keeps custom categories, and marks removed ones', async () => {
+    await insertCustomCategory(db, coins, 1);
+    expect(await listCustomCategories(db)).toEqual([{ ...coins, custom: true, archived: false }]);
+    await archiveCustomCategory(db, 'c1');
+    expect((await listCustomCategories(db))[0].archived).toBe(true);
+  });
+
+  it('saves, replaces and clears limits', async () => {
+    await saveCategoryLimit(db, 'coffee', 500);
+    await saveCategoryLimit(db, 'coffee', 700);
+    await saveCategoryLimit(db, 'fun', 900);
+    expect(await listCategoryLimits(db)).toEqual({ coffee: 700, fun: 900 });
+    await saveCategoryLimit(db, 'coffee', null);
+    expect(await listCategoryLimits(db)).toEqual({ fun: 900 });
+  });
+
+  it('clears everything on delete-all', async () => {
+    await insertCustomCategory(db, coins, 1);
+    await saveCategoryLimit(db, 'coffee', 500);
+    await clearCategories(db);
+    expect(await listCustomCategories(db)).toEqual([]);
+    expect(await listCategoryLimits(db)).toEqual({});
   });
 });

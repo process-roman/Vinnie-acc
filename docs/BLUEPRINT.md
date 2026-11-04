@@ -346,7 +346,7 @@ A local table of the player's replies (tag, category, amount, timestamp). The en
 ### 7.6 Hard Tone Rules
 
 - No insults about poverty, income, job, body, identity or family.
-- No guilt about essentials, medical costs, emergencies, childcare or unavoidable expenses.
+- No guilt about essentials, medical costs, emergencies, childcare or unavoidable expenses. He can object to an amount far over a category's limit, but he never gets angry about medical costs.
 - Never make up numbers. Every number Vinnie says comes from the user's records.
 - No profanity below Unhinged, except "vaffanculo" in Classic.
 

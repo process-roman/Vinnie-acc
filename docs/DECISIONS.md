@@ -339,3 +339,26 @@ the mood drop (rounded up, so -5) and "Kids these days...".
 
 **Crack.** Redrawn as a web: crushed impact, jagged tapering rays with a shadow and a glint, chords between
 them, and tinted panes. Drawn at 2pt per pixel instead of 3pt.
+
+## Category limits and custom categories
+
+**Every category has a line** (`domain/categoryLimits.ts`), one number for "too much in one purchase".
+It's the user's own number if they set one; otherwise a share of their monthly budget, so it fits any
+income; and after four receipts it rises to 1.5x their median if that's higher, capped at 3x the
+start. The median stops one mad purchase teaching him that's normal, and the cap stops him getting
+talked into anything. Custom categories get the same treatment: the form asks need/want and, optionally,
+a number, so there's never a category with no limit.
+
+**Reactions.** Over the line: judging. Over 2.5x: angry. Over 6x: meltdown. Separately, a month's total in a
+category above 6x the line is judged, which catches many small purchases.
+
+**Ceilings.** Health stops at judging, with lines about concern, because of the tone rule on medical costs.
+This is the owner's "all categories" with one exception. 'Other' stops at angry, since it could be anything.
+
+**Bills start at 100% of the budget,** because rent is one purchase and it's meant to be big.
+
+**Registry.** `getCategory` is called from a dozen pure functions, so custom categories are registered in
+the domain module instead of being passed through all of them. It's the one piece of module state in
+`src/domain`. The store calls it on load and on every change.
+
+**Removing a category** archives it. Old receipts need the name.

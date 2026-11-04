@@ -1,7 +1,7 @@
 // Deep-link quick add (blueprint 2.5): vinnie://add?amount=12.50&merchant=Starbucks&category=coffee
 // Bad or missing parameters are dropped, never fatal.
 
-import { CATEGORIES } from './categories';
+import { activeCategories } from './categories';
 import { parseDecimalToMinor } from './money';
 
 export type QuickAdd = {
@@ -29,7 +29,9 @@ export function parseQuickAdd(params: Params): QuickAdd {
   if (merchant) out.merchant = merchant.slice(0, MAX_MERCHANT);
   const category = first(params.category)?.trim().toLowerCase();
   if (category) {
-    const match = CATEGORIES.find((c) => c.id === category || c.label.toLowerCase() === category);
+    const match = activeCategories().find(
+      (c) => c.id === category || c.label.toLowerCase() === category,
+    );
     if (match) out.category = match.id;
   }
   return out;

@@ -66,6 +66,8 @@ export function SettingsSheet({ visible, onClose, onDeleted }: Props & { onDelet
         budget: { limitMinor: s.limitMinor },
         settings: { name: s.userName, heat: s.heat, currency: s.currency },
         vinnie: s.character,
+        categories: s.customCategories,
+        categoryLimits: s.categoryLimits,
         promises: s.ledger,
         coins: s.coinTx,
         achievements: s.achievements,

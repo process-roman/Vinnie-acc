@@ -156,3 +156,61 @@ describe('underBudget', () => {
     expect(reasons({ limitMinor: null })).not.toContain('underBudget');
   });
 });
+
+describe('category limits', () => {
+  const limited = (over: Partial<TierInput>) =>
+    evaluateTier({ ...base, categoryLimitMinor: 20000, ...over });
+
+  it('reacts to groceries by how far over the line they are', () => {
+    const groceries = { kind: 'essential' as const };
+    expect(limited({ ...groceries, amountMinor: 15000 }).tier).toBe('approve');
+    expect(limited({ ...groceries, amountMinor: 30000 }).tier).toBe('judge');
+    expect(limited({ ...groceries, amountMinor: 100000 }).tier).toBe('angry');
+    expect(limited({ ...groceries, amountMinor: 200000 }).tier).toBe('meltdown');
+  });
+
+  it('gives the reasons for it', () => {
+    expect(limited({ amountMinor: 30000 }).reasons).toContain('overLimit');
+    expect(limited({ amountMinor: 100000 }).reasons).toContain('wayOverLimit');
+    expect(limited({ amountMinor: 200000 }).reasons).toContain('absurdOverLimit');
+  });
+
+  it('works for wants too', () => {
+    expect(limited({ amountMinor: 100000 }).tier).toBe('angry');
+    expect(limited({ amountMinor: 200000 }).tier).toBe('meltdown');
+    expect(limited({ amountMinor: 1000, categoryLimitMinor: 800 }).tier).toBe('judge');
+  });
+
+  it("never goes past a category's ceiling", () => {
+    const health = { kind: 'essential' as const, maxTier: 'judge' as const };
+    expect(limited({ ...health, amountMinor: 900000 }).tier).toBe('judge');
+    expect(limited({ kind: 'discretionary', maxTier: 'judge', amountMinor: 900000 }).tier).toBe(
+      'judge',
+    );
+  });
+
+  it("lets 'other' get angry, but not come through the glass", () => {
+    expect(limited({ kind: 'mixed', amountMinor: 900000 }).tier).toBe('angry');
+  });
+
+  it('notices small purchases adding up over the month', () => {
+    const stats = { ...base.stats, monthTotalMinor: 4500 };
+    const coffee = limited({ amountMinor: 600, categoryLimitMinor: 800, stats });
+    expect(coffee.tier).toBe('judge');
+    expect(coffee.reasons).toContain('heavyMonth');
+    const groceries = limited({
+      kind: 'essential',
+      amountMinor: 600,
+      categoryLimitMinor: 800,
+      stats,
+    });
+    expect(groceries.tier).toBe('judge');
+  });
+
+  it('leaves medical costs out of that', () => {
+    const stats = { ...base.stats, monthTotalMinor: 900000 };
+    const r = limited({ kind: 'essential', maxTier: 'judge', amountMinor: 1000, stats });
+    expect(r.tier).toBe('approve');
+    expect(r.reasons).not.toContain('heavyMonth');
+  });
+});

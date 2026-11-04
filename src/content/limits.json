@@ -1,0 +1,9 @@
+{
+  "ask": "One time, how much is too much for {name}?",
+  "hint": "Over that, Vinnie has words. Way over, he comes through the glass. Not sure? Leave it: he'll start at {amount} and learn what's normal for you.",
+  "taken": "You already have one of those. I keep records.",
+  "intro": "One purchase over the line and he has words. Way over, he comes through the glass. Tap one to change it.",
+  "sourceYours": "Your number",
+  "sourceLearned": "Vinnie learned this from your receipts",
+  "sourceVinnie": "Vinnie's call, from your budget"
+}

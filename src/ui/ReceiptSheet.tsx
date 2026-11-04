@@ -4,11 +4,11 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { CATEGORIES } from '@/domain/categories';
 import { EntryType, toDateKey } from '@/domain/entries';
 import { dayLabel } from '@/domain/history';
 import { formatMoney, keypadToMinor, minorToKeypad, pressKey } from '@/domain/money';
 
+import { CategoryPicker } from './CategoryPicker';
 import { Sheet } from './Sheet';
 import { colors, radius, space } from './tokens';
 
@@ -117,22 +117,7 @@ export function ReceiptSheet({ visible, mode, initial, onClose, onSubmit, onDele
           maxLength={60}
         />
 
-        {needsCategory && (
-          <View style={styles.chips}>
-            {CATEGORIES.map((c) => (
-              <Pressable
-                key={c.id}
-                onPress={() => setCategory(c.id)}
-                style={[styles.chip, category === c.id && styles.chipOn]}
-              >
-                <View style={[styles.dot, { backgroundColor: c.color }]} />
-                <Text style={[styles.chipLabel, category === c.id && styles.chipLabelOn]}>
-                  {c.label}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        )}
+        {needsCategory && <CategoryPicker selected={category} onSelect={setCategory} />}
 
         <View style={styles.dateRow}>
           <Pressable
@@ -219,21 +204,6 @@ const styles = StyleSheet.create({
     color: colors.ink,
     fontSize: 16,
   },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingVertical: 6,
-    paddingHorizontal: space.md,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.line,
-  },
-  chipOn: { backgroundColor: colors.ink, borderColor: colors.ink },
-  dot: { width: 8, height: 8, borderRadius: 4 },
-  chipLabel: { color: colors.ink, fontWeight: '600' },
-  chipLabelOn: { color: colors.card },
   dateRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.lg },
   dateStep: {
     width: 40,

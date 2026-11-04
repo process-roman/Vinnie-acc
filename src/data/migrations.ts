@@ -108,6 +108,21 @@ export const MIGRATIONS: readonly string[] = [
   ALTER TABLE settings ADD COLUMN user_name TEXT NOT NULL DEFAULT '';
   UPDATE settings SET heat = 'classic' WHERE heat = 'gentle';
   `,
+  `
+  CREATE TABLE custom_categories (
+    id TEXT PRIMARY KEY,
+    label TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK (kind IN ('essential', 'discretionary')),
+    color TEXT NOT NULL,
+    archived INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  );
+
+  CREATE TABLE category_limits (
+    category TEXT PRIMARY KEY,
+    limit_minor INTEGER NOT NULL CHECK (limit_minor > 0)
+  );
+  `,
 ];
 
 export async function migrate(db: Db): Promise<void> {

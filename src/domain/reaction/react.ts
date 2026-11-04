@@ -6,6 +6,7 @@ import calls from '@/content/calls.json';
 import lines from '@/content/lines.json';
 
 import { getCategory } from '../categories';
+import { categoryLimit } from '../categoryLimits';
 import {
   categoryStats,
   daysLeft as daysLeftIn,
@@ -72,6 +73,8 @@ export type ReactContext = {
   /** Existing entries, not including the new one. */
   entries: readonly Entry[];
   limitMinor: number | null;
+  /** The user's own limits, by category. */
+  categoryLimits?: Readonly<Record<string, number>>;
   heat: Heat;
   currency: Currency;
   recentLineIds: readonly string[];
@@ -89,6 +92,13 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
   const stats = categoryStats(entries, entry.category, now);
   const left = daysLeftIn(now);
   const category = getCategory(entry.category);
+  const { limitMinor: categoryLimitMinor } = categoryLimit(category, {
+    userLimitMinor: ctx.categoryLimits?.[entry.category],
+    monthlyLimitMinor: limitMinor,
+    history: entries
+      .filter((e) => e.type === 'expense' && e.category === entry.category)
+      .map((e) => e.amountMinor),
+  });
 
   const evaluated = evaluateTier({
     type: entry.type,
@@ -98,6 +108,8 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
     spentBeforeMinor: spentBefore,
     daysLeft: left,
     stats,
+    categoryLimitMinor,
+    maxTier: category.maxTier,
   });
 
   // The promise ledger can make things worse: breaking a promise is at least angry,
@@ -130,6 +142,7 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
   const spentAfter = spentBefore + (entry.type === 'expense' ? entry.amountMinor : 0);
   const values: Placeholders = {
     amount: money(entry.amountMinor),
+    limit: money(categoryLimitMinor),
     category: category.label.toLowerCase(),
     Category: category.label,
     count: stats.countThisMonth + 1,
