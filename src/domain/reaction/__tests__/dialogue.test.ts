@@ -143,8 +143,18 @@ describe('selectCallScript', () => {
 });
 
 describe('tone rules (blueprint §7.6)', () => {
-  const BANNED =
-    /\b(fuck|shit|bitch|asshole|bastard|crap|vaffanculo|cazzo|stronz|minchia|puttana)\w*/i;
+  const BANNED = /\b(fuck|shit|bitch|asshole|bastard|crap|cazzo|stronz|minchia|puttana)\w*/i;
+  it('keeps vaffanculo out of Gentle (Classic is allowed it)', () => {
+    for (const l of LINES.filter((x) => x.minHeat === 'gentle')) {
+      expect(l.text).not.toMatch(/vaffanculo/i);
+    }
+    for (const s of SCRIPTS) {
+      for (const t of [...s.lines, s.closer, ...s.replies.map((r) => r.response)]) {
+        expect(t).not.toMatch(/vaffanculo/i);
+      }
+    }
+  });
+
   it('keeps real profanity out of everything below Unhinged', () => {
     for (const l of LINES.filter((x) => x.minHeat !== 'unhinged')) {
       expect(l.text).not.toMatch(BANNED);

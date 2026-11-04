@@ -1532,9 +1532,9 @@
     "text": "You're keeping a whole restaurant in business! I used to know restaurants like that. Cash only."
   },
   {
-    "id": "an_delivery_repeatAgain_unhinged_1",
+    "id": "an_delivery_repeatAgain_classic_3",
     "tier": "angry",
-    "minHeat": "unhinged",
+    "minHeat": "classic",
     "categories": ["delivery"],
     "conditions": ["repeatAgain"],
     "text": "More delivery? Vaffanculo, you have a STOVE."
@@ -1792,9 +1792,9 @@
     "text": "We're over, and that was a big one. Let's talk."
   },
   {
-    "id": "me_alreadyOverBudget_unhinged_1",
+    "id": "me_alreadyOverBudget_classic_4",
     "tier": "meltdown",
-    "minHeat": "unhinged",
+    "minHeat": "classic",
     "conditions": ["alreadyOverBudget"],
     "text": "Over budget and THIS? Vaffanculo. VAFFANCULO."
   },

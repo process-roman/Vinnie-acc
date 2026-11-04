@@ -96,18 +96,49 @@
     "Hands off the merchandise, pal. Last guy who poked me is in Arizona now. By choice."
   ],
   "vinnieFedUp": [
-    { "minHeat": "gentle", "text": "Ehi! What am I, a doorbell? Vai, vai. Go." },
-    { "minHeat": "gentle", "text": "Vaffanapoli. It means go to Naples. Lovely town. Go now." },
-    { "minHeat": "gentle", "text": "Ma basta! Go bother the cat. She bites, I just complain." },
-    { "minHeat": "classic", "text": "VAFFANAPOLI!" },
-    { "minHeat": "classic", "text": "Ma che vuoi?! Vaffanapoli! Take the cat with you!" },
+    {
+      "minHeat": "gentle",
+      "text": "Ehi! What am I, a doorbell? Vai, vai. Go."
+    },
+    {
+      "minHeat": "gentle",
+      "text": "Vaffanapoli. It means go to Naples. Lovely town. Go now."
+    },
+    {
+      "minHeat": "gentle",
+      "text": "Ma basta! Go bother the cat. She bites, I just complain."
+    },
+    {
+      "minHeat": "classic",
+      "text": "VAFFANCULO!"
+    },
+    {
+      "minHeat": "classic",
+      "text": "Ma che vuoi?! Vaffanculo! Take the cat with you!"
+    },
     {
       "minHeat": "classic",
       "text": "Touch me again and you're going to Naples. Vaffanapoli. One way."
     },
-    { "minHeat": "unhinged", "text": "Vaffanculo." },
-    { "minHeat": "unhinged", "text": "VAFFANCULO! ...The receipts are on the desk." },
-    { "minHeat": "unhinged", "text": "Vaffanculo. With love. Now log something." },
-    { "minHeat": "unhinged", "text": "Go fuck yourself. In Italian that's a compliment. It isn't." }
+    {
+      "minHeat": "classic",
+      "text": "VAFFANAPOLI!"
+    },
+    {
+      "minHeat": "unhinged",
+      "text": "Vaffanculo."
+    },
+    {
+      "minHeat": "unhinged",
+      "text": "VAFFANCULO! ...The receipts are on the desk."
+    },
+    {
+      "minHeat": "unhinged",
+      "text": "Vaffanculo. With love. Now log something."
+    },
+    {
+      "minHeat": "unhinged",
+      "text": "Go fuck yourself. In Italian that's a compliment. It isn't."
+    }
   ]
 }

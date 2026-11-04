@@ -142,11 +142,12 @@ describe('poking Vinnie', () => {
     expect(tap([t, t + 300, t + 300 + TAP_GAP_MS + 1])).toBe(1);
   });
 
-  it('keeps the real swearing to Unhinged', () => {
+  it('swears only as far as the heat allows', () => {
     const rand = rng(3);
     for (let i = 0; i < 40; i++) {
       expect(pickFedUpLine('gentle', undefined, rand)).not.toMatch(/vaffanculo|fuck/i);
-      expect(pickFedUpLine('classic', undefined, rand)).toMatch(/vaffanapoli/i);
+      expect(pickFedUpLine('classic', undefined, rand)).toMatch(/vaffan/i);
+      expect(pickFedUpLine('classic', undefined, rand)).not.toMatch(/fuck/i);
     }
   });
 

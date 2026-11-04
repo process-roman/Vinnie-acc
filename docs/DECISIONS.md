@@ -269,9 +269,11 @@ a running dev server (`/index.ts.bundle?platform=android&dev=true`), not only `e
 mafia, which replaces the blueprint's "avoid mob jokes". He only hints at it and never threatens
 the player. All lines were rewritten; the tone rules in 7.6 still apply.
 
-**Swearing by heat.** Italian swears count as profanity: vaffanculo, cazzo and the like are Unhinged
-only, and the content test bans them below that. Gentle and Classic get "vaffanapoli". Mild words
-like mannaggia and madonn' are fine below Unhinged.
+**Swearing by heat.** The owner chose to allow "vaffanculo" in Classic, the default heat, as an
+exception to "no profanity below Unhinged". Gentle gets "vaffanapoli" instead. Every other swear,
+Italian or English (cazzo, minchia, fuck), stays Unhinged only, and the content tests enforce this.
+Mild words like mannaggia and madonn' are fine below Unhinged. Since the default heat now swears,
+check the store age rating answers before the beta (M8).
 
 **Three taps.** Three taps on Vinnie, each within 1.5s of the last, and he tells you off. Taps count
 even while he's talking.

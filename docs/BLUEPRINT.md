@@ -116,7 +116,7 @@ These are reaction states, not permanent punishments. Mood drifts back toward 50
 | Level | Description | Default |
 |---|---|---|
 | **Gentle** | Warm teasing, no shouting, no screen punches (he knocks on the glass instead) | — |
-| **Classic** | Shouting, sarcasm, screen cracks, calls. Mild language ("hell," "damn," "what the—") | ✅ |
+| **Classic** | Shouting, sarcasm, screen cracks, calls. Mild language ("hell," "damn," "what the—") plus "vaffanculo," his one Italian swear | ✅ |
 | **Unhinged** | Everything in Classic plus profanity. Opt-in only, with an age confirmation | — |
 
 Every dialogue line is tagged with the lowest heat level it's allowed in. Profanity in Unhinged mode is written by hand and never generated.
@@ -349,7 +349,7 @@ A local table of the player's replies (tag, category, amount, timestamp). The en
 - No insults about poverty, income, job, body, identity or family.
 - No guilt about essentials, medical costs, emergencies, childcare or unavoidable expenses.
 - Never make up numbers. Every number Vinnie says comes from the user's records.
-- No profanity below Unhinged.
+- No profanity below Unhinged, except "vaffanculo" in Classic.
 
 ## 8. Game Mechanics
 
