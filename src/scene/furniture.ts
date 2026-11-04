@@ -132,30 +132,29 @@ function wallDecor({ side, u, v }: WallPoint): Rgba | null {
       const py = v - 60;
       if (px < 2 || px >= 16 || py < 2 || py >= 22)
         return py >= 22 ? hex('#a87f3e') : hex('#7d5a28');
-      // Sepia: dark hair in a bun, a stern face, a black dress.
-      const head = Math.hypot(px - 9, py - 13);
-      if (Math.hypot(px - 9, py - 16.5) < 1.6) return hex('#2e2219');
-      if (head < 3.6) {
-        if (py > 14) return hex('#2e2219');
-        if (Math.abs(py - 13) < 0.8 && Math.abs(Math.abs(px - 9) - 1.6) < 0.7)
+      // Sepia: dark hair framing a stern face, a black dress with a white collar.
+      const face = Math.hypot(px - 9, py - 12);
+      if (face < 3.4) {
+        if (Math.abs(py - 13) < 0.8 && Math.abs(Math.abs(px - 9) - 1.5) < 0.7)
           return hex('#2e2219');
         return hex('#d9bd97');
       }
-      if (py < 9 && Math.abs(px - 9) < 5.5 - py / 3) return hex('#3a2b22');
+      if (Math.hypot(px - 9, py - 13) < 5) return hex('#2e2219');
+      if (py < 7.5) return Math.abs(px - 9) < 2 && py > 6 ? hex('#f4eedd') : hex('#3a2b22');
       return hex('#cdb68f');
     }
     // A frosted-glass office door, near the front.
     if (at >= 105 && at < 126 && v < 82) {
       const px = at - 105;
-      if (px < 2 || px >= 19 || v >= 80) return px >= 19 ? hex('#3a2115') : hex('#5a3520');
-      if (v < 4) return hex('#3a2115');
+      if (px < 2 || px >= 19 || v >= 80) return px >= 19 ? hex('#172726') : hex('#1f3a38');
+      if (v < 4) return hex('#172726');
       if (v < 38) {
         if (px >= 15 && px < 17 && v >= 34 && v < 37) return BRASS;
-        if (px >= 4 && px < 15 && (v === 10 || v === 28)) return hex('#4f2d19');
-        return px < 3 || px >= 16 ? hex('#6d4228') : hex('#7a4b2e');
+        if (px >= 4 && px < 15 && (v === 10 || v === 28)) return hex('#172726');
+        return px < 3 || px >= 16 ? hex('#264e4b') : hex('#2f5f5a');
       }
-      if (v < 40 || v >= 76) return hex('#6d4228');
-      if (px < 4 || px >= 17) return hex('#6d4228');
+      if (v < 40 || v >= 76) return hex('#264e4b');
+      if (px < 4 || px >= 17) return hex('#264e4b');
       // Frosted glass, with the name in black: the letters read from inside, like his books.
       const row = 72 - v;
       const col = 16 - Math.floor(px);
@@ -394,7 +393,7 @@ function paintDesk(buf: PixelBuffer): void {
       const bx = Math.abs(s - w / 2);
       const by = Math.abs(t - d / 2);
       if (bx < 15 && by < 7) return bx >= 14 || by >= 6 ? hex('#d9c17a') : hex('#2f6a4a');
-      return noise(s, Math.floor(t / 3)) > 0.8 ? hex('#a5612f') : null;
+      return noise(s, Math.floor(t / 3)) > 0.8 ? hex('#663019') : null;
     },
     h - slab,
   );

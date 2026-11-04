@@ -39,10 +39,10 @@
     },
     {
       "id": "cat_bed",
-      "name": "Bed for Deductible",
+      "name": "Bed for Luc",
       "price": 50,
       "slot": "cat",
-      "line": "A bed for Deductible. She'll ignore it for a week, then never leave it."
+      "line": "A bed for Luc. He'll ignore it for a week, then never leave it."
     },
     {
       "id": "neon_sign",

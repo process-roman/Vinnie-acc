@@ -5,6 +5,7 @@ import {
   FED_UP_TAPS,
   nextTapStreak,
   NO_TAPS,
+  pickCatLine,
   pickFedUpLine,
   pickPropLine,
   PropTarget,
@@ -156,6 +157,33 @@ describe('poking Vinnie', () => {
     let last: string | undefined;
     for (let i = 0; i < 30; i++) {
       const line = pickFedUpLine('unhinged', last, rand);
+      expect(line).not.toBe(last);
+      last = line;
+    }
+  });
+});
+
+describe('poking Luc', () => {
+  it('goes from a meow, to a warning, to a threat', () => {
+    const rand = rng(4);
+    expect(pickCatLine(1, 'classic', undefined, rand)).toMatch(/m(e|r)/i);
+    expect(pickCatLine(2, 'classic', undefined, rand)).toMatch(/luc/i);
+    expect(pickCatLine(3, 'classic', undefined, rand)).toMatch(/fishes|river|swimming|luc/i);
+  });
+
+  it('keeps swearing out of threats below the heat', () => {
+    const rand = rng(8);
+    for (let i = 0; i < 40; i++) {
+      expect(pickCatLine(3, 'gentle', undefined, rand)).not.toMatch(/fuck|vaffanculo/i);
+      expect(pickCatLine(3, 'classic', undefined, rand)).not.toMatch(/fuck/i);
+    }
+  });
+
+  it('never repeats a threat twice running', () => {
+    const rand = rng(2);
+    let last: string | undefined;
+    for (let i = 0; i < 20; i++) {
+      const line = pickCatLine(3, 'gentle', last, rand);
       expect(line).not.toBe(last);
       last = line;
     }

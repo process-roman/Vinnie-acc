@@ -301,3 +301,19 @@ Manhattan are drawn in every state. Nothing is copied from the original app: onl
 and ground shadow were used as a reference.
 
 **Not measured yet.** Frame rate on a real phone with the larger images.
+
+## Luc, the poster and contrast (after the art pass)
+
+**The cat is Luc, and he's a he.** The owner renamed Deductible. Earlier notes here use the old name.
+One tap: he meows. Two: Vinnie warns you. Three, each within 1.5s: Luc runs a lap of the office, Vinnie
+threatens you with the fishes, and his mood drops by 6. The runner is drawn over the furniture, so his
+path stays on open floor. He sleeps on the radiator and sits in the patch of sun.
+
+**Threats are jokes about the cat only.** This is the one exception to "he never threatens the player":
+absurd, on the owner's request, and only when you keep poking Luc.
+
+**Poster.** The piggy bank became a vintage espresso poster. No Ferrari badge or Godfather art: those
+are real trademarks and copyrighted work, which is a store-rejection and legal risk.
+
+**Contrast.** Paler oak floor, redder brick with light mortar, deep green panelling and door, cream
+moulding, a dark desk, and a charcoal slab, so things stop blending into one brown.

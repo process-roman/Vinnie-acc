@@ -19,9 +19,19 @@ type Props = {
   /** How long it stays after typing, scaled by length. */
   holdMs?: number;
   onDone: () => void;
+  /** Who's talking, for screen readers. */
+  speaker?: string;
 };
 
-export function SpeechBubble({ text, anchor, parentWidth, parentHeight, holdMs, onDone }: Props) {
+export function SpeechBubble({
+  text,
+  anchor,
+  parentWidth,
+  parentHeight,
+  holdMs,
+  onDone,
+  speaker = 'Vinnie',
+}: Props) {
   const [shown, setShown] = useState(0);
   const typed = shown >= text.length;
 
@@ -37,7 +47,8 @@ export function SpeechBubble({ text, anchor, parentWidth, parentHeight, holdMs, 
     return () => clearTimeout(id);
   }, [typed, holdMs, text, onDone]);
 
-  const width = Math.min(MAX_WIDTH, parentWidth - MARGIN * 2);
+  // Short lines ("Meow.") get a small bubble.
+  const width = Math.min(MAX_WIDTH, parentWidth - MARGIN * 2, 40 + text.length * 12);
   const left = Math.max(MARGIN, Math.min(parentWidth - width - MARGIN, anchor.x - width / 2));
   const tailLeft = Math.max(12, Math.min(width - 24, anchor.x - left - 6));
 
@@ -46,7 +57,7 @@ export function SpeechBubble({ text, anchor, parentWidth, parentHeight, holdMs, 
       onPress={() => (typed ? onDone() : setShown(text.length))}
       style={[styles.wrap, { left, width, bottom: parentHeight - anchor.y }]}
       accessibilityLiveRegion="polite"
-      accessibilityLabel={`Vinnie says: ${text}`}
+      accessibilityLabel={`${speaker} says: ${text}`}
     >
       <View style={styles.bubble}>
         {/* Full text keeps the size stable; the typed part is drawn over it. */}

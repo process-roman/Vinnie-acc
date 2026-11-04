@@ -33,3 +33,37 @@ export function inFootprint(p: GridPoint, f: Footprint): boolean {
 export function depth(p: GridPoint): number {
   return p.gx + p.gy;
 }
+
+/** A point on a path; `lift` raises it off the floor, in pixels. */
+export type PathPoint = GridPoint & { lift?: number };
+
+/** Where a path has got to at t (0..1) at an even speed, and which way it's heading on screen. */
+export function pointOnPath(
+  path: readonly PathPoint[],
+  t: number,
+): { gx: number; gy: number; lift: number; facing: number } {
+  'worklet';
+  let total = 0;
+  for (let i = 1; i < path.length; i++) {
+    total += Math.hypot(path[i].gx - path[i - 1].gx, path[i].gy - path[i - 1].gy);
+  }
+  let left = Math.max(0, Math.min(1, t)) * total;
+  for (let i = 1; i < path.length; i++) {
+    const a = path[i - 1];
+    const b = path[i];
+    const len = Math.hypot(b.gx - a.gx, b.gy - a.gy);
+    if (left <= len || i === path.length - 1) {
+      const k = len > 0 ? Math.min(1, left / len) : 1;
+      return {
+        gx: a.gx + (b.gx - a.gx) * k,
+        gy: a.gy + (b.gy - a.gy) * k,
+        lift: (a.lift ?? 0) + ((b.lift ?? 0) - (a.lift ?? 0)) * k,
+        // Screen x grows with gx and shrinks with gy.
+        facing: b.gx - a.gx - (b.gy - a.gy) < 0 ? -1 : 1,
+      };
+    }
+    left -= len;
+  }
+  const end = path[path.length - 1];
+  return { gx: end.gx, gy: end.gy, lift: end.lift ?? 0, facing: 1 };
+}

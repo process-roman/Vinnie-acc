@@ -109,7 +109,7 @@ export function buildSprites(room: RoomState, cosmetics: Cosmetics): SceneSprite
   if (cosmetics.cat === 'cat_bed') place('catBed', SLOTS.catBed, [CAT_BED], 0, { tap: 'cat' });
   if (room.espressoSteaming) place('steam', SLOTS.steam, STEAM_FRAMES, 1, { frameMs: 220 });
   if (room.cat === 'sleeping') {
-    place('cat', SLOTS.catOnDesk, CAT_SLEEPING, 2, { frameMs: 900, tap: 'cat' });
+    place('cat', SLOTS.catSleeping, CAT_SLEEPING, 2, { frameMs: 900, tap: 'cat' });
   } else if (room.cat === 'sitting') {
     // With a bed, she sits in it.
     const slot = cosmetics.cat === 'cat_bed' ? SLOTS.catInBed : SLOTS.catOnFloor;

@@ -63,3 +63,20 @@ export function pickFedUpLine(heat: Heat, last: string | undefined, rand: () => 
   const fresh = pool.filter((l) => l !== last);
   return fresh[Math.floor(rand() * fresh.length)];
 }
+
+/** What happens when you tap the cat: he answers, then Vinnie warns you, then it gets serious. */
+export function pickCatLine(
+  taps: number,
+  heat: Heat,
+  last: string | undefined,
+  rand: () => number,
+): string {
+  const pool =
+    taps <= 1
+      ? props.cat
+      : taps === 2
+        ? props.catWarning
+        : props.catThreat.filter((l) => l.minHeat === heat).map((l) => l.text);
+  const fresh = pool.filter((l) => l !== last);
+  return fresh[Math.floor(rand() * fresh.length)];
+}

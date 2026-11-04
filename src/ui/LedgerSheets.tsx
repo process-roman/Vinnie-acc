@@ -148,7 +148,7 @@ const STEP = 5000;
 const LEGEND = [
   ['🌿', 'The plant wilts as you near the limit.'],
   ['🌧', 'It rains outside at 85% spent.'],
-  ['🐷', 'The piggy-bank poster cracks if you go over.'],
+  ['☕', 'The espresso poster cracks if you go over.'],
   ['🧾', 'One crumpled receipt per receipt Vinnie ate.'],
 ];
 

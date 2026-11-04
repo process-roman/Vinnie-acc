@@ -38,25 +38,25 @@ const HALF_H = TILE_H / 2;
 export const WALL_PX_PER_TILE = HALF_W;
 
 const C = {
-  planks: [hex('#a9683c'), hex('#9c5e36'), hex('#b0713f'), hex('#935732')],
-  seam: hex('#7b4a2a'),
-  bricksR: [hex('#a9553b'), hex('#9b4c35'), hex('#b25e40'), hex('#8f4530')],
-  mortarR: hex('#c99a7c'),
-  bricksL: [hex('#8f4733'), hex('#83402e'), hex('#974d37'), hex('#7a3b2a')],
-  mortarL: hex('#ab7c62'),
-  crown: hex('#4a2a1a'),
-  crownLight: hex('#6b4128'),
-  woodR: hex('#6d4228'),
-  woodL: hex('#5a3520'),
-  rail: hex('#845334'),
-  base: hex('#3a2115'),
-  cap: hex('#e9dcc2'),
-  capDark: hex('#c9b99c'),
-  endL: hex('#6d3827'),
-  endR: hex('#7a4230'),
-  slabL: hex('#6c4630'),
-  slabR: hex('#553524'),
-  slabLip: hex('#8a5e41'),
+  planks: [hex('#d8ae78'), hex('#cfa46e'), hex('#dfb682'), hex('#c79a63')],
+  seam: hex('#a8794a'),
+  bricksR: [hex('#b8432e'), hex('#a93c2a'), hex('#c44d34'), hex('#9c3626')],
+  mortarR: hex('#e3cbb0'),
+  bricksL: [hex('#8f3428'), hex('#842f25'), hex('#9a3a2c'), hex('#782a22')],
+  mortarL: hex('#b89e8c'),
+  crown: hex('#e9dcc2'),
+  crownLight: hex('#fff6e0'),
+  woodR: hex('#2f5f5a'),
+  woodL: hex('#264e4b'),
+  rail: hex('#e9dcc2'),
+  base: hex('#1d2f2e'),
+  cap: hex('#5a3a2a'),
+  capDark: hex('#3f281c'),
+  endL: hex('#5a2a20'),
+  endR: hex('#6d3327'),
+  slabL: hex('#4a4d57'),
+  slabR: hex('#363842'),
+  slabLip: hex('#6a6d78'),
   frame: hex('#ece4d2'),
   frameDark: hex('#b9ae98'),
 };
@@ -567,9 +567,9 @@ export function rasterizeLightning(): PixelBuffer {
 /** Daylight from the window lying on the floor; none in rain or storms. */
 export function rasterizeSunPatch(weather: Weather): PixelBuffer {
   const buf = createBuffer(ROOM_W, ROOM_H);
-  const alpha = weather === 'sunny' ? 44 : weather === 'cloudy' ? 20 : 0;
+  const alpha = weather === 'sunny' ? 72 : weather === 'cloudy' ? 30 : 0;
   if (!alpha) return buf;
-  const warm: Rgba = [255, 236, 190, alpha];
+  const warm: Rgba = [255, 248, 214, alpha];
   const f = { gx: 3.8, gy: 1.9, w: 3.2, d: 2.7 };
   for (let y = 0; y < ROOM_H; y++) {
     for (let x = 0; x < ROOM_W; x++) {
@@ -578,6 +578,10 @@ export function rasterizeSunPatch(weather: Weather): PixelBuffer {
       const a = (px + py) / 2 - f.gx - ((py - px) / 2 - f.gy) * 0.5;
       const b = (py - px) / 2 - f.gy;
       if (a < 0 || b < 0 || a >= f.w || b >= f.d) continue;
+      // Stays on the planks.
+      const gx = (px + py) / 2;
+      const gy = (py - px) / 2;
+      if (gx >= ROOM_TILES || gy >= ROOM_TILES) continue;
       // The mullion's shadow runs down the middle.
       if (Math.abs(a - f.w / 2) < 0.07) continue;
       blendPixel(buf, x, y, warm);
@@ -586,7 +590,7 @@ export function rasterizeSunPatch(weather: Weather): PixelBuffer {
   return buf;
 }
 
-// --- Piggy-bank poster (left wall): cracks when over budget -----------------------
+// --- Espresso poster (left wall): cracks when over budget -------------------------
 
 export const POSTER = { u0: 2.35, u1: 3.95, v0: 40, v1: 80 };
 
@@ -595,62 +599,74 @@ export function inPoster({ side, u, v }: WallPoint): boolean {
   return side === 'left' && u >= p.u0 && u < p.u1 && v >= p.v0 && v < p.v1;
 }
 
+const POSTER_TITLE = [
+  'xxx.xxx.xxx.xxx.xxx',
+  'x...x.x.x...x...x..',
+  'x...xxx.xx..xx..xx.',
+  'x...x.x.x...x...x..',
+  'xxx.x.x.x...x...xxx',
+];
+
 export function rasterizePoster(state: PosterState): PixelBuffer {
   const P = POSTER;
-  const pig = hex('#e98fa8');
-  const pigLight = hex('#f6b6c7');
-  const pigDark = hex('#b85f78');
-  const paper = hex('#f3e6c8');
-  const paperDark = hex('#e0d0ab');
-  const border = hex('#6b4a2e');
-  const borderLight = hex('#8d6a46');
-  const ink = hex('#3b2a1e');
-  const coin = hex('#e2b13c');
-  const coinLight = hex('#f8dc7c');
+  const frame = hex('#2b1d16');
+  const frameLight = hex('#5a4030');
+  const red = hex('#c8352c');
+  const redDark = hex('#a82a24');
+  const cream = hex('#f6ead0');
+  const creamDark = hex('#d9c7a2');
+  const coffee = hex('#3a2115');
+  const green = hex('#2f8a55');
+  const ink = hex('#1a1210');
   return rasterizeWallLayer(
     (wp) => {
       if (!inPoster(wp)) return null;
-      // Local poster pixels: px across, py up from the bottom.
-      const px = (wp.u - P.u0) * WALL_PX_PER_TILE;
-      const py = wp.v - P.v0;
+      // Poster pixels: px left to right on screen (u runs the other way on this wall),
+      // py up from the bottom.
       const w = (P.u1 - P.u0) * WALL_PX_PER_TILE;
       const h = P.v1 - P.v0;
+      const px = (P.u1 - wp.u) * WALL_PX_PER_TILE;
+      const py = wp.v - P.v0;
       if (px < 2 || px >= w - 2 || py < 2 || py >= h - 2) {
-        return py >= h - 1 || px < 1 ? borderLight : border;
+        return py >= h - 1 || px >= w - 1 ? frameLight : frame;
       }
       if (state === 'cracked') {
-        const along = py * 0.62 + (Math.floor(py / 5) % 2 ? 1.8 : -1.8);
+        const along = py * 0.5 + (Math.floor(py / 5) % 2 ? 2 : -1);
         if (Math.abs(px - along) < 0.8) return ink;
       }
-      const cx = w / 2;
-      // Headline bar.
-      if (py >= h - 9 && py < h - 5 && px >= 5 && px < w - 5) {
-        return Math.floor(px) % 3 === 2 ? paper : ink;
+      // The Italian flag along the bottom.
+      if (py < 7) return px < w / 3 ? green : px < (w * 2) / 3 ? cream : red;
+      const cx = w / 2 - 1;
+      // Title.
+      const row = h - 5 - Math.ceil(py);
+      const col = Math.floor(px) - 3;
+      if (row >= 0 && row < POSTER_TITLE.length && POSTER_TITLE[row][col] === 'x') return cream;
+      // Accent on the last letter.
+      if (py >= h - 5 && py < h - 3 && col >= 17 && col < 19) return cream;
+      // A cup and saucer.
+      if (py >= 9 && py < 11 && Math.abs(px - cx) < 9 - (10.5 - py) * 2) {
+        return py < 10 ? creamDark : cream;
       }
-      // Pig: body, snout, ear, legs and a coin dropping into the slot.
-      const cy = 15;
-      const dx = (px - cx) / 8.5;
-      const dy = (py - cy) / 6.5;
-      if (Math.hypot(px - (cx + 8), py - cy + 1) < 2.6) {
-        return Math.abs(px - (cx + 8)) < 0.6 ? ink : pigDark; // snout
+      if (py >= 11 && py < 19) {
+        const half = 6.5 - Math.max(0, (14 - py) * 0.5);
+        if (Math.abs(px - cx) < half) {
+          if (py >= 18) return coffee;
+          return px > cx + half - 2.5 ? creamDark : cream;
+        }
+        // Handle.
+        const hd = Math.hypot(px - cx - 7, py - 15);
+        if (hd >= 1.6 && hd < 3 && px > cx + 6) return cream;
       }
-      if (px > cx + 2 && px < cx + 5 && py > cy + 5 && py < cy + 8) return pigDark; // ear
-      if (dx * dx + dy * dy < 1) {
-        if (Math.abs(py - (cy + 5)) < 0.8 && Math.abs(px - cx) < 3) return ink; // slot
-        if (Math.abs(px - (cx + 4)) < 0.8 && Math.abs(py - (cy + 1)) < 0.8) return ink; // eye
-        return py > cy + 2.5 ? pigLight : py < cy - 3.5 ? pigDark : pig;
+      // Steam.
+      if (py >= 20 && py < 28) {
+        for (const off of [-3, 2]) {
+          const sx = cx + off + Math.sin((py + off) * 0.9) * 1.4;
+          if (Math.abs(px - sx) < 0.8) return creamDark;
+        }
       }
-      if (
-        py < 9 &&
-        py >= 4 &&
-        (Math.abs(px - (cx - 4.5)) < 1.5 || Math.abs(px - (cx + 4.5)) < 1.5)
-      ) {
-        return pigDark; // legs
-      }
-      const coinD = Math.hypot(px - cx, py - 26);
-      if (coinD < 2) return coinLight;
-      if (coinD < 3.2) return coin;
-      return (Math.floor(px) + Math.floor(py)) % 7 === 0 ? paperDark : paper;
+      // Sunburst behind it all.
+      const angle = Math.atan2(py - 15, px - cx);
+      return Math.floor((angle + Math.PI) * 5) % 2 === 0 ? red : redDark;
     },
     { side: 'left', u0: P.u0, u1: P.u1 },
   );
@@ -794,10 +810,10 @@ export const PROPS: readonly PropDef[] = [
     footprint: { gx: 3, gy: 2, w: 2.5, d: 1.2 },
     heightPx: 24,
     colors: {
-      top: hex('#b06a3b'),
-      left: hex('#7c4526'),
-      right: hex('#653720'),
-      edge: hex('#c98652'),
+      top: hex('#74371f'),
+      left: hex('#4f2414'),
+      right: hex('#3f1c10'),
+      edge: hex('#94502f'),
     },
   },
   {

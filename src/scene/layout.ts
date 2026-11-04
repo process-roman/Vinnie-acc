@@ -2,7 +2,7 @@
 
 import type { PropTarget } from '@/domain/propLines';
 
-import { depth, GridPoint, gridToScreen } from './iso';
+import { depth, GridPoint, gridToScreen, PathPoint } from './iso';
 import { PixelBuffer } from './pixels';
 import { propById, PropId, ROOM_ORIGIN } from './room';
 
@@ -43,10 +43,12 @@ export const SLOTS = {
   pile: { at: { gx: 2.5, gy: 3.9 }, anchor: { x: 39, y: 26 } },
   lamp: { at: { gx: 3.3, gy: 2.3 }, anchor: { x: 8, y: 19 }, lift: DESK_TOP, on: 'desk' },
   phone: { at: { gx: 4.72, gy: 3 }, anchor: { x: 8, y: 10 }, lift: DESK_TOP, on: 'desk' },
-  catOnDesk: { at: { gx: 4.25, gy: 2.6 }, anchor: { x: 10, y: 9 }, lift: DESK_TOP, on: 'desk' },
-  catOnFloor: { at: { gx: 6.7, gy: 2.6 }, anchor: { x: 7, y: 19 } },
-  catBed: { at: { gx: 6.7, gy: 2.6 }, anchor: { x: 13, y: 9 } },
-  catInBed: { at: { gx: 6.7, gy: 2.6 }, anchor: { x: 7, y: 19 }, lift: 3 },
+  /** On the radiator, where it's warm. */
+  catSleeping: { at: { gx: 6.1, gy: 0.2 }, anchor: { x: 10, y: 9 }, lift: 22 },
+  /** In the patch of sun. */
+  catOnFloor: { at: { gx: 6.9, gy: 3.4 }, anchor: { x: 7, y: 19 } },
+  catBed: { at: { gx: 6.9, gy: 3.4 }, anchor: { x: 13, y: 9 } },
+  catInBed: { at: { gx: 6.9, gy: 3.4 }, anchor: { x: 7, y: 19 }, lift: 3 },
   espresso: {
     at: { gx: 0.52, gy: 4.95 },
     anchor: { x: 10, y: 24 },
@@ -60,6 +62,32 @@ export const SLOTS = {
     on: 'cabinet',
   },
 } satisfies Record<string, Slot>;
+
+// Luc's lap of the office when he snaps: open floor only, since he's drawn over the furniture.
+const CAT_LAP: PathPoint[] = [
+  { gx: 7.3, gy: 6.2 },
+  { gx: 4.6, gy: 7.3 },
+  { gx: 1.6, gy: 7 },
+  { gx: 1.4, gy: 5.2 },
+  { gx: 3.6, gy: 5 },
+  { gx: 6, gy: 5.4 },
+  { gx: 7, gy: 4.6 },
+];
+const FLOOR_SPOT: PathPoint = { gx: 6.9, gy: 3.4 };
+const RADIATOR: PathPoint = { gx: 6.1, gy: 0.2, lift: 22 };
+
+export const CAT_PATHS = {
+  sitting: [FLOOR_SPOT, ...CAT_LAP, FLOOR_SPOT],
+  sleeping: [
+    RADIATOR,
+    { gx: 6.6, gy: 1.4 },
+    FLOOR_SPOT,
+    ...CAT_LAP,
+    FLOOR_SPOT,
+    { gx: 6.6, gy: 1.4 },
+    RADIATOR,
+  ],
+};
 
 /** A drawable sprite in the scene: one or more frames, a position, a depth. */
 export type SceneSprite = {

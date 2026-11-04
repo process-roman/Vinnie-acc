@@ -43,12 +43,7 @@
       "Stay inside. Don't spend anything. That's an order, capiche?"
     ]
   },
-  "cat": [
-    "Deductible ignores you.",
-    "Deductible blinks slowly. It's not affection. It's an audit.",
-    "Deductible is busy. Deductible is always busy.",
-    "Deductible knocks a pen off the desk and looks at you."
-  ],
+  "cat": ["Meow.", "Mrrow.", "Meow?", "Mrrp."],
   "phone": [
     "Don't touch the phone. When that thing rings, it's for YOU.",
     "Rotary. Can't be tapped. Well. Harder to tap.",
@@ -68,14 +63,14 @@
   },
   "poster": {
     "intact": [
-      "The piggy bank's smiling. Keep him smiling.",
-      "That's Penny. Penny believes in you. Don't make Penny cry.",
-      "Every dollar you don't spend, Penny gets a little rounder."
+      "Real espresso. Italy's last working institution.",
+      "That poster's older than you. Worth more, too.",
+      "My cousin in Napoli painted that, for a café that's now a bank. I don't ask."
     ],
     "cracked": [
-      "You cracked Penny. You went over and you cracked Penny.",
+      "You cracked my poster. You went over and you cracked it. Madonn'.",
       "Look at that poster. Look at it. That's what over budget looks like.",
-      "Penny's got a crack in her now. She'll heal. If YOU change."
+      "A crack through the caffè. Somewhere, my mother just felt it."
     ]
   },
   "receipts": [
@@ -106,7 +101,7 @@
     },
     {
       "minHeat": "gentle",
-      "text": "Ma basta! Go bother the cat. She bites, I just complain."
+      "text": "Ma basta! Go bother the cat. He bites, I just complain."
     },
     {
       "minHeat": "classic",
@@ -139,6 +134,41 @@
     {
       "minHeat": "unhinged",
       "text": "Go fuck yourself. In Italian that's a compliment. It isn't."
+    }
+  ],
+  "catWarning": [
+    "Careful with Luc. He's a little crazy.",
+    "I wouldn't. Luc's a little pazzo. The last guy needed stitches.",
+    "Ehi. Easy with Luc. He's not right in the head. It's why I like him."
+  ],
+  "catThreat": [
+    {
+      "minHeat": "gentle",
+      "text": "Now look what you did. Touch Luc again and we have a problem. A polite one."
+    },
+    {
+      "minHeat": "gentle",
+      "text": "One more time and you meet his lawyer. He has a lawyer. Don't ask."
+    },
+    {
+      "minHeat": "classic",
+      "text": "Touch Luc again and I introduce you to the fishes. Personally. Capiche?"
+    },
+    {
+      "minHeat": "classic",
+      "text": "That cat is family. One more time and you go swimming. In the East River. In January."
+    },
+    {
+      "minHeat": "classic",
+      "text": "You know what's at the bottom of the river? Guys who poked Luc. Think about it."
+    },
+    {
+      "minHeat": "unhinged",
+      "text": "Touch my fucking cat again and the fishes get a new friend. Capiche?"
+    },
+    {
+      "minHeat": "unhinged",
+      "text": "Vaffanculo! Hands off Luc, or you learn to breathe underwater."
     }
   ]
 }

@@ -68,7 +68,14 @@ import {
   markOpened,
   replaceUpcoming,
 } from '@/data/repositories/notificationLog';
-import { clampMood, DECLINE_MOOD, driftMood, MOOD_START, REPLY_MOOD } from '@/domain/mood';
+import {
+  CAT_TEASE_MOOD,
+  clampMood,
+  DECLINE_MOOD,
+  driftMood,
+  MOOD_START,
+  REPLY_MOOD,
+} from '@/domain/mood';
 import { QuickAdd } from '@/domain/quickAdd';
 import { HONEYMOON_MS } from '@/domain/reaction/escalation';
 import { keptPromises, LedgerEntry, LedgerEvent } from '@/domain/reaction/ledger';
@@ -134,6 +141,8 @@ type GameState = {
   toasts: Achievement[];
 
   /** Counts an achievement event (a call answered, a punch, a gift, a repair...). */
+  /** You kept bothering the cat. Vinnie takes that personally. */
+  catTeased(): void;
   achievementEvent(ev: AchievementEvent): void;
   dismissToast(): void;
   /** Buys a gift or office item. Returns Vinnie's thank-you line, or null if it can't. */
@@ -482,6 +491,9 @@ export const useGame = create<GameState>()((set, get) => {
       if (level === 0 && !opts.quiet) get().achievementEvent('repaired');
     },
 
+    catTeased() {
+      setCharacter({ mood: clampMood(get().character.mood + CAT_TEASE_MOOD) });
+    },
     achievementEvent(ev) {
       const cur = get().achievements[ev]?.progress ?? 0;
       checkAchievements({ [ev]: cur + 1 });

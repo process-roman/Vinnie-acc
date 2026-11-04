@@ -9,7 +9,7 @@
 > **What changed in v2.0**
 >
 > 1. **Breaking the fourth wall is the core feature.** The screen cracks, Vinnie calls you, and he talks to you directly. These are in the MVP, not saved for later.
-> 2. **The office shows the budget.** The plant, the window weather, the piggy-bank poster and the receipt pile show where your budget stands without a chart.
+> 2. **The office shows the budget.** The plant, the window weather, the espresso poster and the receipt pile show where your budget stands without a chart.
 > 3. **Damage persists, and good habits repair it.** Cracks stay until earned away. Coins can't buy repairs.
 > 4. **You can answer back.** Dialogue choices, plus a "promise ledger" so Vinnie remembers what you said.
 > 5. **Heat levels:** Gentle, Classic, and an opt-in Unhinged mode.
@@ -78,7 +78,7 @@ Vinnie must feel like a specific person, not a stock "Italian-American wiseguy."
 
 - A calculator watch he checks while you talk.
 - A personal grudge against oat milk ("It's not milk. Oats don't have nipples.").
-- An office cat named **Deductible**.
+- An office cat named **Luc**. He's a little crazy, and Vinnie would do anything for him.
 - A framed photo of his mother, whom he quotes as a financial authority.
 - He keeps every receipt you've ever given him, and the pile grows.
 - He says "pal," "kid" and "listen to me" a lot. He drops Italian all the time (capiche, mamma mia, basta, madonn', vaffanapoli).
@@ -104,7 +104,7 @@ Loud, dramatic, impatient, sarcastic, proud, and secretly caring. His jokes targ
 | State | Mood range | Behaviour | Animation |
 |---|---|---|---|
 | Proud | 80–100 | Celebrates good decisions | Smiles, sips espresso, claps |
-| Relaxed | 55–79 | Normal everyday mood | Works, reads newspaper, pets Deductible |
+| Relaxed | 55–79 | Normal everyday mood | Works, reads newspaper, pets Luc |
 | Suspicious | 35–54 | Questions purchases | Raises eyebrow, holds receipt to the light |
 | Angry | 15–34 | Reacts to repeated overspending | Shouts, bangs desk, paces |
 | Meltdown | 0–14 | Rare dramatic reaction | Throws papers, punches screen, calls |
@@ -130,7 +130,7 @@ Every dialogue line is tagged with the lowest heat level it's allowed in. Profan
 - **Good week:** "I'm proud of you. Don't make this weird."
 - **Callback (promise ledger):** "Tuesday you told me 'never again.' It's Thursday, pal."
 - **Skipped a purchase:** "You walked away from it? Come here. No, I'm not hugging you. Come here though."
-- **Savings logged:** "Money going INTO an account? Deductible, get the camera."
+- **Savings logged:** "Money going INTO an account? Luc, get the camera."
 
 ## 3. Main Environment: Vinnie's Office
 
@@ -138,7 +138,7 @@ The main screen is a small isometric office. It has to feel alive. It's also a l
 
 ### Starting Room
 
-Wooden desk with a vintage computer, receipts and papers, office chair, filing cabinet, espresso machine, wall calendar, Brooklyn window, old rotary telephone, rug, desk lamp, framed accounting certificate, piggy-bank poster, potted plant, wastebasket, and Deductible the cat.
+Wooden desk with a vintage computer, receipts and papers, office chair, filing cabinet, espresso machine, wall calendar, Brooklyn window, old rotary telephone, rug, desk lamp, framed accounting certificate, piggy-bank poster, potted plant, wastebasket, and Luc the cat.
 
 ### The Room Shows the Budget
 
@@ -148,10 +148,10 @@ Some objects reflect the player's current budget status. The player can read the
 |---|---|---|
 | **Plant** | Share of budget spent | Healthy (<60%) → droopy (60–85%) → wilted (85–100%) → dead (>100%) |
 | **Window weather** | Same | Sunny → cloudy → raining (≥85%) → thunderstorm (>100%) |
-| **Piggy-bank poster** | Over budget | Intact → cracked (>100%) |
+| **Espresso poster** | Over budget | Intact → cracked (>100%) |
 | **Receipt pile by the bin** | Number of receipts this month | Grows with each logged expense |
 | **Espresso machine** | Vinnie's mood | Steaming when mood ≥ 55 |
-| **Deductible the cat** | Streak | Sleeps on the desk during a tracking streak, hides when Vinnie is angry |
+| **Luc the cat** | Streak | Sleeps on the radiator during a tracking streak, hides when Vinnie is angry |
 
 The states come from financial data and are never stored separately (see Architecture).
 
@@ -282,14 +282,14 @@ Example entries from onboarding are labelled "example," with a "Remove examples"
 - Monthly limit with –/+ steppers and direct input.
 - Progress bar, spent, remaining, days left, daily allowance.
 - Spending by category.
-- **Room legend:** "The plant wilts as you near the limit," "It rains at 85%," "The piggy poster cracks if you go over," "One crumpled receipt per receipt Vinnie ate."
+- **Room legend:** "The plant wilts as you near the limit," "It rains at 85%," "The espresso poster cracks if you go over," "One crumpled receipt per receipt Vinnie ate."
 - Vinnie's take: one evidence-based remark ("You spent $140 on delivery this month. That's a lotta pizza, pal.").
 
 ### Screen 5: Appease Vinnie (shop sheet)
 
 Three tabs:
 
-- **Gifts:** treats that raise his mood (espresso, cannoli, pizza, a new newspaper) and office items (better coffee machine, neon "$" sign, rug, new wallpaper, a bed for Deductible, outfits for Vinnie).
+- **Gifts:** treats that raise his mood (espresso, cannoli, pizza, a new newspaper) and office items (better coffee machine, neon "$" sign, rug, new wallpaper, a bed for Luc, outfits for Vinnie).
 - **Achievements:** list with progress and rewards.
 - **Vinnie+:** *(post-MVP)* subscription info.
 
@@ -395,7 +395,7 @@ Tracking streaks are **soft.** Missing a day pauses the streak bonus but doesn't
 - The printer spits out an absurdly long receipt at month's end.
 - Vinnie celebrates a good month with espresso and a little dance.
 - The receipt pile collapses during a meltdown.
-- Deductible knocks something off the desk.
+- Luc knocks something off the desk.
 
 ## 9. Proactive Vinnie and Retention
 

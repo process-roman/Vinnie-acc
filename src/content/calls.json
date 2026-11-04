@@ -110,7 +110,7 @@
           "response": "See? Was that hard? That wasn't hard."
         }
       ],
-      "closer": "Alright. I gotta go. Deductible's eating a receipt. Ciao."
+      "closer": "Alright. I gotta go. Luc's eating a receipt. Ciao."
     },
     {
       "id": "call_over_budget_2",
@@ -248,6 +248,6 @@
         "response": "I know you are. That's all I ask. Trying, and receipts."
       }
     ],
-    "closer": "Alright. Go. Deductible says ciao. She doesn't. But she would."
+    "closer": "Alright. Go. Luc says ciao. He doesn't. But he would."
   }
 }

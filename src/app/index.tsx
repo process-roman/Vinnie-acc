@@ -24,6 +24,7 @@ import {
   FED_UP_TAPS,
   nextTapStreak,
   NO_TAPS,
+  pickCatLine,
   pickFedUpLine,
   pickPropLine,
   PropTarget,
@@ -107,7 +108,7 @@ const SHARE_PROMPT_MS = 10000;
 // Outside the component: reading the clock is only allowed in an event, not a render.
 const tapped = (s: typeof NO_TAPS) => nextTapStreak(s, Date.now());
 
-type Bubble = { id: number; text: string; anchor: Point; done: () => void };
+type Bubble = { id: number; text: string; anchor: Point; speaker?: string; done: () => void };
 type OpenSheet =
   | { kind: 'new'; key: number; initial: Partial<ReceiptValues> & { category: string } }
   | { kind: 'edit'; entry: StoredEntry }
@@ -175,13 +176,15 @@ function Office() {
     zoomY.set(withTiming(at ? (scene.height / 2 - at.y) * (s - 1) : 0, t));
   };
 
-  const say = (text: string) =>
+  const say = (text: string, from?: { at: Point; speaker: string }) =>
     new Promise<void>((resolve) => {
-      const head = office.current?.headPosition() ?? { x: scene.width / 2, y: scene.height / 2 };
+      const head = from?.at ??
+        office.current?.headPosition() ?? { x: scene.width / 2, y: scene.height / 2 };
       setBubble({
         id: Date.now(),
         text,
         anchor: { x: head.x, y: head.y - 10 },
+        speaker: from?.speaker,
         done: () => {
           setBubble(null);
           resolve();
@@ -339,6 +342,9 @@ function Office() {
   const lastLines = useRef<Partial<Record<PropTarget, string>>>({});
   const tapStreak = useRef(NO_TAPS);
   const lastFedUp = useRef<string | undefined>(undefined);
+  const catStreak = useRef(NO_TAPS);
+  const catRunning = useRef(false);
+  const lastCatLine = useRef<string | undefined>(undefined);
   const onSceneTap = async (t: TapTarget) => {
     const canvas = office.current;
     if (!canvas || busy) return;
@@ -356,6 +362,37 @@ function Office() {
         return;
       }
     }
+    if (t.kind === 'prop' && t.target === 'cat') {
+      if (catRunning.current) return;
+      catStreak.current = tapped(catStreak.current);
+      const taps = catStreak.current.count;
+      const line = pickCatLine(taps, heat, lastCatLine.current, Math.random);
+      lastCatLine.current = line;
+      bubble?.done();
+      if (taps === 1) {
+        const at = canvas.catPosition();
+        await say(line, at ? { at, speaker: 'Luc' } : undefined);
+        return;
+      }
+      if (taps === 2) {
+        canvas.alert(900);
+        await say(line);
+        return;
+      }
+      catStreak.current = NO_TAPS;
+      game().catTeased();
+      canvas.alert(1400);
+      canvas.play('shout');
+      if (!reducedMotion) {
+        catRunning.current = true;
+        canvas.runCat().then(() => {
+          catRunning.current = false;
+        });
+      }
+      await say(line);
+      office.current?.play('idle');
+      return;
+    }
     if (bubble) return;
     if (t.kind === 'floor') {
       setStatus(ANIM_STATUS.walk);
@@ -365,11 +402,6 @@ function Office() {
     const target: PropTarget = t.kind === 'vinnie' ? 'vinnie' : t.target;
     const line = pickPropLine(target, room, lastLines.current[target], Math.random);
     lastLines.current[target] = line;
-    if (target === 'cat') {
-      // The cat speaks for itself.
-      setStatus(line);
-      return;
-    }
     if (target === 'vinnie') canvas.alert(700);
     await say(line);
   };
@@ -658,6 +690,7 @@ function Office() {
                 anchor={bubble.anchor}
                 parentWidth={scene.width}
                 parentHeight={scene.height}
+                speaker={bubble.speaker}
                 onDone={bubble.done}
               />
             )}

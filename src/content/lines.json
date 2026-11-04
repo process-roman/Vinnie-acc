@@ -235,7 +235,7 @@
     "tier": "approve",
     "minHeat": "gentle",
     "conditions": ["saved"],
-    "text": "Money going INTO an account? Deductible, get the camera."
+    "text": "Money going INTO an account? Luc, get the camera."
   },
   {
     "id": "ap_saved_2",
@@ -249,7 +249,7 @@
     "tier": "approve",
     "minHeat": "gentle",
     "conditions": ["saved"],
-    "text": "Into the vault! {amount}! Deductible, wake up, we're celebrating!"
+    "text": "Into the vault! {amount}! Luc, wake up, we're celebrating!"
   },
   {
     "id": "ap_saved_4",
@@ -1379,7 +1379,7 @@
     "id": "an_classic_6",
     "tier": "angry",
     "minHeat": "classic",
-    "text": "Deductible, leave the room. Papà's gotta yell."
+    "text": "Luc, leave the room. Papà's gotta yell."
   },
   {
     "id": "an_classic_7",

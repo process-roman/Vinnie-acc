@@ -27,8 +27,8 @@ import type { PropTarget } from '@/domain/propLines';
 import type { RoomState } from '@/domain/roomState';
 
 import { buf, buildSprites, Cosmetics, roomBuffer, vinnieSheet as sheetFor } from './composition';
-import { gridToScreen, GridPoint, Point, screenToGrid } from './iso';
-import { SceneSprite } from './layout';
+import { gridToScreen, GridPoint, Point, pointOnPath, screenToGrid } from './iso';
+import { CAT_PATHS, SceneSprite } from './layout';
 import { getPixel, PixelBuffer } from './pixels';
 import {
   rasterizeLightning,
@@ -46,6 +46,7 @@ import {
 } from './room';
 import { PIXEL_SAMPLING, toSkImage } from './skiaImage';
 import { ALERT_H, ALERT_W, buildAlertBubble } from './sprites/bubble';
+import { CAT_RUN_FRAMES, CAT_RUN_H, CAT_RUN_SHEET, CAT_RUN_W } from './sprites/props';
 import { AnimName, ANIM_NAMES, ANIMS, VINNIE_ANCHOR, VINNIE_H, VINNIE_W } from './sprites/vinnie';
 
 const MS_PER_TILE = 260;
@@ -62,6 +63,8 @@ const WALK = ANIM_NAMES.indexOf('walk');
 const LIGHTNING_EVERY_MS = 4200;
 /** Where the top of his head is inside a frame. */
 const HEAD_TOP = 4;
+const CAT_RUN_MS = 3200;
+const CAT_RUN_FRAME_MS = 70;
 
 export type TapTarget =
   { kind: 'vinnie' } | { kind: 'prop'; target: PropTarget } | { kind: 'floor'; at: GridPoint };
@@ -75,6 +78,10 @@ export type OfficeCanvasHandle = {
   headPositionAt(p: GridPoint): Point;
   position(): GridPoint;
   alert(ms?: number): void;
+  /** Top of the cat's head, in this component's layout coordinates, if he's in the room. */
+  catPosition(): Point | null;
+  /** Sends the cat on a lap of the office; resolves when he's back. */
+  runCat(): Promise<void>;
 };
 
 type Props = {
@@ -183,6 +190,36 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
     return t < 90 || (t > 180 && t < 240) ? 1 : 0;
   });
 
+  // The cat's lap: -1 when he's in his spot, otherwise how far round he's got.
+  const catPath = room.cat === 'sleeping' ? CAT_PATHS.sleeping : CAT_PATHS.sitting;
+  const catRun = useSharedValue(-1);
+  const catSpot = useDerivedValue(() => pointOnPath(catPath, Math.max(0, catRun.value)));
+  const catX = useDerivedValue(
+    () => Math.round(gridToScreen(catSpot.value, ROOM_ORIGIN).x) - Math.floor(CAT_RUN_W / 2),
+  );
+  const catY = useDerivedValue(
+    () =>
+      Math.round(gridToScreen(catSpot.value, ROOM_ORIGIN).y - catSpot.value.lift) - CAT_RUN_H + 1,
+  );
+  const catClip = useDerivedValue(() => rect(catX.value, catY.value, CAT_RUN_W, CAT_RUN_H));
+  const catSheetX = useDerivedValue(
+    () => catX.value - (Math.floor(clock.value / CAT_RUN_FRAME_MS) % CAT_RUN_FRAMES) * CAT_RUN_W,
+  );
+  const catFlip = useDerivedValue(() => {
+    const cx = catX.value + CAT_RUN_W / 2;
+    return [{ translateX: cx }, { scaleX: catSpot.value.facing }, { translateX: -cx }];
+  });
+  const catShown = useDerivedValue(() => (catRun.value >= 0 ? 1 : 0));
+  const runCat = () =>
+    new Promise<void>((resolve) => {
+      catRun.value = 0;
+      catRun.value = withTiming(1, { duration: CAT_RUN_MS, easing: Easing.linear }, (done) => {
+        if (!done) return;
+        catRun.value = -1;
+        scheduleOnRN(resolve);
+      });
+    });
+
   const [alerting, setAlerting] = useState(false);
   const alertTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const showAlert = (ms = 1200) => {
@@ -243,6 +280,15 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
     },
     position: () => ({ gx: gx.value, gy: gy.value }),
     alert: showAlert,
+    catPosition: () => {
+      const cat = sprites.find((c) => c.key === 'cat');
+      if (!cat) return null;
+      return {
+        x: offsetX + (cat.x + cat.frames[0].width / 2) * scale,
+        y: offsetY + cat.y * scale,
+      };
+    },
+    runCat,
   }));
 
   // locationX/Y is undefined on web when the target is the canvas, so work from
@@ -296,6 +342,7 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
         clock={clock}
         vinnieDepth={vinnieDepth}
         behindVinnie={behindVinnie}
+        hiddenWhile={s.key === 'cat' ? catRun : undefined}
       />
     ));
 
@@ -399,6 +446,19 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
               </Group>
             </Group>
             {layers(false)}
+            <Group clip={catClip}>
+              <Group transform={catFlip}>
+                <Image
+                  image={img(CAT_RUN_SHEET)}
+                  x={catSheetX}
+                  y={catY}
+                  width={CAT_RUN_SHEET.width}
+                  height={CAT_RUN_H}
+                  sampling={PIXEL_SAMPLING}
+                  opacity={catShown}
+                />
+              </Group>
+            </Group>
             {alerting && (
               <Image
                 image={statics.bubble}
@@ -463,14 +523,17 @@ function SpriteLayer({
   clock,
   vinnieDepth,
   behindVinnie,
+  hiddenWhile,
 }: {
   sprite: SceneSprite;
   clock: SharedValue<number>;
   vinnieDepth: SharedValue<number>;
   behindVinnie: boolean;
+  /** Hidden while this is 0 or more, e.g. when the sprite's character is off running. */
+  hiddenWhile?: SharedValue<number>;
 }) {
   const visible = useDerivedValue<number>(() =>
-    vinnieDepth.value > sprite.depth === behindVinnie ? 1 : 0,
+    (hiddenWhile?.value ?? -1) < 0 && vinnieDepth.value > sprite.depth === behindVinnie ? 1 : 0,
   );
   return (
     <>

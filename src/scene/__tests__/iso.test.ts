@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { depth, gridToScreen, inFootprint, screenToGrid } from '../iso';
+import { depth, gridToScreen, inFootprint, pointOnPath, screenToGrid } from '../iso';
 
 describe('iso', () => {
   const origin = { x: 64, y: 48 };
@@ -32,5 +32,24 @@ describe('iso', () => {
 
   it('things further forward sort later', () => {
     expect(depth({ gx: 3, gy: 3 })).toBeGreaterThan(depth({ gx: 1, gy: 2 }));
+  });
+});
+
+describe('pointOnPath', () => {
+  const path = [
+    { gx: 0, gy: 0, lift: 10 },
+    { gx: 2, gy: 0 },
+    { gx: 2, gy: 2 },
+  ];
+
+  it('walks the path at an even speed', () => {
+    expect(pointOnPath(path, 0)).toMatchObject({ gx: 0, gy: 0, lift: 10 });
+    expect(pointOnPath(path, 0.25)).toMatchObject({ gx: 1, gy: 0, lift: 5 });
+    expect(pointOnPath(path, 1)).toMatchObject({ gx: 2, gy: 2, lift: 0 });
+  });
+
+  it('faces the way it is heading on screen', () => {
+    expect(pointOnPath(path, 0.25).facing).toBe(1);
+    expect(pointOnPath(path, 0.75).facing).toBe(-1);
   });
 });

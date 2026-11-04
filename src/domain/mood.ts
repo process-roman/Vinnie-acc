@@ -50,6 +50,8 @@ export const REPLY_MOOD: Record<string, number> = {
   excuse_investment: -4,
 };
 export const DECLINE_MOOD = -3;
+/** Nobody bothers Luc. */
+export const CAT_TEASE_MOOD = -6;
 
 /**
  * Applies whole days of drift since `since`. Returns the new mood and the time the

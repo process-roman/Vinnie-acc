@@ -6,6 +6,7 @@ import { PlantState } from '@/domain/roomState';
 import {
   blit,
   createBuffer,
+  packSheet,
   fillRect,
   hex,
   PixelBuffer,
@@ -178,7 +179,7 @@ export function buildReceiptPile(count: number): PixelBuffer {
   return buf;
 }
 
-// --- Deductible the cat ----------------------------------------------------------
+// --- Luc the cat ----------------------------------------------------------------
 
 const CAT = {
   fur: hex('#d98a3a'),
@@ -251,6 +252,47 @@ function sittingCat(tailUp: number): PixelBuffer {
 
 export const CAT_SLEEPING = [sleepingCat(0), sleepingCat(1)];
 export const CAT_SITTING = [sittingCat(0), sittingCat(2)];
+
+export const CAT_RUN_W = 24;
+export const CAT_RUN_H = 14;
+export const CAT_RUN_FRAMES = 4;
+
+/** Luc at full tilt, heading right, ears back. */
+function runningCat(frame: number): PixelBuffer {
+  const b = createBuffer(CAT_RUN_W, CAT_RUN_H);
+  const bob = frame % 2;
+  // Body, stripes.
+  fillRect(b, 6, 4 + bob, 12, 5, CAT.fur);
+  fillRect(b, 6, 4 + bob, 12, 1, CAT.light);
+  fillRect(b, 6, 8 + bob, 12, 1, CAT.dark);
+  for (const x of [9, 12, 15]) fillRect(b, x, 4 + bob, 1, 3, CAT.dark);
+  // Head, ears flat, wide eye.
+  fillRect(b, 17, 3 + bob, 6, 5, CAT.fur);
+  fillRect(b, 17, 2 + bob, 2, 1, CAT.dark);
+  fillRect(b, 20, 4 + bob, 2, 2, hex('#b8d65a'));
+  setPixel(b, 21, 5 + bob, CAT.eye);
+  setPixel(b, 23, 6 + bob, CAT.nose);
+  fillRect(b, 19, 7 + bob, 3, 1, CAT.white);
+  // Tail straight out, then legs in a gallop.
+  fillRect(b, 1, 3 + bob, 5, 1, CAT.dark);
+  fillRect(b, 0, 2 + bob, 2, 1, CAT.fur);
+  const spread = [4, 1, -2, 1][frame];
+  for (const [x, dir] of [
+    [8, -1],
+    [15, 1],
+  ]) {
+    const foot = x + dir * spread;
+    for (let i = 0; i < 4; i++) {
+      const lx = Math.round(x + ((foot - x) * i) / 3);
+      fillRect(b, lx, 9 + bob + i, 2, 1, CAT.fur);
+    }
+    fillRect(b, foot, 12 + bob, 2, 1, CAT.white);
+  }
+  return b;
+}
+export const CAT_RUN_SHEET = packSheet(
+  Array.from({ length: CAT_RUN_FRAMES }, (_, i) => runningCat(i)),
+);
 
 // --- Desk and credenza top items ---------------------------------------------------
 
