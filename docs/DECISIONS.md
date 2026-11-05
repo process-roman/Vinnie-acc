@@ -365,6 +365,8 @@ the domain module instead of being passed through all of them. It's the one piec
 
 ## Sound
 
+**Warm, not harsh.** The first set used raw square waves and sounded like an early-90s handheld. The sounds are now built from rounded waves, soft attacks and a little echo, more like a 16-bit console, with the crack's shards tuned to one scale so they ring together. Levels are set per sound in the generator.
+
 **Generated, not recorded.** `scripts/generate-sounds.js` (`npm run sounds`) synthesizes every effect from
 waveforms and seeded noise into `assets/sounds`, the same way the placeholder art is drawn in code. So
 there's nothing to license, and they can be swapped for recordings by replacing the files.

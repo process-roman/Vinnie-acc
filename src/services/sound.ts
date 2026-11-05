@@ -6,9 +6,11 @@ import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import { useEffect } from 'react';
 import { AppState, Platform } from 'react-native';
 
+import approve from '../../assets/sounds/approve.wav';
 import click from '../../assets/sounds/click.wav';
 import coin from '../../assets/sounds/coin.wav';
 import crack from '../../assets/sounds/crack.wav';
+import frown from '../../assets/sounds/frown.wav';
 import hiss from '../../assets/sounds/hiss.wav';
 import meow from '../../assets/sounds/meow.wav';
 import punch from '../../assets/sounds/punch.wav';
@@ -22,9 +24,11 @@ import thud from '../../assets/sounds/thud.wav';
 import yowl from '../../assets/sounds/yowl.wav';
 
 const SOURCES = {
+  approve,
   click,
   coin,
   crack,
+  frown,
   hiss,
   meow,
   punch,
@@ -41,15 +45,10 @@ const SOURCES = {
 export type SoundName = keyof typeof SOURCES;
 export type LoopName = 'rain' | 'ring' | 'talk';
 
+/** These play under everything else, so they sit lower. The rest is levelled in the files. */
 const VOLUME: Partial<Record<SoundName, number>> = {
-  rain: 0.22,
-  talk: 0.4,
-  ring: 0.7,
-  rustle: 0.6,
-  scurry: 0.55,
-  click: 0.6,
-  hiss: 0.6,
-  coin: 0.6,
+  rain: 0.3,
+  talk: 0.45,
 };
 
 let enabled = true;

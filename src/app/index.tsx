@@ -222,6 +222,8 @@ function Office() {
       canvas.play('inspect');
       await sleep(900);
       canvas.play(TIER_ANIM[reaction.tier]);
+      if (reaction.tier === 'approve') playSound('approve');
+      if (reaction.tier === 'judge' || reaction.tier === 'angry') playSound('frown');
       await say(reaction.line);
       if (reaction.tier === 'angry') {
         canvas.play('slam');
