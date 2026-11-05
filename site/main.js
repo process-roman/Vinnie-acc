@@ -40,6 +40,8 @@ restart.addEventListener('click', startDemo);
 // --- The like button -----------------------------------------------------------------
 
 const LIKED_KEY = 'vinnie-liked';
+/** Shown until the live count arrives, or if it can't be reached. Matches api/likes.js. */
+const STARTING_COUNT = 37;
 const button = document.getElementById('like');
 const label = document.getElementById('like-label');
 const countLine = document.getElementById('like-count');
@@ -67,12 +69,7 @@ function showLiked() {
 
 function showCount(count) {
   if (typeof count !== 'number') return;
-  if (count === 0) {
-    countLine.textContent = 'Nobody yet. Be the first. He remembers that kind of thing.';
-    return;
-  }
-  const people = count === 1 ? 'person wants' : 'people want';
-  countLine.innerHTML = `<strong>${count.toLocaleString('en-US')}</strong> ${people} Vinnie. Capiche?`;
+  countLine.innerHTML = `<strong>${count.toLocaleString('en-US')}</strong> people want Vinnie. Capiche?`;
 }
 
 async function callLikes(method) {
@@ -89,9 +86,11 @@ button.addEventListener('click', async () => {
   try {
     showCount(await callLikes('POST'));
   } catch {
-    // The count's a nicety: the button still works if it can't be reached.
+    // The count can't be reached: still show their like.
+    showCount(STARTING_COUNT + 1);
   }
 });
 
 if (alreadyLiked()) showLiked();
+showCount(STARTING_COUNT + (alreadyLiked() ? 1 : 0));
 callLikes('GET').then(showCount, () => {});

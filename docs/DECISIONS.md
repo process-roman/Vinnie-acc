@@ -403,7 +403,7 @@ someone taps "Try him", so the page itself stays fast.
 
 **Likes** are one number in Upstash Redis behind `api/likes.js`, with no record of who pressed. The only limit
 is per browser (localStorage), so someone determined can inflate it: fine for a vanity count, not a metric
-to quote. Without Redis set up, the button still works but no count shows.
+to quote. The count starts at 37, the owner's choice, with stored likes added on top. Without Redis set up, the page shows 37, plus one if you've liked it, and nothing is saved.
 
 **Own design.** Inspired by another app's page structure (pitch beside an embedded live demo), with our own
 words, colours and art.

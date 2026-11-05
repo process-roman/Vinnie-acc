@@ -16,7 +16,7 @@ const TYPES = {
   '.wasm': 'application/wasm',
   '.json': 'application/json',
 };
-let likes = 0;
+let likes = 37;
 
 function fileFor(url) {
   const clean = path.normalize(decodeURIComponent(url)).replace(/^([/\\.])+/, '');

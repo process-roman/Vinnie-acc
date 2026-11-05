@@ -264,14 +264,20 @@ function Office() {
         game().callPlaced();
         await ring(reaction.call, entry);
       }
-      if (reaction.escalation !== 'none') {
+      // On the website nobody's coming back tomorrow, so he fixes it straight away.
+      if (isDemo && reaction.escalation === 'punch') {
+        await tapeTheGlass(undefined, () => {
+          while (game().character.crackLevel > 0) game().repairNow({ quiet: true });
+        });
+      } else if (reaction.escalation !== 'none') {
         zoomTo(null, 700);
         await canvas.walkTo(DESK_SPOT);
       }
       canvas.play('idle');
       setStatus(STATUS[reaction.tier]);
       // A moment worth sharing (blueprint §12): offer it, never post it.
-      if (reaction.escalation !== 'none' || reaction.call) {
+      // Not in the demo: the crack's already fixed by now, so the picture wouldn't show it.
+      if (!isDemo && (reaction.escalation !== 'none' || reaction.call)) {
         offerShare({
           kind: reaction.escalation === 'punch' ? 'crack' : 'call',
           line: reaction.line,
@@ -289,7 +295,7 @@ function Office() {
   };
 
   /** Repair moment (blueprint 4.4): he walks up and tapes the glass himself. */
-  const tapeTheGlass = async (line?: string) => {
+  const tapeTheGlass = async (line?: string, onTaped?: () => void) => {
     const canvas = office.current;
     if (!canvas) return;
     setStatus('Vinnie is walking up to the glass…');
@@ -299,6 +305,7 @@ function Office() {
     canvas.play('repair');
     setStatus(ANIM_STATUS.repair);
     await sleep(1800);
+    onTaped?.();
     canvas.play('idle');
     await say(line ?? pick(callbacks.repair));
     zoomTo(null, 700);

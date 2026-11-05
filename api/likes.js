@@ -3,6 +3,8 @@
 // Needs Upstash Redis connected to the Vercel project; it answers 503 until then.
 
 const KEY = 'vinnie:likes';
+/** The count the page starts from; what's stored is added on top. */
+const STARTING_COUNT = 37;
 
 const storage = () => {
   const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
@@ -27,7 +29,7 @@ module.exports = async function handler(req, res) {
   if (!store) return res.status(503).json({ error: 'not set up' });
   try {
     const count = await redis(store, req.method === 'POST' ? `incr/${KEY}` : `get/${KEY}`);
-    return res.status(200).json({ count });
+    return res.status(200).json({ count: STARTING_COUNT + count });
   } catch (e) {
     console.error('[likes]', e);
     return res.status(502).json({ error: 'storage unavailable' });
