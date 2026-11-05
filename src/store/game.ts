@@ -94,7 +94,9 @@ import {
   customCategoryColor,
   registerCustomCategories,
 } from '@/domain/categories';
+import demo from '@/content/demo.json';
 import { NewEntry, planReaction, Reaction } from '@/domain/reaction/react';
+import { isDemo } from '@/services/demo';
 import { setSoundEnabled } from '@/services/sound';
 import { crackWorse, repairDue, repairOnce } from '@/domain/repair';
 import { canBuy, equip, GIFTS, itemById, Owned } from '@/domain/shop';
@@ -223,6 +225,8 @@ type GameState = {
    * over budget, and clears cooldowns and the honeymoon so the meltdown escalates.
    */
   loadNearlyBrokeDemo(now?: Date): void;
+  /** The website demo: skips setup and starts with a modest month already logged. */
+  startWebsiteDemo(now?: Date): void;
   reset(): Promise<void>;
 };
 
@@ -387,6 +391,7 @@ export const useGame = create<GameState>()((set, get) => {
         const prevMonth = toMonthKey(new Date(now.getFullYear(), now.getMonth() - 1, 1));
         const goodMonth = lastMonthUnderControl(get().entries, await getLimit(db, prevMonth), now);
         checkAchievements(goodMonth ? { under_control: 1 } : {});
+        if (isDemo) get().startWebsiteDemo();
       })();
       return loading;
     },
@@ -402,11 +407,14 @@ export const useGame = create<GameState>()((set, get) => {
         currency: s.currency,
         recentLineIds: s.recentLineIds,
         ledger: s.ledger,
-        character: {
-          installedAt: s.installedAt,
-          lastCrackAt: s.character.lastCrackAt,
-          lastCallAt: s.character.lastCallAt,
-        },
+        // Nobody has three days to wait in a demo: no grace period, no cooldowns.
+        character: isDemo
+          ? { installedAt: 0, lastCrackAt: null, lastCallAt: null }
+          : {
+              installedAt: s.installedAt,
+              lastCrackAt: s.character.lastCrackAt,
+              lastCallAt: s.character.lastCallAt,
+            },
         now,
         rand: Math.random,
       });
@@ -735,6 +743,30 @@ export const useGame = create<GameState>()((set, get) => {
         if (learned) q = { ...q, category: learned };
       }
       set({ prefill: q });
+    },
+
+    startWebsiteDemo(now = new Date()) {
+      const month = toMonthKey(now);
+      const entries: StoredEntry[] = demo.startingEntries.map((e, i) => {
+        // Early in the month, so none of them count as a repeat today.
+        const at = new Date(now.getFullYear(), now.getMonth(), 1, 9 + i).getTime();
+        return {
+          ...e,
+          id: newId(),
+          type: 'expense',
+          date: `${month}-01`,
+          createdAt: at,
+          updatedAt: at,
+          isExample: false,
+          tier: null,
+        };
+      });
+      set({
+        entries,
+        limitMinor: demo.limitMinor,
+        userName: demo.name,
+        onboardingDone: true,
+      });
     },
 
     loadNearlyBrokeDemo(now = new Date()) {

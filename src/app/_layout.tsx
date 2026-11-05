@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 import { FxProvider, useFx } from '@/store/fx';
+import { announceDemoReady } from '@/services/demo';
 import { configureNotifications, listenForTaps } from '@/services/notifications';
 import { prepareSounds } from '@/services/sound';
 import { useGame } from '@/store/game';
@@ -37,7 +38,10 @@ export default function RootLayout() {
     configureNotifications();
     prepareSounds();
     // Plan the week's notifications once everything has loaded.
-    game.init().then(() => useGame.getState().rescheduleNotifications());
+    game.init().then(() => {
+      useGame.getState().rescheduleNotifications();
+      announceDemoReady();
+    });
     return listenForTaps((t) => useGame.getState().notificationOpened(t));
   }, []);
   return (

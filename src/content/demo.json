@@ -1,0 +1,27 @@
+{
+  "name": "friend",
+  "limitMinor": 200000,
+  "startingEntries": [
+    { "category": "bills", "amountMinor": 42000, "description": "Half the rent" },
+    { "category": "groceries", "amountMinor": 8640, "description": "Weekly shop" },
+    { "category": "transport", "amountMinor": 7200, "description": "Monthly pass" },
+    { "category": "coffee", "amountMinor": 650, "description": "Latte" },
+    { "category": "dining", "amountMinor": 3400, "description": "Pizza" }
+  ],
+  "chips": [
+    { "key": "sneakers", "category": "shopping", "amountMinor": 90000, "description": "Sneakers" },
+    { "key": "latte", "category": "coffee", "amountMinor": 1400, "description": "Oat latte" },
+    {
+      "key": "groceries",
+      "category": "groceries",
+      "amountMinor": 8500,
+      "description": "Groceries"
+    },
+    {
+      "key": "delivery",
+      "category": "delivery",
+      "amountMinor": 7500,
+      "description": "Sushi delivery"
+    }
+  ]
+}

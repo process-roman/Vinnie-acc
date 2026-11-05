@@ -33,6 +33,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import type { PropTarget } from '@/domain/propLines';
 import type { RoomState } from '@/domain/roomState';
+import { isDemo } from '@/services/demo';
 
 import { buf, buildSprites, Cosmetics, roomBuffer, vinnieSheet as sheetFor } from './composition';
 import { CharacterBox, characterAt, TAP_SLOP } from './hitTest';
@@ -505,7 +506,7 @@ export function OfficeCanvas({ width, height, room, cosmetics = {}, onTap, disab
           </Group>
         </Canvas>
       </Pressable>
-      <FpsLabel fps={fps} pixelSize={Math.round(scale * ratio)} />
+      {!isDemo && <FpsLabel fps={fps} pixelSize={Math.round(scale * ratio)} />}
     </View>
   );
 }

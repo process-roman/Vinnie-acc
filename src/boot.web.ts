@@ -4,6 +4,8 @@
 
 import { LoadSkiaWeb } from '@shopify/react-native-skia/lib/module/web';
 
+import { basePath } from './services/demo';
+
 export async function prepareRuntime(): Promise<void> {
-  await LoadSkiaWeb({ locateFile: (file: string) => `/${file}` });
+  await LoadSkiaWeb({ locateFile: (file: string) => `${basePath}/${file}` });
 }

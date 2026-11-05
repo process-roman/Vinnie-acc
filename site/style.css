@@ -1,0 +1,289 @@
+:root {
+  --panel: #1d3533;
+  --panel-deep: #142624;
+  --line: #355a56;
+  --cream: #f4ead4;
+  --cream-soft: #c4c9b8;
+  --mustard: #f2b53a;
+  --mustard-dark: #b9831a;
+  --brick: #c44d34;
+  --ink: #2b1d16;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--panel);
+  color: var(--cream);
+  font-family: Inter, system-ui, sans-serif;
+  line-height: 1.55;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 56px;
+  align-items: center;
+  max-width: 1120px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+/* The lettering on his office door. */
+.door {
+  display: inline-block;
+  margin: 0 0 28px;
+  padding: 6px 14px;
+  border: 2px solid var(--line);
+  background: #dceaea;
+  color: var(--ink);
+  /* The pixel font's C reads as an O, which makes him an O.P.A. */
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+h1 {
+  margin: 0 0 24px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: clamp(48px, 7vw, 84px);
+  font-weight: 700;
+  line-height: 1;
+}
+
+h1 span {
+  color: var(--mustard);
+}
+
+.lead {
+  max-width: 34em;
+  margin: 0 0 14px;
+  color: var(--cream-soft);
+  font-size: 18px;
+}
+
+.like {
+  margin-top: 32px;
+}
+
+.like-ask {
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.like-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border: 0;
+  border-bottom: 5px solid var(--mustard-dark);
+  background: var(--mustard);
+  color: var(--ink);
+  font:
+    700 19px Inter,
+    system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+
+.like-button:hover {
+  filter: brightness(1.06);
+}
+
+.like-button:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+}
+
+.like-button:focus-visible,
+.restart:focus-visible,
+.poster:focus-visible {
+  outline: 3px solid var(--cream);
+  outline-offset: 3px;
+}
+
+.like-button[aria-pressed='true'] {
+  background: var(--cream);
+  border-bottom-color: var(--cream-soft);
+  cursor: default;
+}
+
+.like-button[aria-pressed='true'] .heart {
+  color: var(--brick);
+}
+
+.like-count {
+  min-height: 1.55em;
+  margin: 12px 0 0;
+  color: var(--cream-soft);
+}
+
+.like-count strong {
+  color: var(--cream);
+}
+
+.fine {
+  margin: 24px 0 0;
+  color: var(--cream-soft);
+  font-size: 14px;
+}
+
+/* 402 points wide: on a 2x screen that fits the office exactly at 3 device pixels per art pixel. */
+.phone {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 12px;
+  border-radius: 44px;
+  background: #0d0f12;
+  box-shadow:
+    0 0 0 2px #3a3f47,
+    0 28px 60px rgba(0, 0, 0, 0.5);
+}
+
+.screen {
+  position: relative;
+  width: 402px;
+  height: min(780px, calc(100vh - 110px));
+  min-height: 600px;
+  overflow: hidden;
+  border-radius: 32px;
+  background: #f4ede1;
+}
+
+.screen iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.poster {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  width: 100%;
+  border: 0;
+  background: #f4ede1;
+  cursor: pointer;
+}
+
+.poster img {
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+.try-button {
+  display: block;
+  padding: 12px 32px;
+  border-bottom: 5px solid var(--mustard-dark);
+  background: var(--mustard);
+  color: var(--ink);
+}
+
+.poster:hover .try-button {
+  filter: brightness(1.06);
+}
+
+.try-title {
+  display: block;
+  font:
+    700 26px 'Pixelify Sans',
+    monospace;
+}
+
+.try-sub {
+  display: block;
+  font:
+    600 13px Inter,
+    system-ui,
+    sans-serif;
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #f4ede1;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.loading[hidden] {
+  display: none;
+}
+
+.loading img {
+  width: 128px;
+  image-rendering: pixelated;
+  animation: bob 0.5s steps(2) infinite alternate;
+}
+
+@keyframes bob {
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+.caption {
+  margin: 14px 0 0;
+  color: var(--cream-soft);
+  font-size: 14px;
+  text-align: center;
+}
+
+.restart {
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cream);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading img {
+    animation: none;
+  }
+}
+
+@media (max-width: 880px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+    min-height: 0;
+    padding: 24px 16px 40px;
+  }
+
+  .stage {
+    min-width: 0;
+  }
+
+  .phone {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 8px;
+    border-radius: 34px;
+  }
+
+  .screen {
+    width: min(402px, calc(100vw - 48px));
+    height: min(780px, calc(100dvh - 60px));
+    border-radius: 26px;
+  }
+}

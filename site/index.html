@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vinnie: your budget has a guy</title>
+    <meta
+      name="description"
+      content="A pixel-art budgeting game. Log what you spend. Vinnie Ledger, your accountant, reacts. Go too far and he comes through the screen and calls you."
+    />
+    <meta property="og:title" content="Vinnie: your budget has a guy" />
+    <meta
+      property="og:description"
+      content="A pixel-art budgeting game. Go too far and your accountant comes through the screen."
+    />
+    <link rel="icon" href="/assets/vinnie.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="pitch">
+        <p class="door">V. LEDGER, C.P.A.</p>
+        <h1>Your budget<br />has a <span>guy.</span></h1>
+        <p class="lead">
+          His name's Vinnie. He keeps the books. He kept some other books too, but we don't talk
+          about that.
+        </p>
+        <p class="lead">
+          Log what you spend and he reacts. Groceries, he nods. A $900 pair of sneakers, he walks up
+          to the glass, puts his fist through your screen, and calls you to discuss it.
+        </p>
+
+        <div class="like">
+          <p class="like-ask">Want Vinnie on your phone? Tell him. He's keeping a list.</p>
+          <button id="like" class="like-button" type="button">
+            <span class="heart" aria-hidden="true">♥</span>
+            <span id="like-label">I want Vinnie</span>
+          </button>
+          <p id="like-count" class="like-count" aria-live="polite"></p>
+        </div>
+
+        <p class="fine">Not out yet. iPhone and Android, when he says so.</p>
+      </section>
+
+      <section class="stage" aria-label="Try the Vinnie demo">
+        <div class="phone">
+          <div class="screen" id="screen">
+            <button id="try" class="poster" type="button" aria-label="Try the live demo">
+              <img src="/assets/office.png" alt="Vinnie's pixel-art office in Brooklyn" />
+              <span class="try-button">
+                <span class="try-title">Try him</span>
+                <span class="try-sub">live demo, sound on</span>
+              </span>
+            </button>
+            <div id="loading" class="loading" hidden>
+              <img src="/assets/vinnie.png" alt="" />
+              <p>Vinnie's finding your file…</p>
+            </div>
+          </div>
+        </div>
+        <p class="caption">
+          That's the real app, not a video. Go on, spend something.
+          <button id="restart" class="restart" type="button" hidden>Start over</button>
+        </p>
+      </section>
+    </main>
+    <script src="/main.js"></script>
+  </body>
+</html>

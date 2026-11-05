@@ -30,3 +30,15 @@ call, a free repair, the shop and the notification ask. Settings has export (CSV
 everything, sound and vibration. Reduce Motion is respected; the budget meter has symbols as
 well as colours. Privacy-safe analytics (no amounts ever). 250 dialogue lines and 8 call
 scripts. Performance notes are in [docs/PERF.md](docs/PERF.md). Next: beta builds (M8).
+
+## Website
+
+The landing page is in `site/`, with the app in demo mode at `/app`.
+
+```bash
+npm run build:site   # builds everything into dist/
+npm run site         # serves it locally on http://localhost:8092
+```
+
+Vercel builds it from `main` using `vercel.json`. The like counter (`api/likes.js`) needs Upstash
+Redis connected to the Vercel project.

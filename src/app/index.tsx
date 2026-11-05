@@ -50,7 +50,9 @@ import { ShareSheet } from '@/ui/ShareSheet';
 import { ShopSheet } from '@/ui/ShopSheet';
 import { SitdownSheet } from '@/ui/SitdownSheet';
 import { ShareMoment } from '@/domain/shareCard';
+import demo from '@/content/demo.json';
 import { track } from '@/services/analytics';
+import { isDemo } from '@/services/demo';
 import { playSound, useLoopingSound } from '@/services/sound';
 import { SpeechBubble } from '@/ui/SpeechBubble';
 import { colors, radius, space } from '@/ui/tokens';
@@ -599,7 +601,8 @@ function Office() {
   };
 
   const now = new Date();
-  const chips = quickChips(entries, now);
+  // The demo offers its own purchases, picked to show off each reaction.
+  const chips = isDemo ? demo.chips : quickChips(entries, now);
   // Recomputed every minute too, so the cat comes out once Vinnie has calmed down.
   const [minute, setMinute] = useState(0);
   useEffect(() => {
@@ -620,7 +623,11 @@ function Office() {
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <View style={styles.header}>
         {/* Prototype: tap the title for playtest controls. */}
-        <Pressable onPress={() => setDebugOpen((o) => !o)} accessibilityLabel="Playtest controls">
+        <Pressable
+          disabled={isDemo}
+          onPress={() => setDebugOpen((o) => !o)}
+          accessibilityLabel="Playtest controls"
+        >
           <Text style={styles.title}>Vinnie</Text>
           <Text style={styles.subtitle}>
             {now.toLocaleString('en-US', { month: 'long' })} · {HEAT_LABEL[heat]}

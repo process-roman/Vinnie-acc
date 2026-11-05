@@ -390,3 +390,20 @@ now iPhone-only. Turning the Sounds switch on plays a coin so you can tell right
 
 **Luc hides for an hour.** He runs when Vinnie's mood falls into anger and comes back an hour later, even if
 Vinnie's still angry, since the mood itself recovers over days. Another fall restarts the hour.
+
+## Website
+
+**One repo.** The landing page is in `site/` (plain HTML, no build). `npm run build:site` exports the app to
+`dist/app` and copies the page to `dist`. Phone builds are untouched: the `/app` base path comes from
+`app.config.js` only when `VINNIE_SITE=1`, and demo mode from `EXPO_PUBLIC_DEMO` at build time.
+
+**Demo mode** skips setup, starts with a modest month logged, offers four chosen purchases, has no grace
+period or cooldowns, hides the playtest controls, and keeps nothing between visits. The app only loads when
+someone taps "Try him", so the page itself stays fast.
+
+**Likes** are one number in Upstash Redis behind `api/likes.js`, with no record of who pressed. The only limit
+is per browser (localStorage), so someone determined can inflate it: fine for a vanity count, not a metric
+to quote. Without Redis set up, the button still works but no count shows.
+
+**Own design.** Inspired by another app's page structure (pitch beside an embedded live demo), with our own
+words, colours and art.

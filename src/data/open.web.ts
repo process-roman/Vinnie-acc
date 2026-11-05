@@ -3,6 +3,8 @@
 
 import type { InitSqlJsStatic } from 'sql.js';
 
+import { basePath, isDemo } from '@/services/demo';
+
 import { Db } from './db';
 import { migrate } from './migrations';
 import { wrapSqlJs } from './sqljsDb';
@@ -42,12 +44,14 @@ function readSaved(): Uint8Array | undefined {
 }
 
 export async function openDb(): Promise<Db> {
-  if (!sqlJsGlobal()) await loadScript('/sql-wasm-browser.js');
-  const SQL = await sqlJsGlobal()!({ locateFile: (f) => `/${f}` });
-  const sql = new SQL.Database(readSaved());
+  if (!sqlJsGlobal()) await loadScript(`${basePath}/sql-wasm-browser.js`);
+  const SQL = await sqlJsGlobal()!({ locateFile: (f) => `${basePath}/${f}` });
+  // The demo starts fresh for everyone and keeps nothing.
+  const sql = new SQL.Database(isDemo ? undefined : readSaved());
 
   let timer: ReturnType<typeof setTimeout> | null = null;
   const save = () => {
+    if (isDemo) return;
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       try {
