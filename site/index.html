@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Vinnie: your budget has a guy</title>
+    <title>Vinnie: the budget app that yells at you</title>
     <meta
       name="description"
-      content="A pixel-art budgeting game. Log what you spend. Vinnie Ledger, your accountant, reacts. Go too far and he comes through the screen and calls you."
+      content="A personal budget app with a pixel-art accountant. Track your spending, set your limits, and when you go too far he comes through the screen and calls you."
     />
-    <meta property="og:title" content="Vinnie: your budget has a guy" />
+    <meta property="og:title" content="Vinnie: the budget app that yells at you" />
     <meta
       property="og:description"
-      content="A pixel-art budgeting game. Go too far and your accountant comes through the screen."
+      content="A personal budget app. Go too far and your accountant comes through the screen."
     />
     <link rel="icon" href="/assets/vinnie.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,19 +25,25 @@
   <body>
     <main class="page">
       <section class="pitch">
-        <p class="door">V. LEDGER, C.P.A.</p>
-        <h1>Your budget<br />has a <span>guy.</span></h1>
-        <p class="lead">
-          His name's Vinnie. He keeps the books. He kept some other books too, but we don't talk
-          about that.
+        <p class="brand">
+          <img src="/assets/vinnie.png" alt="" />
+          <span class="brand-name">Vinnie</span>
+          <span class="brand-tag">Personal budget app</span>
         </p>
+        <h1>The budget app that <span>yells at you.</span></h1>
         <p class="lead">
-          Log what you spend and he reacts. Groceries, he nods. A $900 pair of sneakers, he walks up
-          to the glass, puts his fist through your screen, and calls you to discuss it.
+          Your budget has a guy. Vinnie tracks what you spend, watches your limits, and takes every
+          receipt personally.
         </p>
+        <ul class="features">
+          <li>Log a purchase in seconds</li>
+          <li>Set a monthly budget, with a limit for each category</li>
+          <li>See where your money went, month by month</li>
+          <li>Go too far and he punches through your screen, then calls you</li>
+        </ul>
 
         <div class="like">
-          <p class="like-ask">Want Vinnie on your phone? Tell him. He's keeping a list.</p>
+          <p class="like-ask">Want Vinnie on your phone? Tap it. He's counting.</p>
           <button id="like" class="like-button" type="button">
             <span class="heart" aria-hidden="true">♥</span>
             <span id="like-label">I want Vinnie</span>
@@ -45,7 +51,7 @@
           <p id="like-count" class="like-count" aria-live="polite"></p>
         </div>
 
-        <p class="fine">Not out yet. iPhone and Android, when he says so.</p>
+        <p class="fine">Coming to iPhone and Android. Your data stays on your phone.</p>
       </section>
 
       <section class="stage" aria-label="Try the Vinnie demo">
@@ -54,7 +60,7 @@
             <button id="try" class="poster" type="button" aria-label="Try the live demo">
               <img src="/assets/office.png" alt="Vinnie's pixel-art office in Brooklyn" />
               <span class="try-button">
-                <span class="try-title">Try him</span>
+                <span class="try-title">Try the app</span>
                 <span class="try-sub">live demo, sound on</span>
               </span>
             </button>

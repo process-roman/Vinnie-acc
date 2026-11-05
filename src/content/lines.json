@@ -572,7 +572,7 @@
     "tier": "neutral",
     "minHeat": "gentle",
     "categories": ["coffee"],
-    "text": "An espresso I understand. What you got, I'm not sure it has a name."
+    "text": "An espresso I understand. Whatever you got there, it has too many words in it."
   },
   {
     "id": "ne_coffee_5",
@@ -1447,14 +1447,14 @@
     "tier": "angry",
     "minHeat": "classic",
     "conditions": ["crossed85"],
-    "text": "We just crossed eighty-five percent. Hear that? That's the plant dying."
+    "text": "We just crossed eighty-five percent of the budget. Hear that? That's the plant dying."
   },
   {
     "id": "an_crossed85_classic_3",
     "tier": "angry",
     "minHeat": "classic",
     "conditions": ["crossed85"],
-    "text": "That one tipped us past eighty-five. The rain's starting. Hear it?"
+    "text": "That one tipped us past eighty-five percent of the budget. The rain's starting. Hear it?"
   },
   {
     "id": "an_crossed85_1",
@@ -1855,7 +1855,7 @@
     "id": "me_classic_4",
     "tier": "meltdown",
     "minHeat": "classic",
-    "text": "Nope. NOPE. Window. Now."
+    "text": "Nope. NOPE. You and me. Right now."
   },
   {
     "id": "me_classic_5",
@@ -2041,7 +2041,7 @@
     "minHeat": "classic",
     "categories": ["coffee"],
     "conditions": ["overLimit"],
-    "text": "{amount} for one coffee. Is the barista putting your kids through college?"
+    "text": "{amount} for one coffee. You're putting that barista's kids through college."
   },
   {
     "id": "lim_judge_18",
@@ -2073,7 +2073,7 @@
     "minHeat": "classic",
     "categories": ["shopping"],
     "conditions": ["overLimit"],
-    "text": "{amount}. It better have fallen off a very nice truck, and it didn't, because you paid."
+    "text": "{amount}. What's it do? Tell me it does something."
   },
   {
     "id": "lim_judge_22",
@@ -2081,7 +2081,7 @@
     "minHeat": "classic",
     "categories": ["fun"],
     "conditions": ["overLimit"],
-    "text": "{amount} on fun. Fun has a price, kid. That was over it."
+    "text": "{amount} on fun. I've had fun. It wasn't {amount}."
   },
   {
     "id": "lim_judge_23",
@@ -2126,7 +2126,7 @@
     "tier": "angry",
     "minHeat": "classic",
     "conditions": ["wayOverLimit"],
-    "text": "{amount}! I knew guys who did time for less than that! And they didn't get {category}!"
+    "text": "{amount}?! I knew guys who did TIME for less! At least they got away with something!"
   },
   {
     "id": "lim_angry_29",
@@ -2187,7 +2187,7 @@
     "minHeat": "classic",
     "categories": ["coffee"],
     "conditions": ["wayOverLimit"],
-    "text": "{amount} on COFFEE?! Did you buy the farm? Did you buy the FARMER?!"
+    "text": "{amount} on COFFEE?! Oh, I see. We got a f*@king millionaire over here!"
   },
   {
     "id": "lim_angry_37",
@@ -2195,7 +2195,7 @@
     "minHeat": "classic",
     "categories": ["dining"],
     "conditions": ["wayOverLimit"],
-    "text": "{amount} on one meal?! Mamma mia! My mother's rising from her chair!"
+    "text": "{amount}?! For ONE meal?! What did you do, eat the waiter?!"
   },
   {
     "id": "lim_angry_38",
@@ -2307,5 +2307,26 @@
     "minHeat": "classic",
     "conditions": ["heavyMonth"],
     "text": "{count} times this month, {monthTotal}. That's not {category}, that's a lifestyle."
+  },
+  {
+    "id": "lim_angry_53",
+    "tier": "angry",
+    "minHeat": "classic",
+    "conditions": ["wayOverLimit"],
+    "text": "Oh, I see. A f*@king millionaire. {amount} on {category}, like it's nothing."
+  },
+  {
+    "id": "lim_angry_54",
+    "tier": "angry",
+    "minHeat": "unhinged",
+    "conditions": ["wayOverLimit"],
+    "text": "Oh, I see a fucking millionaire here. {amount} on {category}. Beautiful."
+  },
+  {
+    "id": "lim_meltdown_55",
+    "tier": "meltdown",
+    "minHeat": "classic",
+    "conditions": ["absurdOverLimit"],
+    "text": "A millionaire! We got a f*@king MILLIONAIRE! Stay right there."
   }
 ]

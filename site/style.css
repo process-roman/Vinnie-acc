@@ -1,13 +1,10 @@
 :root {
-  --panel: #1d3533;
-  --panel-deep: #142624;
-  --line: #355a56;
-  --cream: #f4ead4;
-  --cream-soft: #c4c9b8;
-  --mustard: #f2b53a;
-  --mustard-dark: #b9831a;
-  --brick: #c44d34;
+  /* New York cab yellow: loud, a bit funny, and the same mustard as the app's main button. */
+  --bg: #f6c431;
   --ink: #2b1d16;
+  --ink-soft: #4d3a22;
+  --cream: #fbf3df;
+  --red: #a8321f;
 }
 
 * {
@@ -16,8 +13,8 @@
 
 body {
   margin: 0;
-  background: var(--panel);
-  color: var(--cream);
+  background: var(--bg);
+  color: var(--ink);
   font-family: Inter, system-ui, sans-serif;
   line-height: 1.55;
 }
@@ -33,41 +30,79 @@ body {
   padding: 32px;
 }
 
-/* The lettering on his office door. */
-.door {
-  display: inline-block;
-  margin: 0 0 28px;
-  padding: 6px 14px;
-  border: 2px solid var(--line);
-  background: #dceaea;
-  color: var(--ink);
-  /* The pixel font's C reads as an O, which makes him an O.P.A. */
-  font-family: 'Courier New', monospace;
+.brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 26px;
+}
+
+.brand img {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--ink);
+  image-rendering: pixelated;
+}
+
+.brand-name {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 28px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+}
+
+.brand-tag {
+  padding: 3px 10px;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 h1 {
   margin: 0 0 24px;
   font-family: 'Pixelify Sans', monospace;
-  font-size: clamp(48px, 7vw, 84px);
+  font-size: clamp(44px, 6vw, 72px);
   font-weight: 700;
   line-height: 1;
 }
 
 h1 span {
-  color: var(--mustard);
+  color: var(--red);
 }
 
 .lead {
   max-width: 34em;
   margin: 0 0 14px;
-  color: var(--cream-soft);
-  font-size: 18px;
+  font-size: 19px;
+}
+
+.features {
+  max-width: 34em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.features li {
+  position: relative;
+  padding: 3px 0 3px 22px;
+  font-weight: 600;
+}
+
+/* A small pixel square for a bullet. */
+.features li::before {
+  content: '';
+  position: absolute;
+  top: 11px;
+  left: 2px;
+  width: 9px;
+  height: 9px;
+  background: var(--ink);
 }
 
 .like {
-  margin-top: 32px;
+  margin-top: 26px;
 }
 
 .like-ask {
@@ -81,9 +116,9 @@ h1 span {
   gap: 10px;
   padding: 14px 26px;
   border: 0;
-  border-bottom: 5px solid var(--mustard-dark);
-  background: var(--mustard);
-  color: var(--ink);
+  border-bottom: 5px solid #000;
+  background: var(--ink);
+  color: var(--cream);
   font:
     700 19px Inter,
     system-ui,
@@ -92,7 +127,7 @@ h1 span {
 }
 
 .like-button:hover {
-  filter: brightness(1.06);
+  background: #3e2c22;
 }
 
 .like-button:active {
@@ -103,33 +138,33 @@ h1 span {
 .like-button:focus-visible,
 .restart:focus-visible,
 .poster:focus-visible {
-  outline: 3px solid var(--cream);
+  outline: 3px solid var(--ink);
   outline-offset: 3px;
 }
 
 .like-button[aria-pressed='true'] {
   background: var(--cream);
-  border-bottom-color: var(--cream-soft);
+  border-bottom-color: #c9bda0;
+  color: var(--ink);
   cursor: default;
 }
 
 .like-button[aria-pressed='true'] .heart {
-  color: var(--brick);
+  color: var(--red);
 }
 
 .like-count {
   min-height: 1.55em;
   margin: 12px 0 0;
-  color: var(--cream-soft);
 }
 
 .like-count strong {
-  color: var(--cream);
+  font-size: 1.15em;
 }
 
 .fine {
-  margin: 24px 0 0;
-  color: var(--cream-soft);
+  margin: 20px 0 0;
+  color: var(--ink-soft);
   font-size: 14px;
 }
 
@@ -183,8 +218,8 @@ h1 span {
 .try-button {
   display: block;
   padding: 12px 32px;
-  border-bottom: 5px solid var(--mustard-dark);
-  background: var(--mustard);
+  border-bottom: 5px solid #b9831a;
+  background: #f2b53a;
   color: var(--ink);
 }
 
@@ -238,7 +273,7 @@ h1 span {
 
 .caption {
   margin: 14px 0 0;
-  color: var(--cream-soft);
+  color: var(--ink-soft);
   font-size: 14px;
   text-align: center;
 }
@@ -248,7 +283,7 @@ h1 span {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--cream);
+  color: var(--ink);
   font: inherit;
   font-weight: 600;
   text-decoration: underline;

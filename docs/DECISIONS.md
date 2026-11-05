@@ -405,5 +405,12 @@ someone taps "Try him", so the page itself stays fast.
 is per browser (localStorage), so someone determined can inflate it: fine for a vanity count, not a metric
 to quote. The count starts at 37, the owner's choice, with stored likes added on top. Without Redis set up, the page shows 37, plus one if you've liked it, and nothing is saved.
 
+**Cab yellow, not green.** The first version was dark office green. It read as a bank, and pushed the
+funny product toward serious. Yellow is loud, says New York, matches the app's main button, and makes the
+dark phone and the red office stand out. It also differs clearly from the cream of the app that inspired it.
+
 **Own design.** Inspired by another app's page structure (pitch beside an embedded live demo), with our own
 words, colours and art.
+
+**Grawlix in Classic.** The "millionaire" lines say "f*@king" in Classic and the real word in Unhinged. A masked
+swear reads as a comic-book joke and stays within "no profanity below Unhinged, except vaffanculo".
