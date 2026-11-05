@@ -1,6 +1,6 @@
 :root {
-  /* New York cab yellow: loud, a bit funny, and the same mustard as the app's main button. */
-  --bg: #f6c431;
+  /* A faded cab yellow: still warm and New York, but quiet enough that the app and the text lead. */
+  --bg: #f3e2ae;
   --ink: #2b1d16;
   --ink-soft: #4d3a22;
   --cream: #fbf3df;
