@@ -15,12 +15,14 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import onboarding from '@/content/onboarding.json';
 import { CATEGORIES, getCategory } from '@/domain/categories';
 import { formatMoney, parseDecimalToMinor } from '@/domain/money';
 import { fillPlaceholders, Heat } from '@/domain/reaction/dialogue';
+import { DuskBackdrop } from '@/scene/DuskBackdrop';
 import { VinniePortrait } from '@/scene/VinniePortrait';
 import { track } from '@/services/analytics';
 import { useLoopingSound } from '@/services/sound';
@@ -127,6 +129,8 @@ export default function Onboarding() {
 
   return (
     <SafeAreaView style={styles.screen}>
+      <StatusBar style="light" />
+      <DuskBackdrop />
       <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
         <View style={styles.portraitFrame}>
           <VinniePortrait size={portrait} talking={!typed} />
@@ -335,6 +339,7 @@ function Retro(props: {
 }
 
 const styles = StyleSheet.create({
+  // The backdrop paints the screen; this only shows before it's drawn.
   screen: { flex: 1, backgroundColor: NIGHT },
   body: { padding: space.lg, gap: space.md, flexGrow: 1, justifyContent: 'center' },
   portraitFrame: {
@@ -348,6 +353,9 @@ const styles = StyleSheet.create({
   },
   nameplate: {
     alignSelf: 'center',
+    paddingHorizontal: space.sm,
+    paddingVertical: 2,
+    backgroundColor: 'rgba(16, 12, 36, 0.75)',
     color: GOLD,
     fontFamily: MONO,
     fontWeight: '700',
@@ -397,7 +405,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: space.sm + 2,
   },
-  amountRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  amountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    paddingHorizontal: space.lg,
+    backgroundColor: NAVY,
+    borderWidth: 3,
+    borderColor: CREAM,
+  },
   dollar: { fontFamily: MONO, fontSize: 34, fontWeight: '700', color: GOLD },
   amount: {
     fontFamily: MONO,
@@ -413,6 +430,11 @@ const styles = StyleSheet.create({
   cardTitle: { fontFamily: MONO, fontWeight: '700', fontSize: 16, color: CREAM },
   cardSub: { fontFamily: MONO, fontSize: 13, lineHeight: 18, color: '#b9bedb', marginTop: 2 },
   cardTextOn: { color: GOLD },
-  link: { alignSelf: 'center', padding: space.sm },
-  linkLabel: { fontFamily: MONO, color: '#b9bedb', textDecorationLine: 'underline' },
+  link: {
+    alignSelf: 'center',
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
+    backgroundColor: 'rgba(16, 12, 36, 0.75)',
+  },
+  linkLabel: { fontFamily: MONO, color: CREAM, textDecorationLine: 'underline' },
 });

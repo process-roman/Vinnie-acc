@@ -414,3 +414,15 @@ words, colours and art.
 
 **Grawlix in Classic.** The "millionaire" lines say "f*@king" in Classic and the real word in Unhinged. A masked
 swear reads as a comic-book joke and stays within "no profanity below Unhinged, except vaffanculo".
+
+## Opening scene backdrop, closing sheets
+
+**Brooklyn at dusk.** The opening scene's plain navy became a pixel-art sunset (`DuskBackdrop`): stepped warm
+bands, a striped sun, the skyline lighting up and the bridge in silhouette. It's warmer and more welcoming,
+fits the 90s-game feel better than a flat gradient, and keeps the navy dialogue box. Anything sitting
+straight on the sky (nameplate, links, the budget number) has a dark backing so it stays readable.
+
+**Sheets close the expected ways.** They weren't native modals, so Android's back gesture went past them.
+Now back closes them, the top bar can be swiped down (PanResponder, no new dependency), and there's a close
+button. Tapping outside still works. A swipe that starts inside a sheet's list scrolls the list; only the top
+bar drags the sheet.
