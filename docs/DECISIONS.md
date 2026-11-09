@@ -365,7 +365,7 @@ the domain module instead of being passed through all of them. It's the one piec
 
 ## Sound
 
-**Warm, not harsh.** The first set used raw square waves and sounded like an early-90s handheld. The sounds are now built from rounded waves, soft attacks and a little echo, more like a 16-bit console, with the crack's shards tuned to one scale so they ring together. Levels are set per sound in the generator.
+**Modern pixel, soft and calm.** Raw square waves sounded like an early-90s handheld, and the warmer rewrite still came across as dull. The current set is built like modern pixel games: FM bells, wooden mallets and plucked strings, notes from one happy scale, a rounded chiptune pulse only for the coin, and a small reverb on everything. Levels sit low and close together.
 
 **Generated, not recorded.** `scripts/generate-sounds.js` (`npm run sounds`) synthesizes every effect from
 waveforms and seeded noise into `assets/sounds`, the same way the placeholder art is drawn in code. So
