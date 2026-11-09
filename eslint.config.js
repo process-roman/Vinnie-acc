@@ -11,9 +11,14 @@ module.exports = defineConfig([
   },
   {
     // Build scripts run under Node.
-    files: ['scripts/**/*.js'],
+    files: ['scripts/**/*.js', 'promo/**/*.ts'],
     languageOptions: {
-      globals: { __dirname: 'readonly', require: 'readonly', process: 'readonly' },
+      globals: {
+        __dirname: 'readonly',
+        require: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+      },
     },
   },
   {

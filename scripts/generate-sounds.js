@@ -1,5 +1,4 @@
 // Generates the game's sound effects as small WAV files in assets/sounds.
-/* global Buffer */
 // Every sound is synthesized here from waveforms and seeded noise, so they're ours to use
 // and easy to tweak. The aim is modern pixel-game audio, the soft and calm kind: clear bells
 // and plucks, notes from one happy scale, a gentle chiptune pulse for the coins, and a real
