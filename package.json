@@ -58,6 +58,7 @@
     "build:site": "node scripts/build-site.js",
     "site": "node scripts/serve-site.js",
     "promo": "tsx promo/render.ts",
+    "screenshots": "tsx promo/screenshots.ts",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",

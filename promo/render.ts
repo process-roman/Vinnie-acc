@@ -2,7 +2,7 @@
 // is composed in music.ts, and ffmpeg turns it into an MP4.
 // Run with: npm run promo   (add --stills to only write a few PNGs for checking)
 
-import { createCanvas, GlobalFonts, SKRSContext2D, Canvas } from '@napi-rs/canvas';
+import { createCanvas, SKRSContext2D } from '@napi-rs/canvas';
 import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -25,142 +25,15 @@ import {
   PORTRAIT_SIZE,
 } from '../src/scene/sprites/portrait';
 import { VINNIE_ANCHOR } from '../src/scene/sprites/vinnie';
+import { bubble, C, pixels, roundRect } from './draw';
 import { composeMusic, RATE } from './music';
 import { BEAT, DURATION, FPS, HEIGHT, T, WIDTH } from './timeline';
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(__dirname, 'out');
-GlobalFonts.registerFromPath(path.join(__dirname, 'fonts', 'PixelifySans.ttf'), 'Pixelify');
-GlobalFonts.registerFromPath(path.join(__dirname, 'fonts', 'Inter.ttf'), 'Inter');
-
-const C = {
-  paper: '#F4EDE1',
-  card: '#FFFAF0',
-  ink: '#2B1D16',
-  inkSoft: '#7A6A5A',
-  line: '#E3D7C3',
-  mustard: '#F2B53A',
-  mustardDark: '#B9831A',
-  brick: '#A4523A',
-  good: '#4E9F5A',
-  yellow: '#F3E2AE',
-  red: '#A8321F',
-  night: '#1D1714',
-};
-
-// --- Drawing helpers -----------------------------------------------------------------
-
-const pixelCanvases = new Map<PixelBuffer, Canvas>();
-function asCanvas(buf: PixelBuffer): Canvas {
-  let c = pixelCanvases.get(buf);
-  if (!c) {
-    c = createCanvas(buf.width, buf.height);
-    const ctx = c.getContext('2d');
-    const img = ctx.createImageData(buf.width, buf.height);
-    img.data.set(buf.data);
-    ctx.putImageData(img, 0, 0);
-    pixelCanvases.set(buf, c);
-  }
-  return c;
-}
-
-/** Pixel art, scaled up with hard edges. */
-function pixels(
-  ctx: SKRSContext2D,
-  buf: PixelBuffer,
-  x: number,
-  y: number,
-  scale: number,
-  sx = 0,
-  sw = buf.width,
-): void {
-  ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(asCanvas(buf), sx, 0, sw, buf.height, x, y, sw * scale, buf.height * scale);
-}
-
-function roundRect(
-  ctx: SKRSContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  r: number,
-): void {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
-
-function wrap(ctx: SKRSContext2D, text: string, maxWidth: number): string[] {
-  const lines: string[] = [];
-  let line = '';
-  for (const word of text.split(' ')) {
-    const next = line ? `${line} ${word}` : word;
-    if (ctx.measureText(next).width > maxWidth && line) {
-      lines.push(line);
-      line = word;
-    } else {
-      line = next;
-    }
-  }
-  if (line) lines.push(line);
-  return lines;
-}
-
 const ease = (k: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, k)), 3);
 const typed = (text: string, t: number, start: number, perSecond = 30) =>
   text.slice(0, Math.max(0, Math.floor((t - start) * perSecond)));
-
-/** A speech bubble like the game's: cream, thick ink border, a tail pointing at the speaker. */
-function bubble(
-  ctx: SKRSContext2D,
-  full: string,
-  shown: string,
-  anchor: { x: number; y: number },
-  size = 52,
-): void {
-  ctx.font = `bold ${size}px Inter`;
-  const maxW = 860;
-  // Size from the full text, so the bubble doesn't grow as it types.
-  const lines = wrap(ctx, full, maxW - 80);
-  const lineH = size * 1.28;
-  const w = Math.min(maxW, Math.max(...lines.map((l) => ctx.measureText(l).width)) + 80);
-  const h = lines.length * lineH + 60;
-  const x = Math.min(WIDTH - w - 30, Math.max(30, anchor.x - w / 2));
-  const y = anchor.y - h - 40;
-  ctx.fillStyle = C.card;
-  ctx.strokeStyle = C.ink;
-  ctx.lineWidth = 8;
-  roundRect(ctx, x, y, w, h, 10);
-  ctx.fill();
-  ctx.stroke();
-  // Tail.
-  const tx = Math.min(x + w - 60, Math.max(x + 60, anchor.x));
-  ctx.beginPath();
-  ctx.moveTo(tx - 22, y + h - 4);
-  ctx.lineTo(tx, y + h + 34);
-  ctx.lineTo(tx + 22, y + h - 4);
-  ctx.closePath();
-  ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(tx - 22, y + h);
-  ctx.lineTo(tx, y + h + 34);
-  ctx.lineTo(tx + 22, y + h);
-  ctx.stroke();
-  // Typed text, laid out on the full text's lines.
-  ctx.fillStyle = C.ink;
-  ctx.textBaseline = 'top';
-  let left = shown.length;
-  lines.forEach((l, i) => {
-    if (left <= 0) return;
-    ctx.fillText(l.slice(0, left), x + 40, y + 30 + i * lineH);
-    left -= l.length + 1;
-  });
-}
 
 // --- The office, as the app shows it -------------------------------------------------
 
