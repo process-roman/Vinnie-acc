@@ -48,3 +48,6 @@ public/sql-wasm-browser.*
 
 # Promo renders
 promo/out/
+
+# Private store research, not part of the app
+VINNIE_keywords.xlsx
