@@ -23,6 +23,8 @@ function fileFor(url) {
   const candidate = path.join(dist, clean);
   if (!candidate.startsWith(dist)) return null;
   if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) return candidate;
+  // Clean URLs, as vercel.json has them: /privacy serves privacy.html.
+  if (fs.existsSync(`${candidate}.html`)) return `${candidate}.html`;
   if (url === '/' || url === '') return path.join(dist, 'index.html');
   // The same rewrite as vercel.json: any other /app path is the single-page app.
   return url.startsWith('/app') ? path.join(dist, 'app', 'index.html') : null;
