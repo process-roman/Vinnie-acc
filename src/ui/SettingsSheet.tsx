@@ -130,8 +130,8 @@ export function SettingsSheet({ visible, onClose, onDeleted }: Props & { onDelet
           <View style={styles.rowMain}>
             <Text style={styles.rowTitle}>Let Vinnie reach out</Text>
             <Text style={styles.rowSub}>
-              At most one a day, never between {quietStart}:00 and {quietEnd}:00. A weekly sit-down,
-              the odd call, and a nudge if you go quiet.
+              Twice a week at most, never between {quietStart}:00 and {quietEnd}:00. A weekly
+              sit-down, the odd call, and a nudge if you go quiet.
             </Text>
           </View>
           <Switch value={notifications} onValueChange={toggleNotifications} />

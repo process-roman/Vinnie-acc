@@ -5,6 +5,8 @@ import {
   backedOff,
   DEFAULT_PREFS,
   inQuietHours,
+  MAX_PER_WEEK,
+  mostInAnyWeek,
   NotificationLogItem,
   PlanInput,
   planNotifications,
@@ -55,12 +57,44 @@ describe('notification plan (blueprint 7.1)', () => {
     for (const x of p) expect(inQuietHours(new Date(x.at).getHours(), DEFAULT_PREFS)).toBe(false);
   });
 
-  it('plans the Sunday sit-down, a weekly call and a quiet nudge', () => {
-    const kinds = plan().map((x) => x.kind);
-    expect(kinds).toContain('sitdown');
-    expect(kinds).toContain('proactive_call');
-    expect(kinds).toContain('quiet_nudge');
+  it('plans the Sunday sit-down and a weekly call, and drops the nudge to stay at two', () => {
+    expect(plan().map((x) => x.kind)).toEqual(['proactive_call', 'sitdown']);
     expect(new Date(plan().find((x) => x.kind === 'sitdown')!.at).getDay()).toBe(0);
+  });
+
+  it('sends the quiet nudge when there is room for it', () => {
+    const log: NotificationLogItem[] = [
+      { kind: 'proactive_call', at: MONDAY.getTime() - 8 * DAY, opened: true },
+    ];
+    // He called 8 days ago, so no call this week (his calls are weekly at most).
+    const kinds = plan({ log, lastCallAt: MONDAY.getTime() + 2 * DAY }).map((x) => x.kind);
+    expect(kinds).toEqual(['quiet_nudge', 'sitdown']);
+  });
+
+  it('never sends more than two in any seven days, counting ones already sent', () => {
+    const heavy = [e('2026-11-02', { amountMinor: 180000 })];
+    for (const entries of [[e(toDateKey(MONDAY))], heavy]) {
+      const p = plan({ entries });
+      expect(p.length).toBeLessThanOrEqual(MAX_PER_WEEK);
+      expect(mostInAnyWeek(p.map((x) => x.at))).toBeLessThanOrEqual(MAX_PER_WEEK);
+    }
+    // Two went out in the last two days: nothing until a week after the first of them.
+    const log: NotificationLogItem[] = [1, 2].map((d) => ({
+      kind: 'quiet_nudge',
+      at: MONDAY.getTime() - d * DAY,
+      opened: true,
+    }));
+    const p = plan({ log });
+    expect(p.length).toBeGreaterThan(0);
+    for (const x of p) expect(x.at).toBeGreaterThanOrEqual(MONDAY.getTime() - 2 * DAY + 7 * DAY);
+    expect(mostInAnyWeek([...log.map((l) => l.at), ...p.map((x) => x.at)])).toBe(2);
+  });
+
+  it('counts the most in any seven days', () => {
+    expect(mostInAnyWeek([])).toBe(0);
+    expect(mostInAnyWeek([0, 3 * DAY, 6 * DAY])).toBe(3);
+    expect(mostInAnyWeek([0, 7 * DAY, 14 * DAY])).toBe(1);
+    expect(mostInAnyWeek([0, 4 * DAY, 8 * DAY])).toBe(2);
   });
 
   it('warns late in the month only when 85% is gone with a week left', () => {
@@ -103,6 +137,18 @@ describe('notification plan (blueprint 7.1)', () => {
     expect(inQuietHours(3, DEFAULT_PREFS)).toBe(true);
     expect(inQuietHours(9, DEFAULT_PREFS)).toBe(false);
     expect(inQuietHours(13, { enabled: true, quietStart: 12, quietEnd: 14 })).toBe(true);
+  });
+
+  it('moves a notification that lands in quiet hours to when they end', () => {
+    const prefs = { enabled: true, quietStart: 17, quietEnd: 20 };
+    const sitdown = plan({ prefs }).find((x) => x.kind === 'sitdown')!;
+    expect(new Date(sitdown.at).getHours()).toBe(20);
+    expect(new Date(sitdown.at).getDay()).toBe(0);
+  });
+
+  it('drops one that quiet hours would push into the next day', () => {
+    const prefs = { enabled: true, quietStart: 18, quietEnd: 9 };
+    expect(plan({ prefs }).map((x) => x.kind)).not.toContain('sitdown');
   });
 });
 

@@ -1,5 +1,5 @@
-// In-character notifications (blueprint §9, 7.1): always opt-in, at most one a
-// day, never in quiet hours, and fewer of them if you keep ignoring them.
+// In-character notifications (blueprint §9, 7.1): always opt-in, at most one a day and two
+// a week, never in quiet hours, and fewer of them if you keep ignoring them.
 
 import { daysLeft, Entry, monthSpentMinor, toDateKey } from './entries';
 
@@ -35,6 +35,16 @@ const DAY = 24 * HOUR;
 export const HORIZON_DAYS = 7;
 const PROACTIVE_EVERY_MS = 7 * DAY;
 const CALL_GAP_MS = 72 * HOUR;
+/** No more than this many in any seven days. */
+export const MAX_PER_WEEK = 2;
+const WEEK = 7 * DAY;
+/** When there's only room for some, these win, in this order. */
+const PRIORITY: readonly NotificationKind[] = [
+  'sitdown',
+  'late_month',
+  'proactive_call',
+  'quiet_nudge',
+];
 /** After this many unopened in a row, only every other day. */
 export const BACKOFF_AFTER = 3;
 
@@ -57,12 +67,23 @@ function outOfQuiet(ms: number, p: NotificationPrefs): number {
   return end > ms ? end : end + DAY;
 }
 
+/** The most of these times that fall within any seven days. */
+export function mostInAnyWeek(times: readonly number[]): number {
+  const t = [...times].sort((a, b) => a - b);
+  let most = 0;
+  for (let k = 0, j = 0; k < t.length; k++) {
+    while (t[k] - t[j] >= WEEK) j++;
+    most = Math.max(most, k - j + 1);
+  }
+  return most;
+}
+
 export function backedOff(log: readonly NotificationLogItem[], now: number): boolean {
   const fired = log.filter((l) => l.at <= now).sort((a, b) => b.at - a.at);
   return fired.length >= BACKOFF_AFTER && fired.slice(0, BACKOFF_AFTER).every((l) => !l.opened);
 }
 
-/** The notifications to schedule for the next week, at most one per day. */
+/** The notifications to schedule for the next week: at most one a day and two a week. */
 export function planNotifications(i: PlanInput): PlannedNotification[] {
   if (!i.prefs.enabled) return [];
   const now = i.now.getTime();
@@ -75,35 +96,44 @@ export function planNotifications(i: PlanInput): PlannedNotification[] {
     .reduce((m, l) => Math.max(m, l.at), 0);
   const slow = backedOff(i.log, now);
 
-  const out: PlannedNotification[] = [];
-  let proactiveDone = now - lastProactive < PROACTIVE_EVERY_MS;
-  let lateDone = !lateMonth;
-  let nudgeDone = lastEntry === 0;
+  // Everything that could go out this week.
+  const candidates: PlannedNotification[] = [];
   for (let d = 0; d < HORIZON_DAYS; d++) {
     if (slow && d % 2 === 1) continue;
     const day = new Date(today);
     day.setDate(today.getDate() + d);
-    const candidates: PlannedNotification[] = [];
-    if (day.getDay() === 0) candidates.push({ kind: 'sitdown', at: at(day, 18) });
-    if (!proactiveDone && day.getDay() === 4) {
+    const options: PlannedNotification[] = [];
+    if (day.getDay() === 0) options.push({ kind: 'sitdown', at: at(day, 18) });
+    if (now - lastProactive >= PROACTIVE_EVERY_MS && day.getDay() === 4) {
       const t = at(day, 18, 30);
       if (i.lastCallAt === null || t - i.lastCallAt >= CALL_GAP_MS) {
-        candidates.push({ kind: 'proactive_call', at: t });
+        options.push({ kind: 'proactive_call', at: t });
       }
     }
-    if (!lateDone && d >= 1) candidates.push({ kind: 'late_month', at: at(day, 12) });
+    if (lateMonth && d >= 1) options.push({ kind: 'late_month', at: at(day, 12) });
     // Two days without a receipt, if nothing gets logged in between.
-    if (!nudgeDone && at(day, 19) - lastEntry >= 2 * DAY) {
-      candidates.push({ kind: 'quiet_nudge', at: at(day, 19) });
+    if (lastEntry !== 0 && at(day, 19) - lastEntry >= 2 * DAY) {
+      options.push({ kind: 'quiet_nudge', at: at(day, 19) });
     }
-    const pick = candidates
-      .map((c) => ({ ...c, at: outOfQuiet(c.at, i.prefs) }))
-      .find((c) => c.at > now + 60_000 && toDateKey(new Date(c.at)) === toDateKey(day));
-    if (!pick) continue;
-    out.push(pick);
-    if (pick.kind === 'proactive_call') proactiveDone = true;
-    if (pick.kind === 'late_month') lateDone = true;
-    if (pick.kind === 'quiet_nudge') nudgeDone = true;
+    for (const c of options) {
+      const moved = { ...c, at: outOfQuiet(c.at, i.prefs) };
+      if (moved.at > now + 60_000 && toDateKey(new Date(moved.at)) === toDateKey(day)) {
+        candidates.push(moved);
+      }
+    }
   }
-  return out;
+
+  // Keep the most useful ones, earliest first within a kind: one of each kind, one a day,
+  // and never more than two in any seven days, counting the ones already sent.
+  const sent = i.log.filter((l) => l.at <= now).map((l) => l.at);
+  const rank = (k: NotificationKind) => PRIORITY.indexOf(k);
+  const out: PlannedNotification[] = [];
+  for (const c of [...candidates].sort((a, b) => rank(a.kind) - rank(b.kind) || a.at - b.at)) {
+    if (out.some((o) => o.kind === c.kind)) continue;
+    const day = toDateKey(new Date(c.at));
+    if (out.some((o) => toDateKey(new Date(o.at)) === day)) continue;
+    if (mostInAnyWeek([...sent, ...out.map((o) => o.at), c.at]) > MAX_PER_WEEK) continue;
+    out.push(c);
+  }
+  return out.sort((a, b) => a.at - b.at);
 }
