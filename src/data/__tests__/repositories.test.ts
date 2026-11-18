@@ -60,7 +60,7 @@ describe('migrations', () => {
   it('are idempotent', async () => {
     await migrate(db);
     const row = await db.get<{ user_version: number }>('PRAGMA user_version');
-    expect(row?.user_version).toBe(8);
+    expect(row?.user_version).toBe(9);
   });
 });
 
@@ -217,6 +217,7 @@ describe('character state', () => {
       lastCallAt: null,
       lastRepairDay: null,
       lastUpsetAt: null,
+      catScaredAt: null,
     });
     const next = {
       ...first,
@@ -228,6 +229,7 @@ describe('character state', () => {
       lastCallAt: 6000,
       lastRepairDay: '2026-11-02',
       lastUpsetAt: null,
+      catScaredAt: 7000,
     };
     await saveCharacter(db, next);
     expect(await getCharacter(db, 999)).toEqual(next);

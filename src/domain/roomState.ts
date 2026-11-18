@@ -53,7 +53,10 @@ export function trackingStreak(entries: readonly { date: string }[], now: Date):
   return n;
 }
 
-/** The cat lies low for this long after Vinnie gets angry, however long the anger lasts. */
+/**
+ * The cat lies low for this long after Vinnie gets angry (however long the anger lasts),
+ * or after you push your luck with him.
+ */
 export const CAT_HIDES_MS = 3600 * 1000;
 
 export function roomState(
@@ -62,6 +65,8 @@ export function roomState(
   now: Date,
   mood: number = MOOD_START,
   lastUpsetAt: number | null = null,
+  /** When Luc was last poked one time too many. */
+  catScaredAt: number | null = null,
 ): RoomState {
   const month = toMonthKey(now);
   const expenses = entries.filter((e) => e.type === 'expense' && toMonthKey(e.date) === month);
@@ -69,11 +74,11 @@ export function roomState(
   const share =
     limitMinor === null ? null : limitMinor === 0 ? (spent > 0 ? 2 : 0) : spent / limitMinor;
 
-  // The cat hides when Vinnie is angry or worse, but only for a while. He's not that scared.
+  // The cat hides when Vinnie is angry or worse, or when you've poked him one time too
+  // many, but only for a while. He's not that scared.
+  const recent = (at: number | null) => at !== null && now.getTime() - at < CAT_HIDES_MS;
   const upset =
-    ['angry', 'meltdown'].includes(moodState(mood)) &&
-    lastUpsetAt !== null &&
-    now.getTime() - lastUpsetAt < CAT_HIDES_MS;
+    (['angry', 'meltdown'].includes(moodState(mood)) && recent(lastUpsetAt)) || recent(catScaredAt);
   const streak = trackingStreak(entries, now);
 
   return {

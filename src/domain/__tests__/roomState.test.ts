@@ -208,6 +208,18 @@ describe('Luc hiding from Vinnie', () => {
     expect(roomState([], null, now, 20, null).cat).toBe('sitting');
   });
 
+  it('treats a zero budget as blown by any spending', () => {
+    expect(roomState([], 0, now).poster).toBe('intact');
+    expect(roomState([e(100)], 0, now).poster).toBe('cracked');
+  });
+
+  it('hides for an hour after being poked too often, whatever his mood', () => {
+    const at = now.getTime();
+    expect(roomState([], null, now, 80, null, at - HOUR + 1000).cat).toBe('hiding');
+    expect(roomState([], null, now, 80, null, at - HOUR).cat).toBe('sitting');
+    expect(roomState([], null, now, 80, null, null).cat).toBe('sitting');
+  });
+
   it('restarts the hour each time the mood falls into anger', () => {
     expect(lastUpsetAfter(40, 30, null, 500)).toBe(500);
     expect(lastUpsetAfter(30, 24, 500, 900)).toBe(900);

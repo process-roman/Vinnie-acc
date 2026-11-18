@@ -37,7 +37,14 @@ export function ShareSheet({ moment, onClose }: Props) {
   const snapshot = useMemo(() => {
     if (!moment) return null;
     const buf = composeSnapshot({
-      room: roomState(entries, limit, new Date(), character.mood, character.lastUpsetAt),
+      room: roomState(
+        entries,
+        limit,
+        new Date(),
+        character.mood,
+        character.lastUpsetAt,
+        character.catScaredAt,
+      ),
       cosmetics: equippedBySlot(inventory),
       vinnieFrame: POSE[moment.kind],
       at: moment.kind === 'achievement' ? WAYPOINTS.centre : WAYPOINTS.camera,

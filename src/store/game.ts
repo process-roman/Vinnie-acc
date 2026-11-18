@@ -112,6 +112,7 @@ export type LogInput = NewEntry & { date?: string };
 
 const FRESH_CHARACTER = (now: number): CharacterState => ({
   lastUpsetAt: null,
+  catScaredAt: null,
   mood: MOOD_START,
   moodAt: now,
   crackLevel: 0,
@@ -548,7 +549,10 @@ export const useGame = create<GameState>()((set, get) => {
     },
 
     catTeased() {
-      setCharacter({ mood: clampMood(get().character.mood + CAT_TEASE_MOOD) });
+      setCharacter({
+        mood: clampMood(get().character.mood + CAT_TEASE_MOOD),
+        catScaredAt: Date.now(),
+      });
     },
     achievementEvent(ev) {
       const cur = get().achievements[ev]?.progress ?? 0;

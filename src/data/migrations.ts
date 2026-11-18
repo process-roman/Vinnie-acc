@@ -126,6 +126,9 @@ export const MIGRATIONS: readonly string[] = [
   `
   ALTER TABLE character_state ADD COLUMN last_upset_at INTEGER;
   `,
+  `
+  ALTER TABLE character_state ADD COLUMN cat_scared_at INTEGER;
+  `,
 ];
 
 export async function migrate(db: Db): Promise<void> {

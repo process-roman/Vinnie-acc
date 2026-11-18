@@ -143,6 +143,7 @@ function Office() {
   const prefill = useGame((s) => s.prefill);
   const mood = useGame((s) => s.character.mood);
   const lastUpsetAt = useGame((s) => s.character.lastUpsetAt);
+  const catScaredAt = useGame((s) => s.character.catScaredAt);
   const crackLevel = useGame((s) => s.character.crackLevel);
   const coins = useGame((s) => balance(s.coinTx));
   const pendingSitdown = useGame((s) => s.pendingSitdown);
@@ -617,9 +618,9 @@ function Office() {
     return () => clearInterval(id);
   }, []);
   const room = useMemo(
-    () => roomState(entries, limit, new Date(), mood, lastUpsetAt),
+    () => roomState(entries, limit, new Date(), mood, lastUpsetAt, catScaredAt),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `minute` only forces a refresh
-    [entries, limit, minute],
+    [entries, limit, mood, lastUpsetAt, catScaredAt, minute],
   );
   // Rain against the window, while there's rain in it.
   useLoopingSound('rain', room.weather === 'rain' || room.weather === 'storm');
