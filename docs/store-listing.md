@@ -13,7 +13,8 @@ Everything to paste into App Store Connect. Name, subtitle, keywords and categor
 | SKU                | vinnie-ios                    |
 | Primary category   | Finance                       |
 | Secondary category | Games › Simulation            |
-| Privacy Policy URL | https://getvinnie.app/privacy |
+| Privacy Policy URL | https://www.getvinnie.app/privacy |
+| Terms of Use | https://www.getvinnie.app/terms (keep Apple's standard licence agreement in App Store Connect) |
 | Support URL        | https://getvinnie.app         |
 | Marketing URL      | https://getvinnie.app         |
 | Copyright          | 2026 (your name or company)   |
@@ -65,6 +66,10 @@ NO BANK LOGIN. YOUR DATA STAYS ON YOUR PHONE.
 • Export your purchases to a spreadsheet whenever you want.
 
 Vinnie is pixel art, sound effects and an accountant with opinions. Download it, log your first coffee, and find out what he thinks.
+
+Vinnie is for fun and personal tracking, not financial advice.
+Terms: https://www.getvinnie.app/terms
+Privacy: https://www.getvinnie.app/privacy
 ```
 
 ## App Privacy (the "nutrition label")
