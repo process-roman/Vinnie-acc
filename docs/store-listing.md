@@ -5,19 +5,19 @@ Everything to paste into App Store Connect. Name, subtitle, keywords and categor
 
 ## App information
 
-| Field              | Value                         |
-| ------------------ | ----------------------------- |
-| Name [30]          | Vinnie: Roast My Spending     |
-| Subtitle [30]      | Pixel accountant money game   |
-| Bundle ID          | com.processroman.vinnie       |
-| SKU                | vinnie-ios                    |
-| Primary category   | Finance                       |
-| Secondary category | Games › Simulation            |
-| Privacy Policy URL | https://www.getvinnie.app/privacy |
-| Terms of Use | https://www.getvinnie.app/terms (keep Apple's standard licence agreement in App Store Connect) |
-| Support URL        | https://getvinnie.app         |
-| Marketing URL      | https://getvinnie.app         |
-| Copyright          | 2026 (your name or company)   |
+| Field              | Value                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------------- |
+| Name [30]          | Vinnie: Roast My Spending                                                                      |
+| Subtitle [30]      | Pixel accountant money game                                                                    |
+| Bundle ID          | com.processroman.vinnie                                                                        |
+| SKU                | vinnie-ios                                                                                     |
+| Primary category   | Finance                                                                                        |
+| Secondary category | Games › Simulation                                                                             |
+| Privacy Policy URL | https://www.getvinnie.app/privacy                                                              |
+| Terms of Use       | https://www.getvinnie.app/terms (keep Apple's standard licence agreement in App Store Connect) |
+| Support URL        | https://getvinnie.app                                                                          |
+| Marketing URL      | https://getvinnie.app                                                                          |
+| Copyright          | 2026 (your name or company)                                                                    |
 
 "Vinnie" alone is taken on the App Store (a wine app), so the name must keep the suffix.
 
