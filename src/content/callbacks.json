@@ -9,6 +9,21 @@
     "Good as new. Almost. I know a guy for glass. Don't ask.",
     "Taped up. You earned that one, kid."
   ],
+  "repairPaid": [
+    "Cash up front. Now we're talking. My guy's fast.",
+    "You paid for the glass? Finally, some respect for property.",
+    "Fixed. That's coming out of your coins, not my pocket."
+  ],
+  "repairBroke": [
+    "Glass costs {price} coins. You got {coins}. Or cheer me up and I fix it myself.",
+    "{price} coins for my glass guy. You have {coins}. Behave for a while, I might do it for free.",
+    "You're short. {price} coins, kid. Or put me in a good mood. Your call."
+  ],
+  "repairMood": [
+    "I'm in a good mood. Don't get used to it. I fixed the glass.",
+    "You're behaving, so I called my glass guy. Clean slate.",
+    "Look at that, you cheered me up. The window too."
+  ],
   "gap": [
     "You alive? Blink twice.",
     "Long time no receipt. You disappear like that, people in my old neighborhood start asking questions.",

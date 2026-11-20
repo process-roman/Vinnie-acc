@@ -1,6 +1,6 @@
 {
-  "declineRetry": "It's in your interest to pick it up.",
-  "declineFinal": "Kids these days...",
+  "declineRetry": "Pick up the phone. I'm calling you back.",
+  "ignored": "You don't pick up? Fine. I talk, you listen. That's how this works.",
   "scripts": [
     {
       "id": "call_broken_promise",

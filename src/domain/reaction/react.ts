@@ -46,8 +46,8 @@ export type FilledCall = {
   replies: Reply[];
   closer: string;
   declineRetry: string;
-  /** When you hang up on him a second time. */
-  declineFinal: string;
+  /** When you ignore the second ring and the call connects anyway. */
+  ignored: string;
 };
 
 export type Reaction = {
@@ -171,7 +171,7 @@ export function planReaction(entry: NewEntry, ctx: ReactContext): Reaction {
         replies: script.replies.map((r) => ({ ...r, response: fill(r.response) })),
         closer: fill(script.closer),
         declineRetry: calls.declineRetry,
-        declineFinal: calls.declineFinal,
+        ignored: calls.ignored,
       };
     }
   }

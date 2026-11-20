@@ -25,13 +25,15 @@ import { colors, radius, space } from './tokens';
 
 /** Long enough to read his warning before it rings again. */
 const RETRY_MS = 5_000;
+/** The second ring can't be declined: ignore it this long and he's on the line anyway. */
+const FORCE_MS = 5_000;
 const ENDED_MS = 1800;
 const CHAR_MS = 24;
 
 type Phase =
   | { kind: 'ringing' }
   | { kind: 'waitingToRetry' }
-  | { kind: 'gaveUp' }
+  | { kind: 'forced' }
   | { kind: 'talking'; step: number }
   | { kind: 'choosing' }
   | { kind: 'after'; reply: Reply; step: 0 | 1 }
@@ -66,19 +68,29 @@ function Call() {
       const id = setTimeout(() => setPhase({ kind: 'ringing' }), RETRY_MS);
       return () => clearTimeout(id);
     }
-    if (phase.kind === 'gaveUp' || phase.kind === 'ended') {
-      const id = setTimeout(hangUp, phase.kind === 'ended' ? ENDED_MS : 2600);
+    if (phase.kind === 'ringing' && declines > 0) {
+      // Ignored the second ring: the call connects without you.
+      const id = setTimeout(() => {
+        useGame.getState().declined(2);
+        track('call_ignored');
+        setAnsweredAt(Date.now());
+        setPhase({ kind: 'forced' });
+      }, FORCE_MS);
       return () => clearTimeout(id);
     }
-  }, [phase.kind, hangUp]);
+    if (phase.kind === 'ended') {
+      const id = setTimeout(hangUp, ENDED_MS);
+      return () => clearTimeout(id);
+    }
+  }, [phase.kind, declines, hangUp]);
 
   const decline = () => {
     playSound('click');
-    // Hanging up on him costs mood every time, and more the second time.
-    useGame.getState().declined(declines + 1);
+    // Hanging up on him costs mood. He calls straight back, and that one you can't decline.
+    useGame.getState().declined(1);
     track('call_declined');
-    setDeclines(declines + 1);
-    setPhase({ kind: declines === 0 ? 'waitingToRetry' : 'gaveUp' });
+    setDeclines(1);
+    setPhase({ kind: 'waitingToRetry' });
   };
   const answer = () => {
     playSound('click');
@@ -93,6 +105,7 @@ function Call() {
   };
   const advance = () => {
     setPhase((p) => {
+      if (p.kind === 'forced') return { kind: 'talking', step: 0 };
       if (p.kind === 'talking') {
         return p.step + 1 < call.lines.length
           ? { kind: 'talking', step: p.step + 1 }
@@ -103,7 +116,7 @@ function Call() {
     });
   };
 
-  if (phase.kind === 'waitingToRetry' || phase.kind === 'gaveUp') {
+  if (phase.kind === 'waitingToRetry') {
     return (
       <Animated.View
         entering={FadeIn}
@@ -114,9 +127,7 @@ function Call() {
         <SafeAreaView edges={['top']}>
           <View style={styles.toast}>
             <Text style={styles.toastFrom}>Vinnie</Text>
-            <Text style={styles.toastText}>
-              {phase.kind === 'gaveUp' ? call.declineFinal : call.declineRetry}
-            </Text>
+            <Text style={styles.toastText}>{call.declineRetry}</Text>
           </View>
         </SafeAreaView>
       </Animated.View>
@@ -134,12 +145,14 @@ function Call() {
             <Text style={styles.callerName}>Vinnie</Text>
             <Pulse>
               <Text style={styles.callerSub}>
-                {declines > 0 ? 'calling again…' : 'mobile · calling…'}
+                {declines > 0 ? 'calling back… no hanging up this time' : 'mobile · calling…'}
               </Text>
             </Pulse>
           </View>
           <View style={styles.callButtons}>
-            <CallButton label="Decline" color="#D64541" glyph="✕" onPress={decline} />
+            {declines === 0 && (
+              <CallButton label="Decline" color="#D64541" glyph="✕" onPress={decline} />
+            )}
             <CallButton label="Answer" color="#3FAE5B" glyph="☎" onPress={answer} />
           </View>
         </SafeAreaView>
@@ -149,15 +162,17 @@ function Call() {
 
   const elapsed = formatClock(seconds);
   const speech =
-    phase.kind === 'talking'
-      ? call.lines[phase.step]
-      : phase.kind === 'choosing'
-        ? call.lines[call.lines.length - 1]
-        : phase.kind === 'after'
-          ? phase.step === 0
-            ? phase.reply.response
-            : call.closer
-          : null;
+    phase.kind === 'forced'
+      ? call.ignored
+      : phase.kind === 'talking'
+        ? call.lines[phase.step]
+        : phase.kind === 'choosing'
+          ? call.lines[call.lines.length - 1]
+          : phase.kind === 'after'
+            ? phase.step === 0
+              ? phase.reply.response
+              : call.closer
+            : null;
 
   return (
     <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.inCall}>

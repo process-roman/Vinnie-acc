@@ -35,7 +35,8 @@ import { fillPlaceholders, Heat } from '@/domain/reaction/dialogue';
 import { Reaction } from '@/domain/reaction/react';
 import { Tier } from '@/domain/reaction/tier';
 import { roomState } from '@/domain/roomState';
-import { equippedBySlot } from '@/domain/shop';
+import { moodMends } from '@/domain/repair';
+import { equippedBySlot, glassRepairPrice } from '@/domain/shop';
 import { Point } from '@/scene/iso';
 import { CAMERA_SPOT, OfficeCanvas, OfficeCanvasHandle, TapTarget } from '@/scene/OfficeCanvas';
 import { Waypoint, WAYPOINTS } from '@/scene/room';
@@ -327,6 +328,47 @@ function Office() {
     }
   };
 
+  // He cheers up and fixes the glass himself: once his mood climbs to relaxed or better
+  // from the lowest it has been since the crack.
+  const lowestSinceCrack = useRef(mood);
+  useEffect(() => {
+    if (crackLevel === 0) {
+      lowestSinceCrack.current = mood;
+      return;
+    }
+    lowestSinceCrack.current = Math.min(lowestSinceCrack.current, mood);
+    if (busy || isDemo || !moodMends(lowestSinceCrack.current, mood)) return;
+    lowestSinceCrack.current = mood;
+    setBusy(true);
+    tapeTheGlass(pick(callbacks.repairMood), () => game().mendGlass()).finally(() =>
+      setBusy(false),
+    );
+    // tapeTheGlass and game() read fresh refs; mood and the crack are the triggers.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mood, crackLevel, busy]);
+
+  /** The "Fix the glass" button: pay coins, or hear how else to get it fixed. */
+  const glassPrice = glassRepairPrice(crackLevel);
+  const payForGlass = async () => {
+    if (!office.current || busy || crackLevel === 0) return;
+    setBusy(true);
+    setUserZoom(0);
+    try {
+      if (coins < glassPrice) {
+        await say(
+          fillPlaceholders(pick(callbacks.repairBroke), {
+            price: String(glassPrice),
+            coins: String(coins),
+          }),
+        );
+        return;
+      }
+      await tapeTheGlass(pick(callbacks.repairPaid), () => game().payForGlass());
+    } finally {
+      setBusy(false);
+    }
+  };
+
   // On opening: a promise kept for a week, or a gap since the last receipt.
   const checkedPromises = useRef(false);
   useEffect(() => {
@@ -531,7 +573,7 @@ function Office() {
             ...onboarding.call,
             scriptId: onboarding.call.id,
             declineRetry: calls.declineRetry,
-            declineFinal: calls.declineFinal,
+            ignored: calls.ignored,
           },
         });
         if (game().character.crackLevel > 0) {
@@ -576,7 +618,7 @@ function Office() {
             ...calls.checkIn,
             scriptId: calls.checkIn.id,
             declineRetry: calls.declineRetry,
-            declineFinal: calls.declineFinal,
+            ignored: calls.ignored,
           },
           null,
         );
@@ -794,8 +836,18 @@ function Office() {
         </View>
       )}
 
-      {(sitdownReady || sharePrompt) && (
+      {(sitdownReady || sharePrompt || crackLevel > 0) && (
         <View style={styles.prompts}>
+          {crackLevel > 0 && !busy && (
+            <Pressable
+              style={styles.prompt}
+              onPress={payForGlass}
+              accessibilityRole="button"
+              accessibilityLabel={`Fix the glass for ${glassPrice} coins`}
+            >
+              <Text style={styles.promptLabel}>🔨 Fix the glass · 🪙 {glassPrice}</Text>
+            </Pressable>
+          )}
           {sitdownReady && !busy && (
             <Pressable style={styles.prompt} onPress={() => setSheet({ kind: 'sitdown' })}>
               <Text style={styles.promptLabel}>☕ Weekly sit-down</Text>

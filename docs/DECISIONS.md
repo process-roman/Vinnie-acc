@@ -426,3 +426,17 @@ straight on the sky (nameplate, links, the budget number) has a dark backing so 
 Now back closes them, the top bar can be swiped down (PanResponder, no new dependency), and there's a close
 button. Tapping outside still works. A swipe that starts inside a sheet's list scrolls the list; only the top
 bar drags the sheet.
+
+**Calls: you can only hang up once.** Testers declined twice and he just got mad. Now the first decline gets
+"pick up the phone" and he calls straight back. The second ring has no Decline button, and if you ignore it
+for 5 seconds the call connects anyway: he opens with a line about talking whether you listen or not, then
+goes through the script. Ignoring costs the same mood as a second decline did. The hang-up button inside a
+connected call stays, so nobody is ever stuck on the call.
+
+**Fixing the glass: coins and mood, as well as good days (owner's call, reverses blueprint §4.4).** Players
+didn't know how to get rid of the crack. Now there are three ways, and the first two are explained on screen:
+a "Fix the glass" button pays 10 coins per crack level; with too few coins he says what it costs and that a
+good mood fixes it too; and the glass mends by itself when his mood climbs to relaxed or better from the
+lowest it has been since the crack. It's a climb, not just a good mood, so a crack from a good mood doesn't
+vanish as the call ends. Gifts lift his mood, so they can now mend the glass indirectly. The old rule (a good
+day takes a level off) stays.

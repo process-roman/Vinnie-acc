@@ -46,3 +46,7 @@ export function equippedBySlot(owned: readonly Owned[]): Partial<Record<ItemSlot
   }
   return out;
 }
+
+/** Paying to fix the cracked glass: a price per crack level, so a hairline costs less. */
+export const GLASS_REPAIR_PER_LEVEL: number = data.glassRepairPerLevel;
+export const glassRepairPrice = (level: number) => level * GLASS_REPAIR_PER_LEVEL;

@@ -1,4 +1,5 @@
 {
+  "glassRepairPerLevel": 10,
   "gifts": [
     {
       "id": "espresso_shot",

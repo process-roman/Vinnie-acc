@@ -10,7 +10,7 @@ import {
   HONEYMOON_MS,
 } from '../reaction/escalation';
 import { checkLedger, keptPromises, LedgerEntry } from '../reaction/ledger';
-import { crackWorse, NO_CRACK, repairDue, repairOnce } from '../repair';
+import { crackWorse, moodMends, NO_CRACK, repairDue, repairOnce } from '../repair';
 
 const HOUR = 3600 * 1000;
 const DAY = 24 * HOUR;
@@ -206,5 +206,19 @@ describe('declining his calls', () => {
     expect(declineMood(1)).toBe(DECLINE_MOOD);
     expect(declineMood(2)).toBeLessThanOrEqual(DECLINE_MOOD * 1.5);
     expect(declineMood(2)).toBeGreaterThan(DECLINE_MOOD * 2);
+  });
+});
+
+describe('the glass mends when he cheers up', () => {
+  it('mends once his mood climbs to relaxed or better', () => {
+    expect(moodMends(20, 55)).toBe(true);
+    expect(moodMends(40, 90)).toBe(true);
+    expect(moodMends(20, 54)).toBe(false);
+  });
+
+  it('needs a climb, not just a good mood that was already there', () => {
+    expect(moodMends(60, 70)).toBe(false);
+    expect(moodMends(60, 80)).toBe(true);
+    expect(moodMends(85, 90)).toBe(false);
   });
 });

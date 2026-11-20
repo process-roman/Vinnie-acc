@@ -24,6 +24,8 @@ export const EVENTS = {
   crack_shown: { level: ['1', '2', '3'] },
   call_answered: {},
   call_declined: {},
+  call_ignored: {},
+  glass_repaired: { how: ['coins', 'mood'] },
   reply_chosen: { tag: ['excuse_needed', 'promise_never_again', 'excuse_investment', 'admit'] },
   share_opened: { kind: ['crack', 'call', 'achievement'] },
   sitdown_done: {},

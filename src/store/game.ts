@@ -99,7 +99,7 @@ import { NewEntry, planReaction, Reaction } from '@/domain/reaction/react';
 import { isDemo } from '@/services/demo';
 import { setSoundEnabled } from '@/services/sound';
 import { crackWorse, repairDue, repairOnce } from '@/domain/repair';
-import { canBuy, equip, GIFTS, itemById, Owned } from '@/domain/shop';
+import { canBuy, equip, GIFTS, glassRepairPrice, itemById, Owned } from '@/domain/shop';
 
 export type { CharacterState, StoredEntry };
 
@@ -209,6 +209,10 @@ type GameState = {
   repairIfDue(now?: Date): boolean;
   /** Repair right now, ignoring the once-a-day rule (playtests, onboarding's free fix). */
   repairNow(opts?: { quiet?: boolean }): void;
+  /** Pays coins to fix the glass completely. Returns false if there's no crack or not enough coins. */
+  payForGlass(): boolean;
+  /** He cheered up: the glass is fixed completely. */
+  mendGlass(): void;
   /** Promises kept for a week, resolved as kept; Vinnie should say something. */
   collectKeptPromises(now?: Date): LedgerEntry[];
   setHeat(heat: Heat): void;
@@ -548,6 +552,28 @@ export const useGame = create<GameState>()((set, get) => {
       if (level === 0 && !opts.quiet) get().achievementEvent('repaired');
     },
 
+    payForGlass() {
+      const s = get();
+      const level = s.character.crackLevel;
+      const price = glassRepairPrice(level);
+      if (level === 0 || balance(s.coinTx) < price) return false;
+      const now = Date.now();
+      const spend: CoinGrant = { key: 'glass:' + now, delta: -price, reason: 'Glass repair' };
+      set({ coinTx: [...s.coinTx, spend] });
+      write((d) => spendCoins(d, spend, now));
+      setCharacter({ crackLevel: 0 });
+      track('glass_repaired', { how: 'coins' });
+      get().achievementEvent('repaired');
+      return true;
+    },
+
+    mendGlass() {
+      if (get().character.crackLevel === 0) return;
+      setCharacter({ crackLevel: 0 });
+      track('glass_repaired', { how: 'mood' });
+      get().achievementEvent('repaired');
+    },
+
     catTeased() {
       setCharacter({
         mood: clampMood(get().character.mood + CAT_TEASE_MOOD),
@@ -576,7 +602,7 @@ export const useGame = create<GameState>()((set, get) => {
       const gift = GIFTS.find((g) => g.id === id);
       track(gift ? 'gift_bought' : 'item_bought');
       if (gift) {
-        // Gifts lift his mood. They never repair the glass.
+        // Gifts lift his mood, which can mend the glass (the home screen watches for that).
         setCharacter({ mood: clampMood(s.character.mood + gift.mood) });
         get().achievementEvent('first_gift');
         return gift.line;

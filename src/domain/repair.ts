@@ -1,8 +1,12 @@
-// Cracks heal through behaviour, not coins (blueprint §4.4): every day you log
-// something without setting him off takes the crack down a level.
+// Fixing the cracked glass (blueprint §4.4, changed by the owner: see DECISIONS.md).
+// Three ways: a good day takes it down a level, his mood recovering mends it, or coins.
 
 import { toDateKey } from './entries';
+import { moodState } from './mood';
 import type { Tier } from './reaction/tier';
+
+/** How good his mood has to get for the glass to mend on its own. */
+const MOOD_FIXES = 55;
 
 export type CrackLevel = 0 | 1 | 2 | 3;
 
@@ -44,4 +48,16 @@ export function repairOnce(c: CrackState, now: Date): CrackState {
     level: Math.max(0, c.level - 1) as CrackLevel,
     lastRepairDay: toDateKey(now),
   };
+}
+
+const MOOD_RANK = ['meltdown', 'angry', 'suspicious', 'relaxed', 'proud'] as const;
+
+/**
+ * The glass also mends when he cheers up: once his mood climbs to relaxed or better,
+ * from the lowest it has been since the crack. Climbing, not just being there, so a
+ * crack from a good mood doesn't vanish the moment the call ends.
+ */
+export function moodMends(lowestSinceCrack: number, mood: number): boolean {
+  const rank = (m: number) => MOOD_RANK.indexOf(moodState(m));
+  return rank(mood) >= rank(MOOD_FIXES) && rank(mood) > rank(lowestSinceCrack);
 }

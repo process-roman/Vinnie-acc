@@ -18,7 +18,7 @@ import {
   reversalForDeletedEntry,
 } from '../coins';
 import { Entry } from '../entries';
-import { canBuy, equip, equippedBySlot, GIFTS, ITEMS } from '../shop';
+import { canBuy, equip, equippedBySlot, GIFTS, glassRepairPrice, ITEMS } from '../shop';
 
 let n = 0;
 const e = (date: string, over: Partial<Entry> = {}): Entry => ({
@@ -181,5 +181,13 @@ describe('shop (blueprint 6.3)', () => {
     expect(equippedBySlot(owned)).toEqual({ outfit: 'sunday_vest', floor: 'rug' });
     owned = equip(owned, 'rug', false);
     expect(equippedBySlot(owned)).toEqual({ outfit: 'sunday_vest' });
+  });
+});
+
+describe('paying to fix the glass', () => {
+  it('costs more the worse the crack', () => {
+    expect(glassRepairPrice(0)).toBe(0);
+    expect(glassRepairPrice(1)).toBeGreaterThan(0);
+    expect(glassRepairPrice(3)).toBe(glassRepairPrice(1) * 3);
   });
 });
