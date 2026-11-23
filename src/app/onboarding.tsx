@@ -135,7 +135,7 @@ export default function Onboarding() {
         <View style={styles.portraitFrame}>
           <VinniePortrait size={portrait} talking={!typed} />
         </View>
-        <Text style={styles.nameplate}>VINNIE LEDGER, C.P.A.</Text>
+        <Text style={styles.nameplate}>VINNIE, C.P.A.</Text>
 
         <Dialogue key={line} text={line} onTyped={() => setTypedLine(line)} />
 
