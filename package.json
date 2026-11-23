@@ -61,6 +61,7 @@
     "promo": "tsx promo/render.ts",
     "screenshots": "tsx promo/screenshots.ts",
     "header": "tsx promo/header.ts",
+    "icon": "tsx promo/icon.ts",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
