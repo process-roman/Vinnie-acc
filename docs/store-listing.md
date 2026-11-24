@@ -102,12 +102,35 @@ about encryption on each build.
 
 ## Notes for App Review
 
+App Review asked for this (Guideline 2.1, information needed). Paste it into App Review Information ›
+Notes, and attach the screen recording (or paste a link to it in place of the first line).
+
 ```
-Vinnie is a personal budget tracker with a cartoon accountant. No account or login is needed; all data stays on the device.
+1. SCREEN RECORDING
+Attached: a recording on a physical iPhone (latest iOS), starting from launching the app and showing the typical flow: onboarding, logging purchases, Vinnie's reactions, the in-app call, the budget, history, the shop and settings. The app has no accounts, no login, no user-generated content and no paid content, so there are no such flows to show.
 
-To see the main feature: complete the short onboarding, then tap "+ New Receipt" and log a large purchase (for example $500 in Shopping). Vinnie reacts, and if you go well over budget he "cracks" the screen and places an in-app call (a simulated call screen, not a real phone call).
+2. PURPOSE AND AUDIENCE
+Vinnie is a personal budget tracker for adults who want to spend less on impulse purchases (coffee, delivery, shopping). Most budget apps are easy to ignore. Vinnie turns budgeting into a game: you set a monthly budget and category limits, log what you spend, and a pixel-art cartoon accountant reacts to every purchase. Staying under budget makes him proud and his office thrives; overspending makes him angry, the office falls apart, and he "calls" you. Good habits earn coins and achievements. The value is a fun, emotional nudge to track spending and stick to a budget. It is not financial advice.
 
-The "Unhinged" heat level (Settings, labelled 17+) uses strong language; the default level, Classic, does not.
+3. HOW TO USE IT
+No login, account or sample files are needed.
+- Launch the app and follow the short onboarding: enter a first name, pick how strict Vinnie is (Gentle, Classic or Unhinged), set a monthly budget, then log a first purchase. Choosing the example purchase shows his biggest reaction: he punches the screen (a cartoon crack over the app) and calls you (a simulated call screen inside the app, not a real phone call), with replies to pick from.
+- Main screen: tap "+ New Receipt" to log a purchase. Logging a large one (for example $500 in Shopping) goes over budget and triggers a reaction.
+- "Budget" (bottom right): monthly budget and per-category limits. "History" (bottom left): every purchase, with edit and delete.
+- Coin button (top right): spend coins earned for tracking on gifts and office items. Coins can't be bought; there are no in-app purchases.
+- Settings (gear): strictness level, sound, reminders, and export of all purchases as a CSV file.
+- Tap objects in the office, Vinnie, or his cat Luc for comments.
+
+4. EXTERNAL SERVICES
+None. The app works fully offline. All data is stored only on the device (SQLite) and is never uploaded. Reminders are local notifications scheduled on the device; there is no server, no analytics, no ads, no AI service and no payment processing.
+
+5. REGIONS
+The app works the same in all regions. It is in English, and amounts use US dollar formatting everywhere.
+
+6. REGULATED INDUSTRY / THIRD-PARTY MATERIAL
+Not applicable. The app does not connect to banks or provide financial services or advice; it only records what the user types in. All art, characters, text and sounds are original to this app.
+
+Content note: the "Unhinged" level, which the user has to choose, uses strong language and is labelled 17+ in the app. Gentle has no swearing; Classic has mild language.
 ```
 
 ## Screenshots

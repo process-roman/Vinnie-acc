@@ -672,9 +672,9 @@ function Office() {
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <View style={styles.header}>
-        {/* Prototype: tap the title for playtest controls. */}
+        {/* Development builds only: tap the title for playtest controls. */}
         <Pressable
-          disabled={isDemo}
+          disabled={isDemo || !__DEV__}
           onPress={() => setDebugOpen((o) => !o)}
           accessibilityLabel="Playtest controls"
         >
